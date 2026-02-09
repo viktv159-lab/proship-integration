@@ -5,161 +5,318 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proship Easy 📦</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { font-family: 'Prompt', sans-serif; }
         .emoji-big { font-size: 3rem; }
         .card-hover:hover { transform: scale(1.02); }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .gradient-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .gradient-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        
+        .bounce { animation: bounce 0.5s ease; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            80%, 100% { transform: scale(1.3); opacity: 0; }
+        }
+        
+        .float { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .shake { animation: shake 0.5s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mascot {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 4rem;
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+        .mascot:hover { transform: scale(1.2) rotate(10deg); }
+
+        .tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .mascot:hover .tooltip { opacity: 1; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .recent-order {
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .recent-order:hover {
+            transform: translateX(5px);
+            background: #f8f9fa;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Mascot -->
+    <div class="mascot float" onclick="mascotTalk()">
+        📦
+        <div class="tooltip" id="mascot-tooltip">สวัสดีค่ะ! ต้องการความช่วยเหลือไหม?</div>
+    </div>
+
     <!-- Header -->
     <header class="gradient-bg text-white p-6 shadow-lg">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <span class="text-4xl">📦</span>
+                <span class="text-4xl bounce">📦</span>
                 <div>
                     <h1 class="text-2xl font-bold">Proship Easy</h1>
                     <p class="text-sm opacity-80">ส่งพัสดุง่ายๆ สำหรับทุกคน!</p>
                 </div>
             </div>
-            <button onclick="showSettings()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-sm">
-                ⚙️ ตั้งค่า
-            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-full text-sm" title="เปลี่ยนธีม">
+                    🌙
+                </button>
+                <button onclick="showSettings()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-sm">
+                    ⚙️ ตั้งค่า
+                </button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto p-6">
         <!-- API Key Warning -->
-        <div id="api-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6 rounded-r-lg">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl">⚠️</span>
+        <div id="api-warning" class="hidden bg-gradient-to-r from-yellow-100 to-orange-100 border-l-4 border-yellow-500 p-4 mb-6 rounded-r-lg shake">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🔑</span>
                 <div>
-                    <p class="font-semibold">ยังไม่ได้ใส่ API Key!</p>
-                    <p class="text-sm">กดปุ่ม "ตั้งค่า" ด้านบนเพื่อใส่ API Key ก่อนนะ</p>
+                    <p class="font-semibold text-yellow-800">ยังไม่ได้ใส่ API Key!</p>
+                    <p class="text-sm text-yellow-700">กดปุ่ม "⚙️ ตั้งค่า" ด้านบนเพื่อใส่ API Key ก่อนนะ</p>
+                </div>
+                <button onclick="showSettings()" class="ml-auto bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 font-semibold">
+                    ตั้งค่าเลย!
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div id="stats-bar" class="hidden bg-white rounded-2xl shadow-lg p-4 mb-6">
+            <div class="flex justify-around text-center">
+                <div class="cursor-pointer hover:scale-105 transition-transform" onclick="loadOrders(1); showSection('list');">
+                    <p class="text-2xl font-bold text-yellow-500" id="stat-pending">-</p>
+                    <p class="text-xs text-gray-500">⏳ รอดำเนินการ</p>
+                </div>
+                <div class="cursor-pointer hover:scale-105 transition-transform" onclick="loadOrders(3); showSection('list');">
+                    <p class="text-2xl font-bold text-blue-500" id="stat-shipping">-</p>
+                    <p class="text-xs text-gray-500">🚚 กำลังส่ง</p>
+                </div>
+                <div class="cursor-pointer hover:scale-105 transition-transform" onclick="loadOrders(4); showSection('list');">
+                    <p class="text-2xl font-bold text-green-500" id="stat-delivered">-</p>
+                    <p class="text-xs text-gray-500">✅ ส่งแล้ว</p>
+                </div>
+                <div class="cursor-pointer hover:scale-105 transition-transform" onclick="loadOrders(5); showSection('list');">
+                    <p class="text-2xl font-bold text-red-500" id="stat-cancelled">-</p>
+                    <p class="text-xs text-gray-500">❌ ยกเลิก</p>
                 </div>
             </div>
         </div>
 
+        <!-- Recent Orders (Local) -->
+        <div id="recent-orders-section" class="hidden bg-white rounded-2xl shadow-lg p-4 mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700">🕐 สร้างล่าสุด</h3>
+                <button onclick="clearRecentOrders()" class="text-xs text-gray-400 hover:text-red-500">ล้างประวัติ</button>
+            </div>
+            <div id="recent-orders-list" class="space-y-2"></div>
+        </div>
+
         <!-- Menu Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <!-- Create Order -->
-            <div onclick="showSection('create')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-purple-300">
-                <div class="emoji-big mb-4">📝</div>
-                <h2 class="text-xl font-bold text-gray-800">สร้างออเดอร์ใหม่</h2>
-                <p class="text-gray-500 mt-2">เพิ่มพัสดุที่จะส่ง</p>
+            <div onclick="showSection('create')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-4 transition-all border-2 border-transparent hover:border-purple-300 text-center">
+                <div class="text-4xl mb-2">📝</div>
+                <h2 class="font-bold text-gray-800 text-sm">สร้างออเดอร์</h2>
             </div>
 
             <!-- View Orders -->
-            <div onclick="showSection('list')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-blue-300">
-                <div class="emoji-big mb-4">📋</div>
-                <h2 class="text-xl font-bold text-gray-800">ดูรายการทั้งหมด</h2>
-                <p class="text-gray-500 mt-2">เช็คสถานะพัสดุ</p>
+            <div onclick="showSection('list')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-4 transition-all border-2 border-transparent hover:border-blue-300 text-center">
+                <div class="text-4xl mb-2">📋</div>
+                <h2 class="font-bold text-gray-800 text-sm">ดูรายการ</h2>
             </div>
 
             <!-- Print Labels -->
-            <div onclick="showSection('print')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-green-300">
-                <div class="emoji-big mb-4">🖨️</div>
-                <h2 class="text-xl font-bold text-gray-800">พิมพ์ใบปะหน้า</h2>
-                <p class="text-gray-500 mt-2">พิมพ์ฉลากติดกล่อง</p>
+            <div onclick="showSection('print')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-4 transition-all border-2 border-transparent hover:border-green-300 text-center">
+                <div class="text-4xl mb-2">🖨️</div>
+                <h2 class="font-bold text-gray-800 text-sm">พิมพ์ฉลาก</h2>
             </div>
 
             <!-- Track -->
-            <div onclick="showSection('track')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-orange-300">
-                <div class="emoji-big mb-4">🔍</div>
-                <h2 class="text-xl font-bold text-gray-800">ค้นหาพัสดุ</h2>
-                <p class="text-gray-500 mt-2">ติดตามสถานะการส่ง</p>
+            <div onclick="showSection('track')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-4 transition-all border-2 border-transparent hover:border-orange-300 text-center">
+                <div class="text-4xl mb-2">🔍</div>
+                <h2 class="font-bold text-gray-800 text-sm">ติดตามพัสดุ</h2>
             </div>
         </div>
 
-        <!-- Sections (Hidden by default) -->
+        <!-- Quick Actions -->
+        <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-4 mb-6">
+            <p class="text-sm text-purple-800 mb-2">⚡ ทางลัด</p>
+            <div class="flex gap-2 flex-wrap">
+                <button onclick="showSection('create')" class="bg-white px-3 py-1.5 rounded-full text-sm shadow hover:shadow-md transition-all">
+                    ➕ สร้างใหม่
+                </button>
+                <button onclick="loadOrders(1); showSection('list');" class="bg-white px-3 py-1.5 rounded-full text-sm shadow hover:shadow-md transition-all">
+                    ⏳ รอส่ง
+                </button>
+                <button onclick="loadOrders(3); showSection('list');" class="bg-white px-3 py-1.5 rounded-full text-sm shadow hover:shadow-md transition-all">
+                    🚚 กำลังส่ง
+                </button>
+            </div>
+        </div>
+
+        <!-- Sections -->
         
         <!-- Create Order Section -->
         <div id="section-create" class="hidden bg-white rounded-2xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold flex items-center gap-2">📝 สร้างออเดอร์ใหม่</h2>
+                <h2 class="text-xl font-bold flex items-center gap-2">📝 สร้างออเดอร์ใหม่</h2>
                 <button onclick="hideSection('create')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             
             <form id="create-form" class="space-y-4">
                 <!-- Customer Info -->
-                <div class="bg-blue-50 p-4 rounded-xl">
-                    <h3 class="font-semibold text-blue-800 mb-3">👤 ข้อมูลผู้รับ</h3>
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                        <span class="text-xl">👤</span> ข้อมูลผู้รับ
+                    </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้รับ *</label>
-                            <input type="text" id="customer-name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-300" placeholder="ชื่อ-นามสกุล">
+                            <input type="text" id="customer-name" required class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" placeholder="ชื่อ-นามสกุล">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทร *</label>
-                            <input type="tel" id="customer-phone" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-300" placeholder="0812345678">
+                            <input type="tel" id="customer-phone" required class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" placeholder="0812345678">
                         </div>
                     </div>
                 </div>
 
                 <!-- Address -->
-                <div class="bg-green-50 p-4 rounded-xl">
-                    <h3 class="font-semibold text-green-800 mb-3">📍 ที่อยู่จัดส่ง</h3>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-green-800 mb-3 flex items-center gap-2">
+                        <span class="text-xl">📍</span> ที่อยู่จัดส่ง
+                    </h3>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ที่อยู่ *</label>
-                            <input type="text" id="address" required class="w-full p-3 border rounded-lg" placeholder="บ้านเลขที่ ซอย ถนน">
+                            <input type="text" id="address" required class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-300 focus:border-green-300 transition-all" placeholder="บ้านเลขที่ ซอย ถนน">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">แขวง/ตำบล *</label>
-                                <input type="text" id="sub-district" required class="w-full p-3 border rounded-lg" placeholder="ตำบล">
+                                <input type="text" id="sub-district" required class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="ตำบล">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">เขต/อำเภอ *</label>
-                                <input type="text" id="district" required class="w-full p-3 border rounded-lg" placeholder="อำเภอ">
+                                <input type="text" id="district" required class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="อำเภอ">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">จังหวัด *</label>
-                                <input type="text" id="province" required class="w-full p-3 border rounded-lg" placeholder="จังหวัด">
+                                <input type="text" id="province" required class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="จังหวัด">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">รหัสไปรษณีย์ *</label>
-                                <input type="text" id="zipcode" required class="w-full p-3 border rounded-lg" placeholder="10000">
+                                <input type="text" id="zipcode" required class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="10000">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Package Info -->
-                <div class="bg-purple-50 p-4 rounded-xl">
-                    <h3 class="font-semibold text-purple-800 mb-3">📦 ข้อมูลพัสดุ</h3>
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                        <span class="text-xl">📦</span> ข้อมูลพัสดุ
+                    </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">น้ำหนัก (กรัม) *</label>
-                            <input type="number" id="weight" required class="w-full p-3 border rounded-lg" placeholder="500" value="500">
+                            <input type="number" id="weight" required class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="500" value="500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ขนส่ง *</label>
-                            <select id="shipping-method" class="w-full p-3 border rounded-lg">
+                            <select id="shipping-method" class="w-full p-3 border-2 border-gray-200 rounded-xl bg-white">
                                 <option value="thaipost">🇹🇭 ไปรษณีย์ไทย</option>
                                 <option value="flash">⚡ Flash Express</option>
                                 <option value="kerry">🟠 Kerry</option>
                                 <option value="shopee">🧡 Shopee Express</option>
+                                <option value="jt">🔴 J&T Express</option>
                             </select>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ (ถ้ามี)</label>
-                        <input type="text" id="remarks" class="w-full p-3 border rounded-lg" placeholder="เช่น สินค้าแตกง่าย">
-                    </div>
-                    <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">ยอด COD (ถ้ามี)</label>
-                        <input type="number" id="cod-amount" class="w-full p-3 border rounded-lg" placeholder="0">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ</label>
+                            <input type="text" id="remarks" class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="เช่น สินค้าแตกง่าย">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ยอด COD (บาท)</label>
+                            <input type="number" id="cod-amount" class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="0" value="0">
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all">
-                    ✨ สร้างออเดอร์
+                <button type="submit" id="submit-btn" class="w-full gradient-bg text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                    <span>✨</span> สร้างออเดอร์
                 </button>
             </form>
         </div>
@@ -167,36 +324,60 @@
         <!-- List Orders Section -->
         <div id="section-list" class="hidden bg-white rounded-2xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold flex items-center gap-2">📋 รายการพัสดุ</h2>
+                <h2 class="text-xl font-bold flex items-center gap-2">📋 รายการพัสดุ</h2>
                 <button onclick="hideSection('list')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             
             <div class="flex gap-2 mb-4 flex-wrap">
-                <button onclick="loadOrders(1)" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm">⏳ รอดำเนินการ</button>
-                <button onclick="loadOrders(2)" class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm">📤 พร้อมส่ง</button>
-                <button onclick="loadOrders(3)" class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm">🚚 กำลังส่ง</button>
-                <button onclick="loadOrders(4)" class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm">✅ ส่งแล้ว</button>
+                <button onclick="loadOrders(1)" class="status-badge bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-all">⏳ รอดำเนินการ</button>
+                <button onclick="loadOrders(2)" class="status-badge bg-blue-100 text-blue-800 hover:bg-blue-200 transition-all">📤 พร้อมส่ง</button>
+                <button onclick="loadOrders(3)" class="status-badge bg-purple-100 text-purple-800 hover:bg-purple-200 transition-all">🚚 กำลังส่ง</button>
+                <button onclick="loadOrders(4)" class="status-badge bg-green-100 text-green-800 hover:bg-green-200 transition-all">✅ ส่งแล้ว</button>
+                <button onclick="loadOrders(5)" class="status-badge bg-red-100 text-red-800 hover:bg-red-200 transition-all">❌ ยกเลิก</button>
             </div>
 
             <div id="orders-list" class="space-y-3">
-                <p class="text-gray-400 text-center py-8">กดปุ่มด้านบนเพื่อโหลดรายการ</p>
+                <div class="text-center py-8">
+                    <span class="text-4xl">📭</span>
+                    <p class="text-gray-400 mt-2">กดปุ่มด้านบนเพื่อโหลดรายการ</p>
+                </div>
             </div>
         </div>
 
         <!-- Print Section -->
         <div id="section-print" class="hidden bg-white rounded-2xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold flex items-center gap-2">🖨️ พิมพ์ใบปะหน้า</h2>
+                <h2 class="text-xl font-bold flex items-center gap-2">🖨️ พิมพ์ใบปะหน้า</h2>
                 <button onclick="hideSection('print')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
-                    <input type="text" id="print-order-id" class="w-full p-3 border rounded-lg" placeholder="order-xxxxx">
+                <div class="bg-gray-50 p-4 rounded-xl">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Order ID</label>
+                    <input type="text" id="print-order-id" class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="order-xxxxx หรือวางจากประวัติ">
+                    <p class="text-xs text-gray-400 mt-1">💡 Tip: คัดลอก Order ID จากรายการที่สร้างล่าสุด</p>
                 </div>
-                <button onclick="printLabel()" class="w-full bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600">
-                    🖨️ พิมพ์เลย!
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ขนาดกระดาษ</label>
+                        <select id="print-size" class="w-full p-3 border-2 border-gray-200 rounded-xl bg-white">
+                            <option value="normal">ปกติ (100x150mm)</option>
+                            <option value="a4">A4</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบ</label>
+                        <select id="print-printer" class="w-full p-3 border-2 border-gray-200 rounded-xl bg-white">
+                            <option value="proship">Proship</option>
+                            <option value="default">Default</option>
+                            <option value="tsc">TSC</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="printLabel()" class="w-full gradient-green text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                    <span>🖨️</span> พิมพ์เลย!
                 </button>
             </div>
         </div>
@@ -204,72 +385,131 @@
         <!-- Track Section -->
         <div id="section-track" class="hidden bg-white rounded-2xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold flex items-center gap-2">🔍 ค้นหาพัสดุ</h2>
+                <h2 class="text-xl font-bold flex items-center gap-2">🔍 ติดตามพัสดุ</h2>
                 <button onclick="hideSection('track')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Order ID หรือ Tracking Number</label>
-                    <input type="text" id="track-id" class="w-full p-3 border rounded-lg" placeholder="order-xxxxx หรือ tracking number">
+                <div class="bg-gray-50 p-4 rounded-xl">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Order ID</label>
+                    <input type="text" id="track-id" class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="order-xxxxx">
                 </div>
-                <button onclick="trackOrder()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600">
-                    🔍 ค้นหา
+                <button onclick="trackOrder()" class="w-full gradient-orange text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                    <span>🔍</span> ค้นหา
                 </button>
                 <div id="track-result"></div>
             </div>
         </div>
     </main>
 
+    <!-- Footer -->
+    <footer class="text-center py-6 text-gray-400 text-sm">
+        <p>Made with 💜 by Proship Team</p>
+    </footer>
+
     <!-- Settings Modal -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full">
-            <h2 class="text-xl font-bold mb-4">⚙️ ตั้งค่า</h2>
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold">⚙️ ตั้งค่า</h2>
+                <button onclick="hideSettings()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
             
             <div class="space-y-4">
+                <div class="bg-blue-50 p-3 rounded-xl text-sm text-blue-800">
+                    💡 หา API Key และ Shop ID ได้ที่ <a href="https://app.proship.co.th" target="_blank" class="underline font-semibold">app.proship.co.th</a>
+                </div>
+                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">API Key *</label>
-                    <input type="password" id="api-key" class="w-full p-3 border rounded-lg" placeholder="ใส่ API Key จาก Proship">
-                    <p class="text-xs text-gray-400 mt-1">หา API Key ได้ที่ app.proship.co.th > ตั้งค่า > API</p>
+                    <input type="password" id="api-key" class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="ใส่ API Key">
+                    <p class="text-xs text-gray-400 mt-1">ตั้งค่า > API</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Shop ID *</label>
-                    <input type="text" id="shop-id" class="w-full p-3 border rounded-lg" placeholder="shop-xxxxx">
-                    <p class="text-xs text-gray-400 mt-1">หา Shop ID ได้ที่ app.proship.co.th > ตั้งค่า > ร้านค้า</p>
+                    <input type="text" id="shop-id" class="w-full p-3 border-2 border-gray-200 rounded-xl" placeholder="shop-xxxxx">
+                    <p class="text-xs text-gray-400 mt-1">ตั้งค่า > ร้านค้า</p>
                 </div>
             </div>
 
             <div class="flex gap-3 mt-6">
-                <button onclick="saveSettings()" class="flex-1 gradient-bg text-white py-3 rounded-xl font-semibold">
+                <button onclick="saveSettings()" class="flex-1 gradient-bg text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all">
                     💾 บันทึก
                 </button>
-                <button onclick="hideSettings()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold">
+                <button onclick="hideSettings()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all">
                     ยกเลิก
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed bottom-6 right-6 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-lg z-50"></div>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 text-center">
+            <div class="loader mx-auto mb-4"></div>
+            <p id="loading-text" class="text-gray-600">กำลังโหลด...</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center">
+            <div class="text-6xl mb-4">🎉</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">สำเร็จ!</h3>
+            <p id="success-message" class="text-gray-600 mb-4">สร้างออเดอร์เรียบร้อยแล้ว</p>
+            <p id="success-order-id" class="text-sm text-gray-400 mb-4 font-mono"></p>
+            <div class="flex gap-2">
+                <button onclick="copyOrderId()" class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-xl font-semibold hover:bg-gray-200">
+                    📋 คัดลอก ID
+                </button>
+                <button onclick="closeSuccessModal()" class="flex-1 gradient-bg text-white py-2 rounded-xl font-semibold hover:opacity-90">
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2"></div>
 
     <script>
-        // Config
         const API_BASE = 'https://api.proship.me';
-        
-        // Check API key on load
+        let lastCreatedOrderId = '';
+
+        // Init
         document.addEventListener('DOMContentLoaded', () => {
             const apiKey = localStorage.getItem('proship_api_key');
             const shopId = localStorage.getItem('proship_shop_id');
             
             if (!apiKey || !shopId) {
                 document.getElementById('api-warning').classList.remove('hidden');
+            } else {
+                document.getElementById('stats-bar').classList.remove('hidden');
+                loadStats();
             }
             
-            // Load saved settings
             if (apiKey) document.getElementById('api-key').value = apiKey;
             if (shopId) document.getElementById('shop-id').value = shopId;
+            
+            renderRecentOrders();
         });
+
+        // Mascot
+        const mascotMessages = [
+            'สวัสดีค่ะ! ต้องการความช่วยเหลือไหม? 🤗',
+            'อย่าลืมใส่ API Key นะคะ! 🔑',
+            'ส่งพัสดุง่ายๆ แค่ไม่กี่คลิก! ✨',
+            'มีปัญหาอะไรถามได้เลยนะคะ! 💬',
+            'วันนี้ส่งพัสดุกี่ชิ้นแล้วคะ? 📦'
+        ];
+        
+        function mascotTalk() {
+            const tooltip = document.getElementById('mascot-tooltip');
+            const msg = mascotMessages[Math.floor(Math.random() * mascotMessages.length)];
+            tooltip.textContent = msg;
+            tooltip.style.opacity = '1';
+            setTimeout(() => tooltip.style.opacity = '0', 2000);
+        }
 
         // Settings
         function showSettings() {
@@ -281,11 +521,11 @@
         }
         
         function saveSettings() {
-            const apiKey = document.getElementById('api-key').value;
-            const shopId = document.getElementById('shop-id').value;
+            const apiKey = document.getElementById('api-key').value.trim();
+            const shopId = document.getElementById('shop-id').value.trim();
             
             if (!apiKey || !shopId) {
-                showToast('❌ กรุณาใส่ข้อมูลให้ครบ!');
+                showToast('❌ กรุณาใส่ข้อมูลให้ครบ!', 'error');
                 return;
             }
             
@@ -293,14 +533,19 @@
             localStorage.setItem('proship_shop_id', shopId);
             
             document.getElementById('api-warning').classList.add('hidden');
+            document.getElementById('stats-bar').classList.remove('hidden');
             hideSettings();
-            showToast('✅ บันทึกแล้ว!');
+            showToast('✅ บันทึกแล้ว!', 'success');
+            confetti({ particleCount: 50, spread: 60 });
+            loadStats();
         }
 
         // Sections
         function showSection(section) {
             document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`section-${section}`).classList.remove('hidden');
+            const sectionEl = document.getElementById(`section-${section}`);
+            sectionEl.classList.remove('hidden');
+            sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         
         function hideSection(section) {
@@ -308,20 +553,108 @@
         }
 
         // Toast
-        function showToast(message) {
+        function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            toast.innerHTML = message;
+            toast.className = 'fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2';
+            
+            if (type === 'success') toast.classList.add('bg-green-600', 'text-white');
+            else if (type === 'error') toast.classList.add('bg-red-600', 'text-white');
+            else toast.classList.add('bg-gray-800', 'text-white');
+            
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
-        // API Functions
-        function getApiKey() {
-            return localStorage.getItem('proship_api_key');
+        // Loading
+        function showLoading(text = 'กำลังโหลด...') {
+            document.getElementById('loading-text').textContent = text;
+            document.getElementById('loading-overlay').classList.remove('hidden');
         }
         
-        function getShopId() {
-            return localStorage.getItem('proship_shop_id');
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+
+        // Success Modal
+        function showSuccessModal(message, orderId) {
+            document.getElementById('success-message').textContent = message;
+            document.getElementById('success-order-id').textContent = orderId;
+            lastCreatedOrderId = orderId;
+            document.getElementById('success-modal').classList.remove('hidden');
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+        
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+        
+        function copyOrderId() {
+            navigator.clipboard.writeText(lastCreatedOrderId);
+            showToast('📋 คัดลอกแล้ว!', 'success');
+        }
+
+        // API
+        function getApiKey() { return localStorage.getItem('proship_api_key'); }
+        function getShopId() { return localStorage.getItem('proship_shop_id'); }
+
+        // Stats
+        async function loadStats() {
+            const apiKey = getApiKey();
+            if (!apiKey) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/orders/v1/orders-v2?status=1&perPage=1&onlyError=false`, {
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                });
+                const result = await response.json();
+                
+                if (result.orderCounts) {
+                    document.getElementById('stat-pending').textContent = result.orderCounts['1'] || 0;
+                    document.getElementById('stat-shipping').textContent = result.orderCounts['3'] || 0;
+                    document.getElementById('stat-delivered').textContent = result.orderCounts['4'] || 0;
+                    document.getElementById('stat-cancelled').textContent = result.orderCounts['5'] || 0;
+                }
+            } catch (e) {
+                console.error('Failed to load stats', e);
+            }
+        }
+
+        // Recent Orders (Local Storage)
+        function addRecentOrder(order) {
+            let recent = JSON.parse(localStorage.getItem('proship_recent_orders') || '[]');
+            recent.unshift(order);
+            recent = recent.slice(0, 5); // Keep only 5
+            localStorage.setItem('proship_recent_orders', JSON.stringify(recent));
+            renderRecentOrders();
+        }
+        
+        function renderRecentOrders() {
+            const recent = JSON.parse(localStorage.getItem('proship_recent_orders') || '[]');
+            const section = document.getElementById('recent-orders-section');
+            const list = document.getElementById('recent-orders-list');
+            
+            if (recent.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            
+            section.classList.remove('hidden');
+            list.innerHTML = recent.map(o => `
+                <div class="recent-order flex items-center justify-between p-2 rounded-lg" onclick="document.getElementById('print-order-id').value='${o.id}'; document.getElementById('track-id').value='${o.id}';">
+                    <div>
+                        <p class="font-medium text-sm">${o.name}</p>
+                        <p class="text-xs text-gray-400">${o.id.substring(0, 20)}...</p>
+                    </div>
+                    <span class="text-xs text-gray-400">${o.time}</span>
+                </div>
+            `).join('');
+        }
+        
+        function clearRecentOrders() {
+            localStorage.removeItem('proship_recent_orders');
+            renderRecentOrders();
+            showToast('🗑️ ล้างประวัติแล้ว');
         }
 
         // Create Order
@@ -332,18 +665,19 @@
             const shopId = getShopId();
             
             if (!apiKey || !shopId) {
-                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!', 'error');
                 showSettings();
                 return;
             }
 
+            const customerName = document.getElementById('customer-name').value;
             const orderData = {
                 user: 'ProshipEasy',
                 shippingMethod: document.getElementById('shipping-method').value,
                 weight: parseInt(document.getElementById('weight').value) || 500,
                 shopId: shopId,
                 customer: {
-                    name: document.getElementById('customer-name').value,
+                    name: customerName,
                     phoneNo: document.getElementById('customer-phone').value,
                     address: {
                         address: document.getElementById('address').value,
@@ -360,7 +694,7 @@
             };
 
             try {
-                showToast('⏳ กำลังสร้างออเดอร์...');
+                showLoading('กำลังสร้างออเดอร์... 📦');
                 
                 const response = await fetch(`${API_BASE}/orders/v1/orders`, {
                     method: 'POST',
@@ -372,16 +706,27 @@
                 });
 
                 const result = await response.json();
+                hideLoading();
                 
                 if (result.id) {
-                    showToast('✅ สร้างออเดอร์สำเร็จ!');
+                    // Save to recent
+                    addRecentOrder({
+                        id: result.id,
+                        name: customerName,
+                        time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+                    });
+                    
+                    showSuccessModal('สร้างออเดอร์เรียบร้อยแล้ว! 🎉', result.id);
                     document.getElementById('create-form').reset();
                     document.getElementById('weight').value = '500';
+                    document.getElementById('cod-amount').value = '0';
+                    loadStats();
                 } else {
-                    showToast('❌ เกิดข้อผิดพลาด: ' + (result.message || 'Unknown error'));
+                    showToast('❌ เกิดข้อผิดพลาด: ' + (result.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
-                showToast('❌ เชื่อมต่อไม่ได้: ' + error.message);
+                hideLoading();
+                showToast('❌ เชื่อมต่อไม่ได้: ' + error.message, 'error');
             }
         });
 
@@ -390,63 +735,72 @@
             const apiKey = getApiKey();
             
             if (!apiKey) {
-                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!', 'error');
                 return;
             }
 
             const listEl = document.getElementById('orders-list');
-            listEl.innerHTML = '<p class="text-center py-4">⏳ กำลังโหลด...</p>';
+            listEl.innerHTML = '<div class="text-center py-8"><div class="loader mx-auto"></div><p class="text-gray-400 mt-4">กำลังโหลด...</p></div>';
 
             try {
                 const response = await fetch(`${API_BASE}/orders/v1/orders-v2?status=${status}&perPage=20&onlyError=false`, {
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`
-                    }
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
 
                 const result = await response.json();
                 
                 if (result.orders && result.orders.length > 0) {
+                    const statusColors = {
+                        1: 'yellow', 2: 'blue', 3: 'purple', 4: 'green', 5: 'red', 6: 'orange', 8: 'gray'
+                    };
+                    const statusEmoji = {
+                        1: '⏳', 2: '📤', 3: '🚚', 4: '✅', 5: '❌', 6: '⚠️', 8: '↩️'
+                    };
+                    
                     listEl.innerHTML = result.orders.map(order => `
-                        <div class="border rounded-xl p-4 hover:bg-gray-50">
+                        <div class="border-2 border-gray-100 rounded-xl p-4 hover:border-purple-200 hover:bg-purple-50/30 transition-all cursor-pointer" onclick="document.getElementById('track-id').value='${order.id}'; document.getElementById('print-order-id').value='${order.id}';">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-semibold">${order.details?.customer?.name || 'ไม่ระบุชื่อ'}</p>
-                                    <p class="text-sm text-gray-500">${order.trackingNo || 'ยังไม่มี tracking'}</p>
-                                    <p class="text-xs text-gray-400 mt-1">${order.id}</p>
+                                    <p class="font-semibold text-gray-800">${order.details?.customer?.name || 'ไม่ระบุชื่อ'}</p>
+                                    <p class="text-sm text-gray-500">${order.trackingNo || '📭 ยังไม่มี tracking'}</p>
+                                    <p class="text-xs text-gray-400 mt-1 font-mono">${order.id.substring(0, 25)}...</p>
                                 </div>
                                 <div class="text-right">
-                                    <span class="text-xs bg-gray-100 px-2 py-1 rounded">${order.shippingMethod}</span>
-                                    <p class="text-xs text-gray-400 mt-1">${new Date(order.createdAt).toLocaleDateString('th-TH')}</p>
+                                    <span class="status-badge bg-${statusColors[order.status] || 'gray'}-100 text-${statusColors[order.status] || 'gray'}-800">
+                                        ${statusEmoji[order.status] || '❓'} ${order.shippingMethod}
+                                    </span>
+                                    <p class="text-xs text-gray-400 mt-2">${new Date(order.createdAt).toLocaleDateString('th-TH')}</p>
                                 </div>
                             </div>
                         </div>
                     `).join('');
                 } else {
-                    listEl.innerHTML = '<p class="text-center text-gray-400 py-8">ไม่มีรายการ</p>';
+                    listEl.innerHTML = '<div class="text-center py-8"><span class="text-4xl">📭</span><p class="text-gray-400 mt-2">ไม่มีรายการ</p></div>';
                 }
             } catch (error) {
-                listEl.innerHTML = `<p class="text-center text-red-500 py-4">❌ ${error.message}</p>`;
+                listEl.innerHTML = `<div class="text-center py-8 text-red-500"><span class="text-4xl">😵</span><p class="mt-2">${error.message}</p></div>`;
             }
         }
 
         // Print Label
         async function printLabel() {
             const apiKey = getApiKey();
-            const orderId = document.getElementById('print-order-id').value;
+            const orderId = document.getElementById('print-order-id').value.trim();
+            const size = document.getElementById('print-size').value;
+            const printer = document.getElementById('print-printer').value;
             
             if (!apiKey) {
-                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!', 'error');
                 return;
             }
             
             if (!orderId) {
-                showToast('❌ กรุณาใส่ Order ID!');
+                showToast('❌ กรุณาใส่ Order ID!', 'error');
                 return;
             }
 
             try {
-                showToast('⏳ กำลังสร้าง PDF...');
+                showLoading('กำลังสร้าง PDF... 🖨️');
                 
                 const response = await fetch(`${API_BASE}/print/v1/print-label`, {
                     method: 'POST',
@@ -456,86 +810,99 @@
                     },
                     body: JSON.stringify({
                         orders: [orderId],
-                        size: 'normal',
-                        printer: 'proship',
+                        size: size,
+                        printer: printer,
                         base64: true
                     })
                 });
 
                 const result = await response.json();
+                hideLoading();
                 
                 if (result.base64) {
-                    // Open PDF in new window
                     const pdfWindow = window.open();
-                    pdfWindow.document.write(`<iframe src="data:application/pdf;base64,${result.base64}" style="width:100%;height:100%;border:none;"></iframe>`);
-                    showToast('✅ เปิด PDF แล้ว!');
+                    pdfWindow.document.write(`
+                        <html><head><title>พิมพ์ใบปะหน้า</title></head>
+                        <body style="margin:0;padding:0;">
+                        <iframe src="data:application/pdf;base64,${result.base64}" style="width:100%;height:100vh;border:none;"></iframe>
+                        </body></html>
+                    `);
+                    showToast('✅ เปิด PDF แล้ว!', 'success');
+                    confetti({ particleCount: 30, spread: 40 });
                 } else {
-                    showToast('❌ ไม่สามารถสร้าง PDF ได้');
+                    showToast('❌ ไม่สามารถสร้าง PDF ได้', 'error');
                 }
             } catch (error) {
-                showToast('❌ ' + error.message);
+                hideLoading();
+                showToast('❌ ' + error.message, 'error');
             }
         }
 
         // Track Order
         async function trackOrder() {
             const apiKey = getApiKey();
-            const trackId = document.getElementById('track-id').value;
+            const trackId = document.getElementById('track-id').value.trim();
             
             if (!apiKey) {
-                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!', 'error');
                 return;
             }
             
             if (!trackId) {
-                showToast('❌ กรุณาใส่ Order ID!');
+                showToast('❌ กรุณาใส่ Order ID!', 'error');
                 return;
             }
 
             const resultEl = document.getElementById('track-result');
-            resultEl.innerHTML = '<p class="text-center py-4">⏳ กำลังค้นหา...</p>';
+            resultEl.innerHTML = '<div class="text-center py-4"><div class="loader mx-auto"></div></div>';
 
             try {
                 const response = await fetch(`${API_BASE}/orders/v1/orders/${trackId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`
-                    }
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
 
                 const order = await response.json();
                 
                 if (order.id) {
                     const statusMap = {
-                        '-1': '📝 แบบร่าง',
-                        '1': '⏳ รอดำเนินการ',
-                        '2': '📤 พร้อมส่ง',
-                        '3': '🚚 กำลังส่ง',
-                        '4': '✅ ส่งสำเร็จ',
-                        '5': '❌ ยกเลิก',
-                        '6': '⚠️ มีปัญหา',
-                        '8': '↩️ ตีกลับ'
+                        '-1': { text: '📝 แบบร่าง', color: 'gray' },
+                        '1': { text: '⏳ รอดำเนินการ', color: 'yellow' },
+                        '2': { text: '📤 พร้อมส่ง', color: 'blue' },
+                        '3': { text: '🚚 กำลังส่ง', color: 'purple' },
+                        '4': { text: '✅ ส่งสำเร็จ', color: 'green' },
+                        '5': { text: '❌ ยกเลิก', color: 'red' },
+                        '6': { text: '⚠️ มีปัญหา', color: 'orange' },
+                        '8': { text: '↩️ ตีกลับ', color: 'gray' }
                     };
                     
+                    const status = statusMap[order.status] || { text: '❓ ไม่ทราบ', color: 'gray' };
+                    
                     resultEl.innerHTML = `
-                        <div class="border rounded-xl p-4 mt-4 bg-gray-50">
+                        <div class="border-2 border-${status.color}-200 bg-${status.color}-50 rounded-xl p-4 mt-4">
                             <div class="text-center mb-4">
-                                <span class="text-3xl">${statusMap[order.status] || '❓'}</span>
+                                <span class="text-4xl">${status.text.split(' ')[0]}</span>
+                                <p class="font-semibold text-${status.color}-800 mt-2">${status.text}</p>
                             </div>
-                            <div class="space-y-2 text-sm">
-                                <p><strong>ผู้รับ:</strong> ${order.details?.customer?.name || '-'}</p>
-                                <p><strong>เบอร์:</strong> ${order.details?.customer?.phoneNo || '-'}</p>
-                                <p><strong>Tracking:</strong> ${order.trackingNo || 'ยังไม่มี'}</p>
-                                <p><strong>ขนส่ง:</strong> ${order.shippingMethod}</p>
-                                <p><strong>สร้างเมื่อ:</strong> ${new Date(order.createdAt).toLocaleString('th-TH')}</p>
+                            <div class="space-y-2 text-sm bg-white rounded-lg p-3">
+                                <p><strong>👤 ผู้รับ:</strong> ${order.details?.customer?.name || '-'}</p>
+                                <p><strong>📱 เบอร์:</strong> ${order.details?.customer?.phoneNo || '-'}</p>
+                                <p><strong>📦 Tracking:</strong> ${order.trackingNo || 'ยังไม่มี'}</p>
+                                <p><strong>🚚 ขนส่ง:</strong> ${order.shippingMethod}</p>
+                                <p><strong>📅 สร้างเมื่อ:</strong> ${new Date(order.createdAt).toLocaleString('th-TH')}</p>
                             </div>
                         </div>
                     `;
                 } else {
-                    resultEl.innerHTML = '<p class="text-center text-red-500 py-4">❌ ไม่พบข้อมูล</p>';
+                    resultEl.innerHTML = '<div class="text-center py-4 text-red-500"><span class="text-4xl">😕</span><p class="mt-2">ไม่พบข้อมูล</p></div>';
                 }
             } catch (error) {
-                resultEl.innerHTML = `<p class="text-center text-red-500 py-4">❌ ${error.message}</p>`;
+                resultEl.innerHTML = `<div class="text-center py-4 text-red-500"><span class="text-4xl">😵</span><p class="mt-2">${error.message}</p></div>`;
             }
+        }
+
+        // Theme (placeholder)
+        function toggleTheme() {
+            showToast('🌙 Dark mode มาเร็วๆ นี้!');
         }
     </script>
 </body>
