@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proship Easy 📦</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Prompt', sans-serif; }
+        .emoji-big { font-size: 3rem; }
+        .card-hover:hover { transform: scale(1.02); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-6 shadow-lg">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-4xl">📦</span>
+                <div>
+                    <h1 class="text-2xl font-bold">Proship Easy</h1>
+                    <p class="text-sm opacity-80">ส่งพัสดุง่ายๆ สำหรับทุกคน!</p>
+                </div>
+            </div>
+            <button onclick="showSettings()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-sm">
+                ⚙️ ตั้งค่า
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto p-6">
+        <!-- API Key Warning -->
+        <div id="api-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6 rounded-r-lg">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">⚠️</span>
+                <div>
+                    <p class="font-semibold">ยังไม่ได้ใส่ API Key!</p>
+                    <p class="text-sm">กดปุ่ม "ตั้งค่า" ด้านบนเพื่อใส่ API Key ก่อนนะ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Create Order -->
+            <div onclick="showSection('create')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-purple-300">
+                <div class="emoji-big mb-4">📝</div>
+                <h2 class="text-xl font-bold text-gray-800">สร้างออเดอร์ใหม่</h2>
+                <p class="text-gray-500 mt-2">เพิ่มพัสดุที่จะส่ง</p>
+            </div>
+
+            <!-- View Orders -->
+            <div onclick="showSection('list')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-blue-300">
+                <div class="emoji-big mb-4">📋</div>
+                <h2 class="text-xl font-bold text-gray-800">ดูรายการทั้งหมด</h2>
+                <p class="text-gray-500 mt-2">เช็คสถานะพัสดุ</p>
+            </div>
+
+            <!-- Print Labels -->
+            <div onclick="showSection('print')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-green-300">
+                <div class="emoji-big mb-4">🖨️</div>
+                <h2 class="text-xl font-bold text-gray-800">พิมพ์ใบปะหน้า</h2>
+                <p class="text-gray-500 mt-2">พิมพ์ฉลากติดกล่อง</p>
+            </div>
+
+            <!-- Track -->
+            <div onclick="showSection('track')" class="card-hover cursor-pointer bg-white rounded-2xl shadow-lg p-6 transition-all border-2 border-transparent hover:border-orange-300">
+                <div class="emoji-big mb-4">🔍</div>
+                <h2 class="text-xl font-bold text-gray-800">ค้นหาพัสดุ</h2>
+                <p class="text-gray-500 mt-2">ติดตามสถานะการส่ง</p>
+            </div>
+        </div>
+
+        <!-- Sections (Hidden by default) -->
+        
+        <!-- Create Order Section -->
+        <div id="section-create" class="hidden bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center gap-2">📝 สร้างออเดอร์ใหม่</h2>
+                <button onclick="hideSection('create')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            
+            <form id="create-form" class="space-y-4">
+                <!-- Customer Info -->
+                <div class="bg-blue-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-blue-800 mb-3">👤 ข้อมูลผู้รับ</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้รับ *</label>
+                            <input type="text" id="customer-name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-300" placeholder="ชื่อ-นามสกุล">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทร *</label>
+                            <input type="tel" id="customer-phone" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-300" placeholder="0812345678">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="bg-green-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-green-800 mb-3">📍 ที่อยู่จัดส่ง</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ที่อยู่ *</label>
+                            <input type="text" id="address" required class="w-full p-3 border rounded-lg" placeholder="บ้านเลขที่ ซอย ถนน">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">แขวง/ตำบล *</label>
+                                <input type="text" id="sub-district" required class="w-full p-3 border rounded-lg" placeholder="ตำบล">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">เขต/อำเภอ *</label>
+                                <input type="text" id="district" required class="w-full p-3 border rounded-lg" placeholder="อำเภอ">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">จังหวัด *</label>
+                                <input type="text" id="province" required class="w-full p-3 border rounded-lg" placeholder="จังหวัด">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">รหัสไปรษณีย์ *</label>
+                                <input type="text" id="zipcode" required class="w-full p-3 border rounded-lg" placeholder="10000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Package Info -->
+                <div class="bg-purple-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-purple-800 mb-3">📦 ข้อมูลพัสดุ</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">น้ำหนัก (กรัม) *</label>
+                            <input type="number" id="weight" required class="w-full p-3 border rounded-lg" placeholder="500" value="500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ขนส่ง *</label>
+                            <select id="shipping-method" class="w-full p-3 border rounded-lg">
+                                <option value="thaipost">🇹🇭 ไปรษณีย์ไทย</option>
+                                <option value="flash">⚡ Flash Express</option>
+                                <option value="kerry">🟠 Kerry</option>
+                                <option value="shopee">🧡 Shopee Express</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ (ถ้ามี)</label>
+                        <input type="text" id="remarks" class="w-full p-3 border rounded-lg" placeholder="เช่น สินค้าแตกง่าย">
+                    </div>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ยอด COD (ถ้ามี)</label>
+                        <input type="number" id="cod-amount" class="w-full p-3 border rounded-lg" placeholder="0">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all">
+                    ✨ สร้างออเดอร์
+                </button>
+            </form>
+        </div>
+
+        <!-- List Orders Section -->
+        <div id="section-list" class="hidden bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center gap-2">📋 รายการพัสดุ</h2>
+                <button onclick="hideSection('list')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            
+            <div class="flex gap-2 mb-4 flex-wrap">
+                <button onclick="loadOrders(1)" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm">⏳ รอดำเนินการ</button>
+                <button onclick="loadOrders(2)" class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm">📤 พร้อมส่ง</button>
+                <button onclick="loadOrders(3)" class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm">🚚 กำลังส่ง</button>
+                <button onclick="loadOrders(4)" class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm">✅ ส่งแล้ว</button>
+            </div>
+
+            <div id="orders-list" class="space-y-3">
+                <p class="text-gray-400 text-center py-8">กดปุ่มด้านบนเพื่อโหลดรายการ</p>
+            </div>
+        </div>
+
+        <!-- Print Section -->
+        <div id="section-print" class="hidden bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center gap-2">🖨️ พิมพ์ใบปะหน้า</h2>
+                <button onclick="hideSection('print')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
+                    <input type="text" id="print-order-id" class="w-full p-3 border rounded-lg" placeholder="order-xxxxx">
+                </div>
+                <button onclick="printLabel()" class="w-full bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600">
+                    🖨️ พิมพ์เลย!
+                </button>
+            </div>
+        </div>
+
+        <!-- Track Section -->
+        <div id="section-track" class="hidden bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center gap-2">🔍 ค้นหาพัสดุ</h2>
+                <button onclick="hideSection('track')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Order ID หรือ Tracking Number</label>
+                    <input type="text" id="track-id" class="w-full p-3 border rounded-lg" placeholder="order-xxxxx หรือ tracking number">
+                </div>
+                <button onclick="trackOrder()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600">
+                    🔍 ค้นหา
+                </button>
+                <div id="track-result"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+            <h2 class="text-xl font-bold mb-4">⚙️ ตั้งค่า</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">API Key *</label>
+                    <input type="password" id="api-key" class="w-full p-3 border rounded-lg" placeholder="ใส่ API Key จาก Proship">
+                    <p class="text-xs text-gray-400 mt-1">หา API Key ได้ที่ app.proship.co.th > ตั้งค่า > API</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Shop ID *</label>
+                    <input type="text" id="shop-id" class="w-full p-3 border rounded-lg" placeholder="shop-xxxxx">
+                    <p class="text-xs text-gray-400 mt-1">หา Shop ID ได้ที่ app.proship.co.th > ตั้งค่า > ร้านค้า</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="saveSettings()" class="flex-1 gradient-bg text-white py-3 rounded-xl font-semibold">
+                    💾 บันทึก
+                </button>
+                <button onclick="hideSettings()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold">
+                    ยกเลิก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-lg z-50"></div>
+
+    <script>
+        // Config
+        const API_BASE = 'https://api.proship.me';
+        
+        // Check API key on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiKey = localStorage.getItem('proship_api_key');
+            const shopId = localStorage.getItem('proship_shop_id');
+            
+            if (!apiKey || !shopId) {
+                document.getElementById('api-warning').classList.remove('hidden');
+            }
+            
+            // Load saved settings
+            if (apiKey) document.getElementById('api-key').value = apiKey;
+            if (shopId) document.getElementById('shop-id').value = shopId;
+        });
+
+        // Settings
+        function showSettings() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+        
+        function hideSettings() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+        
+        function saveSettings() {
+            const apiKey = document.getElementById('api-key').value;
+            const shopId = document.getElementById('shop-id').value;
+            
+            if (!apiKey || !shopId) {
+                showToast('❌ กรุณาใส่ข้อมูลให้ครบ!');
+                return;
+            }
+            
+            localStorage.setItem('proship_api_key', apiKey);
+            localStorage.setItem('proship_shop_id', shopId);
+            
+            document.getElementById('api-warning').classList.add('hidden');
+            hideSettings();
+            showToast('✅ บันทึกแล้ว!');
+        }
+
+        // Sections
+        function showSection(section) {
+            document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`section-${section}`).classList.remove('hidden');
+        }
+        
+        function hideSection(section) {
+            document.getElementById(`section-${section}`).classList.add('hidden');
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        // API Functions
+        function getApiKey() {
+            return localStorage.getItem('proship_api_key');
+        }
+        
+        function getShopId() {
+            return localStorage.getItem('proship_shop_id');
+        }
+
+        // Create Order
+        document.getElementById('create-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const apiKey = getApiKey();
+            const shopId = getShopId();
+            
+            if (!apiKey || !shopId) {
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                showSettings();
+                return;
+            }
+
+            const orderData = {
+                user: 'ProshipEasy',
+                shippingMethod: document.getElementById('shipping-method').value,
+                weight: parseInt(document.getElementById('weight').value) || 500,
+                shopId: shopId,
+                customer: {
+                    name: document.getElementById('customer-name').value,
+                    phoneNo: document.getElementById('customer-phone').value,
+                    address: {
+                        address: document.getElementById('address').value,
+                        subDistrict: document.getElementById('sub-district').value,
+                        district: document.getElementById('district').value,
+                        province: document.getElementById('province').value,
+                        zipcode: parseInt(document.getElementById('zipcode').value)
+                    },
+                    salesChannel: 'ProshipEasy'
+                },
+                products: {},
+                remarks: document.getElementById('remarks').value || null,
+                codAmount: parseInt(document.getElementById('cod-amount').value) || 0
+            };
+
+            try {
+                showToast('⏳ กำลังสร้างออเดอร์...');
+                
+                const response = await fetch(`${API_BASE}/orders/v1/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+                
+                if (result.id) {
+                    showToast('✅ สร้างออเดอร์สำเร็จ!');
+                    document.getElementById('create-form').reset();
+                    document.getElementById('weight').value = '500';
+                } else {
+                    showToast('❌ เกิดข้อผิดพลาด: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                showToast('❌ เชื่อมต่อไม่ได้: ' + error.message);
+            }
+        });
+
+        // Load Orders
+        async function loadOrders(status) {
+            const apiKey = getApiKey();
+            
+            if (!apiKey) {
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                return;
+            }
+
+            const listEl = document.getElementById('orders-list');
+            listEl.innerHTML = '<p class="text-center py-4">⏳ กำลังโหลด...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/orders/v1/orders-v2?status=${status}&perPage=20&onlyError=false`, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.orders && result.orders.length > 0) {
+                    listEl.innerHTML = result.orders.map(order => `
+                        <div class="border rounded-xl p-4 hover:bg-gray-50">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-semibold">${order.details?.customer?.name || 'ไม่ระบุชื่อ'}</p>
+                                    <p class="text-sm text-gray-500">${order.trackingNo || 'ยังไม่มี tracking'}</p>
+                                    <p class="text-xs text-gray-400 mt-1">${order.id}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs bg-gray-100 px-2 py-1 rounded">${order.shippingMethod}</span>
+                                    <p class="text-xs text-gray-400 mt-1">${new Date(order.createdAt).toLocaleDateString('th-TH')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<p class="text-center text-gray-400 py-8">ไม่มีรายการ</p>';
+                }
+            } catch (error) {
+                listEl.innerHTML = `<p class="text-center text-red-500 py-4">❌ ${error.message}</p>`;
+            }
+        }
+
+        // Print Label
+        async function printLabel() {
+            const apiKey = getApiKey();
+            const orderId = document.getElementById('print-order-id').value;
+            
+            if (!apiKey) {
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                return;
+            }
+            
+            if (!orderId) {
+                showToast('❌ กรุณาใส่ Order ID!');
+                return;
+            }
+
+            try {
+                showToast('⏳ กำลังสร้าง PDF...');
+                
+                const response = await fetch(`${API_BASE}/print/v1/print-label`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        orders: [orderId],
+                        size: 'normal',
+                        printer: 'proship',
+                        base64: true
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.base64) {
+                    // Open PDF in new window
+                    const pdfWindow = window.open();
+                    pdfWindow.document.write(`<iframe src="data:application/pdf;base64,${result.base64}" style="width:100%;height:100%;border:none;"></iframe>`);
+                    showToast('✅ เปิด PDF แล้ว!');
+                } else {
+                    showToast('❌ ไม่สามารถสร้าง PDF ได้');
+                }
+            } catch (error) {
+                showToast('❌ ' + error.message);
+            }
+        }
+
+        // Track Order
+        async function trackOrder() {
+            const apiKey = getApiKey();
+            const trackId = document.getElementById('track-id').value;
+            
+            if (!apiKey) {
+                showToast('❌ กรุณาตั้งค่า API Key ก่อน!');
+                return;
+            }
+            
+            if (!trackId) {
+                showToast('❌ กรุณาใส่ Order ID!');
+                return;
+            }
+
+            const resultEl = document.getElementById('track-result');
+            resultEl.innerHTML = '<p class="text-center py-4">⏳ กำลังค้นหา...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/orders/v1/orders/${trackId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+
+                const order = await response.json();
+                
+                if (order.id) {
+                    const statusMap = {
+                        '-1': '📝 แบบร่าง',
+                        '1': '⏳ รอดำเนินการ',
+                        '2': '📤 พร้อมส่ง',
+                        '3': '🚚 กำลังส่ง',
+                        '4': '✅ ส่งสำเร็จ',
+                        '5': '❌ ยกเลิก',
+                        '6': '⚠️ มีปัญหา',
+                        '8': '↩️ ตีกลับ'
+                    };
+                    
+                    resultEl.innerHTML = `
+                        <div class="border rounded-xl p-4 mt-4 bg-gray-50">
+                            <div class="text-center mb-4">
+                                <span class="text-3xl">${statusMap[order.status] || '❓'}</span>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <p><strong>ผู้รับ:</strong> ${order.details?.customer?.name || '-'}</p>
+                                <p><strong>เบอร์:</strong> ${order.details?.customer?.phoneNo || '-'}</p>
+                                <p><strong>Tracking:</strong> ${order.trackingNo || 'ยังไม่มี'}</p>
+                                <p><strong>ขนส่ง:</strong> ${order.shippingMethod}</p>
+                                <p><strong>สร้างเมื่อ:</strong> ${new Date(order.createdAt).toLocaleString('th-TH')}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultEl.innerHTML = '<p class="text-center text-red-500 py-4">❌ ไม่พบข้อมูล</p>';
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<p class="text-center text-red-500 py-4">❌ ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
