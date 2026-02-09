@@ -1,0 +1,12 @@
+{
+  "name": "proship-integration",
+  "version": "0.1.0",
+  "description": "Proship API integration",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["proship", "shipping", "api"],
+  "license": "MIT"
+}
