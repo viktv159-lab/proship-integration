@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านรับพัสดุ - สาขา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Prompt', sans-serif; }
+        .gradient-main { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .gradient-card { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .carrier-btn { transition: all 0.2s; }
+        .carrier-btn:hover { transform: scale(1.02); }
+        .carrier-btn.selected { ring: 2px solid #3b82f6; transform: scale(1.02); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-main text-white py-4 px-4 shadow-lg">
+        <div class="max-w-lg mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold" id="branchName">📦 ร้านรับพัสดุ อุดมสุข</h1>
+                    <p class="text-sm opacity-80" id="branchCode">สาขา: UDS-001</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs opacity-70">เปิดให้บริการ</p>
+                    <p class="text-sm font-semibold">08:00 - 20:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-lg mx-auto p-4">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-white rounded-xl p-3 text-center shadow-sm">
+                <p class="text-2xl font-bold text-blue-600" id="todayOrders">12</p>
+                <p class="text-xs text-gray-500">ออเดอร์วันนี้</p>
+            </div>
+            <div class="bg-white rounded-xl p-3 text-center shadow-sm">
+                <p class="text-2xl font-bold text-green-600" id="todayRevenue">฿1,450</p>
+                <p class="text-xs text-gray-500">รายได้วันนี้</p>
+            </div>
+            <div class="bg-white rounded-xl p-3 text-center shadow-sm">
+                <p class="text-2xl font-bold text-purple-600" id="pendingPickup">3</p>
+                <p class="text-xs text-gray-500">รอรับพัสดุ</p>
+            </div>
+        </div>
+
+        <!-- New Order Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span class="text-2xl">📝</span> สร้างออเดอร์ใหม่
+            </h2>
+
+            <!-- Step 1: Carrier Selection -->
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-2">1. เลือกขนส่ง</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectCarrier('jt')" id="btn-jt" class="carrier-btn bg-red-50 border-2 border-red-200 rounded-xl p-3 text-center hover:bg-red-100">
+                        <p class="font-bold text-red-600">J&T</p>
+                        <p class="text-xs text-gray-600" id="price-jt">฿35</p>
+                    </button>
+                    <button onclick="selectCarrier('flash')" id="btn-flash" class="carrier-btn bg-yellow-50 border-2 border-yellow-200 rounded-xl p-3 text-center hover:bg-yellow-100">
+                        <p class="font-bold text-yellow-600">Flash</p>
+                        <p class="text-xs text-gray-600" id="price-flash">฿38</p>
+                    </button>
+                    <button onclick="selectCarrier('thp')" id="btn-thp" class="carrier-btn bg-orange-50 border-2 border-orange-200 rounded-xl p-3 text-center hover:bg-orange-100">
+                        <p class="font-bold text-orange-600">ไปรษณีย์</p>
+                        <p class="text-xs text-gray-600" id="price-thp">฿32</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Package Info -->
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-2">2. ข้อมูลพัสดุ</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-500">น้ำหนัก (กก.)</label>
+                        <select id="weight" onchange="calculatePrice()" class="w-full border border-gray-300 rounded-lg p-2 mt-1">
+                            <option value="1">0-1 กก.</option>
+                            <option value="2">1-2 กก.</option>
+                            <option value="3">2-3 กก.</option>
+                            <option value="5">3-5 กก.</option>
+                            <option value="10">5-10 กก.</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">ประเภท</label>
+                        <select id="type" class="w-full border border-gray-300 rounded-lg p-2 mt-1">
+                            <option value="normal">ทั่วไป</option>
+                            <option value="fragile">แตกง่าย (+฿10)</option>
+                            <option value="cod">เก็บเงินปลายทาง</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Recipient -->
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-2">3. ข้อมูลผู้รับ</label>
+                <input type="text" id="recipientName" placeholder="ชื่อผู้รับ" class="w-full border border-gray-300 rounded-lg p-2 mb-2">
+                <input type="tel" id="recipientPhone" placeholder="เบอร์โทร" class="w-full border border-gray-300 rounded-lg p-2 mb-2">
+                <textarea id="recipientAddress" placeholder="ที่อยู่" rows="2" class="w-full border border-gray-300 rounded-lg p-2"></textarea>
+            </div>
+
+            <!-- Step 4: Sender -->
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-2">4. ข้อมูลผู้ส่ง</label>
+                <input type="text" id="senderName" placeholder="ชื่อผู้ส่ง" class="w-full border border-gray-300 rounded-lg p-2 mb-2">
+                <input type="tel" id="senderPhone" placeholder="เบอร์โทร" class="w-full border border-gray-300 rounded-lg p-2">
+            </div>
+
+            <!-- Price Summary -->
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">ค่าขนส่ง</span>
+                    <span id="shippingCost">฿35</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">ค่าบริการสาขา</span>
+                    <span id="serviceFee">฿15</span>
+                </div>
+                <div class="border-t pt-2 flex justify-between items-center">
+                    <span class="font-semibold">รวมทั้งหมด</span>
+                    <span class="text-xl font-bold text-blue-600" id="totalPrice">฿50</span>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button onclick="createOrder()" class="w-full gradient-main text-white font-semibold py-3 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-2">
+                <span class="text-xl">✅</span> สร้างออเดอร์
+            </button>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="bg-white rounded-2xl shadow-lg p-5 mb-6">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span class="text-2xl">📋</span> ออเดอร์ล่าสุด
+            </h2>
+            <div id="recentOrders" class="space-y-3">
+                <!-- Orders will be populated here -->
+            </div>
+        </div>
+
+        <!-- Track Package -->
+        <div class="bg-white rounded-2xl shadow-lg p-5">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span class="text-2xl">🔍</span> ติดตามพัสดุ
+            </h2>
+            <div class="flex gap-2">
+                <input type="text" id="trackingNumber" placeholder="หมายเลขพัสดุ" class="flex-1 border border-gray-300 rounded-lg p-2">
+                <button onclick="trackPackage()" class="bg-blue-600 text-white px-4 rounded-lg hover:bg-blue-700">
+                    ค้นหา
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 m-4 max-w-sm w-full">
+            <div class="text-center mb-4">
+                <span class="text-5xl">✅</span>
+                <h3 class="text-xl font-bold mt-2">สร้างออเดอร์สำเร็จ!</h3>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                <p class="text-sm text-gray-500 mb-1">หมายเลขพัสดุ</p>
+                <p class="text-2xl font-bold text-blue-600" id="newTrackingNumber">TH123456789</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="printLabel()" class="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 flex items-center justify-center gap-1">
+                    <span>🖨️</span> พิมพ์ใบปะหน้า
+                </button>
+                <button onclick="closeReceipt()" class="bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300">
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Branch config (would come from URL params or API)
+        const branchConfig = {
+            id: 'UDS-001',
+            name: 'ร้านรับพัสดุ อุดมสุข',
+            serviceFee: 15,
+            pricing: {
+                jt: { base: 35, perKg: 10 },
+                flash: { base: 38, perKg: 12 },
+                thp: { base: 32, perKg: 8 }
+            }
+        };
+
+        let selectedCarrier = 'jt';
+        let orders = [];
+
+        function selectCarrier(carrier) {
+            selectedCarrier = carrier;
+            document.querySelectorAll('.carrier-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            });
+            document.getElementById(`btn-${carrier}`).classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+            calculatePrice();
+        }
+
+        function calculatePrice() {
+            const weight = parseInt(document.getElementById('weight').value);
+            const pricing = branchConfig.pricing[selectedCarrier];
+            const shippingCost = pricing.base + (weight > 1 ? (weight - 1) * pricing.perKg : 0);
+            const serviceFee = branchConfig.serviceFee;
+            const total = shippingCost + serviceFee;
+
+            document.getElementById('shippingCost').textContent = `฿${shippingCost}`;
+            document.getElementById('serviceFee').textContent = `฿${serviceFee}`;
+            document.getElementById('totalPrice').textContent = `฿${total}`;
+        }
+
+        function createOrder() {
+            const order = {
+                id: 'TH' + Math.random().toString().slice(2, 11),
+                carrier: selectedCarrier.toUpperCase(),
+                recipient: document.getElementById('recipientName').value,
+                status: 'pending',
+                time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                total: document.getElementById('totalPrice').textContent
+            };
+
+            if (!order.recipient) {
+                alert('กรุณากรอกชื่อผู้รับ');
+                return;
+            }
+
+            orders.unshift(order);
+            document.getElementById('newTrackingNumber').textContent = order.id;
+            document.getElementById('receiptModal').classList.remove('hidden');
+            document.getElementById('receiptModal').classList.add('flex');
+            
+            updateRecentOrders();
+            updateStats();
+            clearForm();
+        }
+
+        function closeReceipt() {
+            document.getElementById('receiptModal').classList.add('hidden');
+            document.getElementById('receiptModal').classList.remove('flex');
+        }
+
+        function printLabel() {
+            alert('กำลังเปิดหน้าพิมพ์ใบปะหน้า...');
+            closeReceipt();
+        }
+
+        function updateRecentOrders() {
+            const container = document.getElementById('recentOrders');
+            if (orders.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-4">ยังไม่มีออเดอร์</p>';
+                return;
+            }
+
+            container.innerHTML = orders.slice(0, 5).map(order => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div>
+                        <p class="font-medium">${order.recipient}</p>
+                        <p class="text-xs text-gray-500">${order.id} • ${order.carrier}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-green-600">${order.total}</p>
+                        <p class="text-xs text-gray-500">${order.time}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('todayOrders').textContent = orders.length;
+            const revenue = orders.reduce((sum, o) => sum + parseInt(o.total.replace(/[฿,]/g, '')), 0);
+            document.getElementById('todayRevenue').textContent = `฿${revenue.toLocaleString()}`;
+        }
+
+        function clearForm() {
+            document.getElementById('recipientName').value = '';
+            document.getElementById('recipientPhone').value = '';
+            document.getElementById('recipientAddress').value = '';
+            document.getElementById('senderName').value = '';
+            document.getElementById('senderPhone').value = '';
+        }
+
+        function trackPackage() {
+            const tracking = document.getElementById('trackingNumber').value;
+            if (tracking) {
+                alert(`กำลังค้นหาพัสดุ: ${tracking}`);
+            }
+        }
+
+        // Initialize
+        selectCarrier('jt');
+        updateRecentOrders();
+    </script>
+</body>
+</html>
