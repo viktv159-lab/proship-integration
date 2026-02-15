@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Controls - Proship Easy 💰</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Prompt', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .card-hover:hover { transform: scale(1.01); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .profit-positive { color: #10b981; }
+        .profit-negative { color: #ef4444; }
+        
+        .pricing-row {
+            transition: all 0.3s;
+        }
+        .pricing-row:hover {
+            background-color: #f9fafb;
+        }
+        
+        input[type="number"] {
+            transition: all 0.2s;
+        }
+        input[type="number"]:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="gradient-bg text-white py-6 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold">💰 Pricing Controls</h1>
+                    <p class="text-green-100 mt-1">ตั้งราคาของสาขา · กำไร/ขาดทุน</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-green-100">สาขา</div>
+                    <div class="font-semibold">Bangkok Central</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                <div class="text-gray-500 text-sm font-medium">กำไรรวม (เดือนนี้)</div>
+                <div class="text-3xl font-bold text-green-600 mt-2">฿42,580</div>
+                <div class="text-xs text-gray-500 mt-2">จาก 1,247 ออเดอร์</div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                <div class="text-gray-500 text-sm font-medium">กำไรเฉลี่ยต่อออเดอร์</div>
+                <div class="text-3xl font-bold text-blue-600 mt-2">฿34.15</div>
+                <div class="text-xs text-gray-500 mt-2">margin ~42%</div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                <div class="text-gray-500 text-sm font-medium">ราคาที่ตั้งไว้</div>
+                <div class="text-3xl font-bold text-purple-600 mt-2">12</div>
+                <div class="text-xs text-gray-500 mt-2">3 carriers × 4 zones</div>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <span class="text-2xl">ℹ️</span>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-blue-700">
+                        <strong>วิธีการตั้งราคา:</strong> กรอกราคาขาย (ที่คิดกับลูกค้า) และต้นทุน (ที่คุณจ่ายให้ carrier) 
+                        ระบบจะคำนวณกำไรอัตโนมัติ · สีเขียว = กำไร, สีแดง = ขาดทุน
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Tables by Carrier -->
+        
+        <!-- Flash Express -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">⚡ Flash Express</h2>
+                    <p class="text-orange-100 text-sm">ขนส่งด่วน พิเศษ</p>
+                </div>
+                <button class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded transition-all">
+                    บันทึกทั้งหมด
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">โซน</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">น้ำหนัก</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ราคาขาย (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ต้นทุน (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">กำไร (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Margin %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">กรุงเทพฯ & ปริมณฑล</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="45" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="28" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+17</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">37.8%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคกลาง</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="55" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="35" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+20</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">36.4%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคเหนือ/อีสาน</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="65" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="42" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+23</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">35.4%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคใต้</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="70" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="48" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+22</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">31.4%</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- J&T Express -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">📦 J&T Express</h2>
+                    <p class="text-red-100 text-sm">ส่งด่วน ทั่วไทย</p>
+                </div>
+                <button class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded transition-all">
+                    บันทึกทั้งหมด
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">โซน</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">น้ำหนัก</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ราคาขาย (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ต้นทุน (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">กำไร (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Margin %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">กรุงเทพฯ & ปริมณฑล</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="40" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="25" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+15</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">37.5%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคกลาง</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="50" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="32" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+18</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">36.0%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคเหนือ/อีสาน</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="60" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="38" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+22</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">36.7%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคใต้</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="65" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="44" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+21</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">32.3%</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Thailand Post -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">📮 Thailand Post (THP)</h2>
+                    <p class="text-blue-100 text-sm">ส่งธรรมดา ประหยัด</p>
+                </div>
+                <button class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded transition-all">
+                    บันทึกทั้งหมด
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">โซน</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">น้ำหนัก</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ราคาขาย (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ต้นทุน (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">กำไร (฿)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Margin %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">กรุงเทพฯ & ปริมณฑล</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="35" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="22" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+13</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">37.1%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคกลาง</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="42" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="28" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+14</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">33.3%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคเหนือ/อีสาน</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="48" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="32" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-positive">+16</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-green-600">33.3%</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="pricing-row bg-red-50">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">ภาคใต้</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">0-5 kg</td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="45" class="w-24 px-3 py-2 border border-red-300 rounded-lg text-right focus:ring-2 focus:ring-red-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <input type="number" value="50" class="w-24 px-3 py-2 border border-red-300 rounded-lg text-right focus:ring-2 focus:ring-red-500 focus:border-transparent" onchange="calculateProfit(this)">
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="profit-value text-lg font-bold profit-negative">-5</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="margin-value text-sm font-semibold text-red-600">-11.1%</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="px-6 py-4 bg-red-50 border-t border-red-200">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-3">⚠️</span>
+                    <div class="text-sm text-red-700">
+                        <strong>คำเตือน:</strong> ภาคใต้ (THP) กำลังขาดทุน ฿5/ออเดอร์ · ควรปรับราคาขายหรือต้นทุน
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">💡 Tips การตั้งราคา</h3>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">✓</span>
+                    <span>Margin 30-40% เหมาะสมสำหรับธุรกิจขนส่ง</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">✓</span>
+                    <span>ตรวจสอบต้นทุนจาก carrier อัพเดตทุกเดือน</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">✓</span>
+                    <span>ถ้าขาดทุน (สีแดง) ให้ปรับราคาทันที</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">✓</span>
+                    <span>เปรียบเทียบกับคู่แข่งในพื้นที่ของคุณ</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculateProfit(input) {
+            const row = input.closest('tr');
+            const inputs = row.querySelectorAll('input[type="number"]');
+            const sellingPrice = parseFloat(inputs[0].value) || 0;
+            const costPrice = parseFloat(inputs[1].value) || 0;
+            const profit = sellingPrice - costPrice;
+            const margin = sellingPrice > 0 ? ((profit / sellingPrice) * 100) : 0;
+            
+            const profitElement = row.querySelector('.profit-value');
+            const marginElement = row.querySelector('.margin-value');
+            
+            // Update profit
+            profitElement.textContent = profit >= 0 ? `+${profit}` : profit;
+            profitElement.className = profit >= 0 ? 'profit-value text-lg font-bold profit-positive' : 'profit-value text-lg font-bold profit-negative';
+            
+            // Update margin
+            marginElement.textContent = `${margin.toFixed(1)}%`;
+            marginElement.className = margin >= 0 ? 'margin-value text-sm font-semibold text-green-600' : 'margin-value text-sm font-semibold text-red-600';
+            
+            // Highlight row if losing money
+            if (profit < 0) {
+                row.classList.add('bg-red-50');
+                inputs.forEach(inp => {
+                    inp.classList.remove('border-gray-300');
+                    inp.classList.add('border-red-300');
+                });
+            } else {
+                row.classList.remove('bg-red-50');
+                inputs.forEach(inp => {
+                    inp.classList.remove('border-red-300');
+                    inp.classList.add('border-gray-300');
+                });
+            }
+            
+            // Show confetti on good margin
+            if (margin > 40 && Math.random() > 0.7) {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.8 }
+                });
+            }
+        }
+        
+        // Confetti library (simple version)
+        function confetti(options) {
+            // Simple confetti effect - would use canvas-confetti in production
+            console.log('🎉 Great margin!', options);
+        }
+    </script>
+</body>
+</html>
