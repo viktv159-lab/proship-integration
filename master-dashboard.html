@@ -3,296 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Dashboard - Proship Easy 👑</title>
+    <title>แดชบอร์ดหลัก - ProShip Easy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Prompt', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .card-hover:hover { transform: scale(1.01); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .stat-card {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
-            border-left: 4px solid #667eea;
-        }
+        .gradient-card { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .stat-card { transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .branch-row:hover { background-color: #f8f9fa; transform: translateX(4px); }
+        .branch-row { transition: all 0.2s ease; cursor: pointer; }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <div class="gradient-bg text-white py-6 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold">👑 Master Dashboard</h1>
-                    <p class="text-purple-100 mt-1">จัดการทุกสาขา · ระบบกลาง</p>
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 h-screen fixed left-0 top-0" id="sidebar-container"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 ml-64">
+            <!-- Header -->
+            <div id="header-container"></div>
+
+            <!-- Page Content -->
+            <main class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <span class="text-2xl text-blue-600">🏪</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">สาขาทั้งหมด</p>
+                                <p class="text-2xl font-bold text-gray-900">5</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <span class="text-2xl text-green-600">📦</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">ออเดอร์วันนี้</p>
+                                <p class="text-2xl font-bold text-gray-900">247</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 rounded-lg">
+                                <span class="text-2xl text-purple-600">💰</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">รายได้วันนี้</p>
+                                <p class="text-2xl font-bold text-gray-900">12,450₿</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <span class="text-2xl text-yellow-600">⭐</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">คะแนนเฉลี่ย</p>
+                                <p class="text-2xl font-bold text-gray-900">4.8</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <div class="text-sm text-purple-100">ผู้ดูแลระบบ</div>
-                    <div class="font-semibold">Admin Master</div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <button onclick="proshipNav.navigateToPage('settings.html')"
+                            class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-left">
+                        <div class="flex items-center">
+                            <span class="text-3xl mr-3">⚙️</span>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">จัดการราคาต้นทุน</h3>
+                                <p class="text-sm text-gray-500">ตั้งค่าราคาส่งแต่ละบริษัท</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button onclick="proshipNav.navigateToPage('reports.html')"
+                            class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-left">
+                        <div class="flex items-center">
+                            <span class="text-3xl mr-3">📈</span>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">ดูรายงานยอดขาย</h3>
+                                <p class="text-sm text-gray-500">สถิติและกราฟแต่ละสาขา</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button onclick="addNewBranch()"
+                            class="bg-gradient-to-r from-purple-500 to-blue-500 p-4 rounded-xl text-white hover:opacity-90 transition-opacity text-left">
+                        <div class="flex items-center">
+                            <span class="text-3xl mr-3">➕</span>
+                            <div>
+                                <h3 class="font-semibold">เพิ่มสาขาใหม่</h3>
+                                <p class="text-sm opacity-80">สร้างบัญชีสาขาใหม่</p>
+                            </div>
+                        </div>
+                    </button>
                 </div>
-            </div>
+
+                <!-- Branch Management Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">จัดการสาขา</h2>
+                        <p class="text-sm text-gray-500 mt-1">คลิกที่ชื่อสาขาเพื่อเข้าไปดูรายละเอียด</p>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สาขา</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ออเดอร์วันนี้</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายได้</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปัจจุบัน</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">การดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="branch-row" onclick="openBranch('สาขาสยาม')">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-green-600 font-semibold">S</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาสยาม</div>
+                                                <div class="text-sm text-gray-500">เปิด 24 ชั่วโมง</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                            🟢 เปิดใช้งาน
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">89</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">4,230₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 นาทีที่แล้ว</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="event.stopPropagation(); manageBranch('สาขาสยาม')" 
+                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
+                                    </td>
+                                </tr>
+
+                                <tr class="branch-row" onclick="openBranch('สาขาลาดพร้าว')">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-blue-600 font-semibold">L</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาลาดพร้าว</div>
+                                                <div class="text-sm text-gray-500">ใกล้ BTS ลาดพร้าว</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                            🟢 เปิดใช้งาน
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">67</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">3,120₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5 นาทีที่แล้ว</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="event.stopPropagation(); manageBranch('สาขาลาดพร้าว')" 
+                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
+                                    </td>
+                                </tr>
+
+                                <tr class="branch-row" onclick="openBranch('สาขาอ่อนนุช')">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-purple-600 font-semibold">O</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาอ่อนนุช</div>
+                                                <div class="text-sm text-gray-500">ใกล้ห้างเซ็นทรัลพลาซา</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                            🟢 เปิดใช้งาน
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">2,890₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8 นาทีที่แล้ว</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="event.stopPropagation(); manageBranch('สาขาอ่อนนุช')" 
+                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
+                                    </td>
+                                </tr>
+
+                                <tr class="branch-row" onclick="openBranch('สาขาบางนา')">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-yellow-600 font-semibold">B</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาบางนา</div>
+                                                <div class="text-sm text-gray-500">ใกล้เมกะบางนา</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">
+                                            🟡 ปิดชั่วคราว
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">0</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">0₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3 ชั่วโมงที่แล้ว</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="event.stopPropagation(); manageBranch('สาขาบางนา')" 
+                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
+                                    </td>
+                                </tr>
+
+                                <tr class="branch-row" onclick="openBranch('สาขารังสิต')">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-red-600 font-semibold">R</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขารังสิต</div>
+                                                <div class="text-sm text-gray-500">ใกล้ธรรมศาสตร์</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                            🟢 เปิดใช้งาน
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">46</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">2,210₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 นาทีที่แล้ว</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="event.stopPropagation(); manageBranch('สาขารังสิต')" 
+                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">กิจกรรมล่าสุด</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <span class="text-green-600 text-sm">📦</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-800"><strong>สาขาสยาม</strong> สร้างออเดอร์ใหม่ 5 รายการ</p>
+                                    <p class="text-xs text-gray-500">2 นาทีที่แล้ว</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span class="text-blue-600 text-sm">💰</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-800"><strong>สาขาลาดพร้าว</strong> รับเงิน COD 1,250₿</p>
+                                    <p class="text-xs text-gray-500">5 นาทีที่แล้ว</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <span class="text-purple-600 text-sm">⚙️</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-800">อัปเดตราคาต้นทุน <strong>Flash Express</strong></p>
+                                    <p class="text-xs text-gray-500">15 นาทีที่แล้ว</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
-    <!-- Stats Summary -->
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="stat-card p-6 rounded-lg transition-all card-hover bg-white">
-                <div class="text-gray-500 text-sm font-medium">สาขาทั้งหมด</div>
-                <div class="text-3xl font-bold text-purple-600 mt-2">24</div>
-                <div class="text-xs text-green-600 mt-2">↑ +3 เดือนนี้</div>
-            </div>
-            
-            <div class="stat-card p-6 rounded-lg transition-all card-hover bg-white">
-                <div class="text-gray-500 text-sm font-medium">ออเดอร์วันนี้</div>
-                <div class="text-3xl font-bold text-purple-600 mt-2">1,247</div>
-                <div class="text-xs text-gray-500 mt-2">ทุกสาขารวมกัน</div>
-            </div>
-            
-            <div class="stat-card p-6 rounded-lg transition-all card-hover bg-white">
-                <div class="text-gray-500 text-sm font-medium">ยอดรวมเดือนนี้</div>
-                <div class="text-3xl font-bold text-purple-600 mt-2">฿892K</div>
-                <div class="text-xs text-green-600 mt-2">↑ +18% จากเดือนก่อน</div>
-            </div>
-            
-            <div class="stat-card p-6 rounded-lg transition-all card-hover bg-white">
-                <div class="text-gray-500 text-sm font-medium">สาขาที่ Active</div>
-                <div class="text-3xl font-bold text-purple-600 mt-2">22/24</div>
-                <div class="text-xs text-gray-500 mt-2">ใช้งานใน 7 วันล่าสุด</div>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-4 mb-6">
-            <button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-md hover:shadow-lg">
-                ➕ สร้างสาขาใหม่
-            </button>
-            <button class="bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium transition-all shadow-md border border-gray-200">
-                📊 รายงานสรุป
-            </button>
-            <button class="bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium transition-all shadow-md border border-gray-200">
-                ⚙️ ตั้งค่าระบบ
-            </button>
-        </div>
-
-        <!-- Branch List Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <h2 class="text-xl font-bold text-gray-800">รายการสาขาทั้งหมด</h2>
-            </div>
-            
-            <!-- Search & Filter -->
-            <div class="px-6 py-4 border-b border-gray-100 flex gap-4">
-                <input type="text" placeholder="🔍 ค้นหาสาขา..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
-                    <option>ทั้งหมด</option>
-                    <option>Active</option>
-                    <option>Inactive</option>
-                </select>
-            </div>
-
-            <!-- Table -->
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สาขา</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่สร้าง</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จำนวนการใช้งาน</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ยอดออเดอร์ (เดือนนี้)</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">การจัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <!-- Branch Row 1 -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                        <span class="text-purple-600 font-bold">BK</span>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Bangkok Central</div>
-                                        <div class="text-xs text-gray-500">bangkok-central</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">15 ม.ค. 2026</div>
-                                <div class="text-xs text-gray-500">30 วันที่แล้ว</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-gray-900">4,582 ออเดอร์</div>
-                                <div class="text-xs text-gray-500">เฉลี่ย 152/วัน</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-green-600">฿127,500</div>
-                                <div class="text-xs text-gray-500">↑ +12% จากเดือนก่อน</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    🟢 Active
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all mr-2">
-                                    🚪 เข้าสู่ระบบ
-                                </button>
-                                <button class="text-gray-600 hover:text-gray-900">
-                                    ⚙️
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Branch Row 2 -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <span class="text-blue-600 font-bold">CM</span>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Chiang Mai Shop</div>
-                                        <div class="text-xs text-gray-500">chiangmai-shop</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">3 ก.พ. 2026</div>
-                                <div class="text-xs text-gray-500">11 วันที่แล้ว</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-gray-900">892 ออเดอร์</div>
-                                <div class="text-xs text-gray-500">เฉลี่ย 81/วัน</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-green-600">฿42,180</div>
-                                <div class="text-xs text-gray-500">สาขาใหม่</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    🟢 Active
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all mr-2">
-                                    🚪 เข้าสู่ระบบ
-                                </button>
-                                <button class="text-gray-600 hover:text-gray-900">
-                                    ⚙️
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Branch Row 3 -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-orange-100 rounded-full flex items-center justify-center">
-                                        <span class="text-orange-600 font-bold">PK</span>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Phuket Express</div>
-                                        <div class="text-xs text-gray-500">phuket-express</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">8 ม.ค. 2026</div>
-                                <div class="text-xs text-gray-500">37 วันที่แล้ว</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-gray-900">2,341 ออเดอร์</div>
-                                <div class="text-xs text-gray-500">เฉลี่ย 63/วัน</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-green-600">฿68,920</div>
-                                <div class="text-xs text-gray-500">↑ +8% จากเดือนก่อน</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    🟢 Active
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all mr-2">
-                                    🚪 เข้าสู่ระบบ
-                                </button>
-                                <button class="text-gray-600 hover:text-gray-900">
-                                    ⚙️
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Branch Row 4 - Inactive -->
-                        <tr class="hover:bg-gray-50 transition-colors opacity-60">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                        <span class="text-gray-600 font-bold">KK</span>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Khon Kaen Hub</div>
-                                        <div class="text-xs text-gray-500">khonkaen-hub</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">12 ธ.ค. 2025</div>
-                                <div class="text-xs text-gray-500">64 วันที่แล้ว</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-gray-900">125 ออเดอร์</div>
-                                <div class="text-xs text-gray-500">ไม่มีกิจกรรม 10 วัน</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-semibold text-gray-600">฿0</div>
-                                <div class="text-xs text-gray-500">ไม่มีออเดอร์เดือนนี้</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">
-                                    ⚪ Inactive
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all mr-2">
-                                    🚪 เข้าสู่ระบบ
-                                </button>
-                                <button class="text-gray-600 hover:text-gray-900">
-                                    ⚙️
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                <div class="text-sm text-gray-500">
-                    แสดง 1-4 จาก 24 สาขา
-                </div>
-                <div class="flex gap-2">
-                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">ก่อนหน้า</button>
-                    <button class="px-3 py-1 bg-purple-600 text-white rounded">1</button>
-                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">2</button>
-                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">3</button>
-                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">ถัดไป</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="shared.js"></script>
     <script>
-        // Auto-login simulation
-        document.querySelectorAll('button').forEach(btn => {
-            if (btn.textContent.includes('เข้าสู่ระบบ')) {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const branchName = row.querySelector('.text-sm.font-medium').textContent;
-                    alert(`กำลังเข้าสู่ระบบ: ${branchName}\n\nจะพาคุณไปหน้าสาขานี้โดยอัตโนมัติ`);
-                });
-            }
+        // Branch management functions
+        function openBranch(branchName) {
+            const branchData = {
+                name: branchName,
+                id: branchName.replace('สาขา', '').toLowerCase(),
+                status: branchName === 'สาขาบางนา' ? 'maintenance' : 'active'
+            };
+            
+            proshipNav.openBranchView(branchData);
+        }
+
+        function manageBranch(branchName) {
+            showToast(`จัดการ${branchName} - ฟีเจอร์กำลังพัฒนา`, 'info');
+        }
+
+        function addNewBranch() {
+            showToast('เพิ่มสาขาใหม่ - ฟีเจอร์กำลังพัฒนา', 'info');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update stats periodically (mock)
+            setInterval(() => {
+                const orderCount = document.querySelector('.stat-card:nth-child(2) .text-2xl');
+                if (orderCount) {
+                    const current = parseInt(orderCount.textContent);
+                    orderCount.textContent = current + Math.floor(Math.random() * 3);
+                }
+            }, 30000);
         });
     </script>
 </body>
