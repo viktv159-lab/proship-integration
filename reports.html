@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานและสถิติ - ProShip Easy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Prompt', sans-serif; }
+        .chart-container { position: relative; height: 300px; }
+        .filter-button.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .metric-card { transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 h-screen fixed left-0 top-0" id="sidebar-container"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 ml-64">
+            <!-- Header -->
+            <div id="header-container"></div>
+
+            <!-- Page Content -->
+            <main class="p-6">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">รายงานและสถิติ</h1>
+                            <p class="mt-1 text-sm text-gray-500">วิเคราะห์ข้อมูลการขายและประสิทธิภาพของแต่ละสาขา</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="exportReport()"
+                                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                📊 ส่งออกรายงาน
+                            </button>
+                            <button onclick="proshipNav.navigateToPage('master-dashboard.html')"
+                                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                ← กลับแดชบอร์ด
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-6">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div class="flex space-x-2">
+                            <button onclick="setTimeFilter('today')" class="filter-button px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                                วันนี้
+                            </button>
+                            <button onclick="setTimeFilter('week')" class="filter-button active px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                                7 วันล่าสุด
+                            </button>
+                            <button onclick="setTimeFilter('month')" class="filter-button px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                                30 วันล่าสุด
+                            </button>
+                            <button onclick="setTimeFilter('quarter')" class="filter-button px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                                3 เดือนล่าสุด
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm text-gray-600">สาขา:</label>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                <option>ทุกสาขา</option>
+                                <option>สาขาสยาม</option>
+                                <option>สาขาลาดพร้าว</option>
+                                <option>สาขาอ่อนนุช</option>
+                                <option>สาขาบางนา</option>
+                                <option>สาขารังสิต</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white metric-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">รายได้รวม</p>
+                                <p class="text-2xl font-bold text-gray-900">87,230₿</p>
+                                <p class="text-sm text-green-600">+12.5% จากเมื่อวาน</p>
+                            </div>
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <span class="text-2xl text-green-600">💰</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white metric-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">จำนวนออเดอร์</p>
+                                <p class="text-2xl font-bold text-gray-900">1,847</p>
+                                <p class="text-sm text-blue-600">+8.2% จากเมื่อวาน</p>
+                            </div>
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <span class="text-2xl text-blue-600">📦</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white metric-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">ค่าเฉลี่ยต่อออเดอร์</p>
+                                <p class="text-2xl font-bold text-gray-900">47.3₿</p>
+                                <p class="text-sm text-purple-600">+3.8% จากเมื่อวาน</p>
+                            </div>
+                            <div class="p-3 bg-purple-100 rounded-lg">
+                                <span class="text-2xl text-purple-600">📊</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white metric-card rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">กำไรรวม</p>
+                                <p class="text-2xl font-bold text-gray-900">45,120₿</p>
+                                <p class="text-sm text-green-600">+15.3% จากเมื่อวาน</p>
+                            </div>
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <span class="text-2xl text-yellow-600">💎</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Revenue Chart -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">รายได้รายวัน</h2>
+                            <span class="text-sm text-gray-500">7 วันล่าสุด</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Orders Chart -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">ออเดอร์ตามบริษัทขนส่ง</h2>
+                            <span class="text-sm text-gray-500">7 วันล่าสุด</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="carriersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branch Performance -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">ประสิทธิภาพแต่ละสาขา</h2>
+                        <span class="text-sm text-gray-500">7 วันล่าสุด</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สาขา</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ออเดอร์</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายได้</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">กำไร</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เติบโต</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประสิทธิภาพ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-green-600 font-semibold">S</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">สาขาสยาม</div>
+                                                <div class="text-sm text-gray-500">24/7</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">623</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">29,640₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">15,230₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-green-600 text-sm font-medium">+18.5%</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                                <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                                            </div>
+                                            <span class="text-sm text-gray-600">95%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-blue-600 font-semibold">L</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">สาขาลาดพร้าว</div>
+                                                <div class="text-sm text-gray-500">08:00-20:00</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">469</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">21,840₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">11,650₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-green-600 text-sm font-medium">+12.3%</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                                <div class="bg-blue-500 h-2 rounded-full" style="width: 88%"></div>
+                                            </div>
+                                            <span class="text-sm text-gray-600">88%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-purple-600 font-semibold">O</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">สาขาอ่อนนุช</div>
+                                                <div class="text-sm text-gray-500">09:00-21:00</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">315</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">20,230₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">10,120₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-green-600 text-sm font-medium">+8.7%</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                                <div class="bg-purple-500 h-2 rounded-full" style="width: 82%"></div>
+                                            </div>
+                                            <span class="text-sm text-gray-600">82%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-red-600 font-semibold">R</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">สาขารังสิต</div>
+                                                <div class="text-sm text-gray-500">10:00-22:00</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">322</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">15,520₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">8,120₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-green-600 text-sm font-medium">+6.2%</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 75%"></div>
+                                            </div>
+                                            <span class="text-sm text-gray-600">75%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                                <span class="text-gray-600 font-semibold">B</span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-500">สาขาบางนา</div>
+                                                <div class="text-sm text-gray-400">ปิดชั่วคราว</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">0</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">0₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">0₿</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-gray-400 text-sm">-</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                                <div class="bg-gray-400 h-2 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                            <span class="text-sm text-gray-400">0%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Insights -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Popular Times -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">เวลาที่มีออเดอร์มาก</h2>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">09:00 - 12:00</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">425 ออเดอร์</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">13:00 - 16:00</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">461 ออเดอร์</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">17:00 - 20:00</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">389 ออเดอร์</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Destinations -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">จังหวัดปลายทางยอดนิยม</h2>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">กรุงเทพมหานคร</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 95%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">1,156</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">นนทบุรี</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">231</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">สมุทรปราการ</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 35%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">178</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        let revenueChart, carriersChart;
+
+        function initCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['จัน 14', 'จัน 15', 'จัน 16', 'จัน 17', 'จัน 18', 'จัน 19', 'จัน 20'],
+                    datasets: [{
+                        label: 'รายได้ (บาท)',
+                        data: [11500, 13200, 12800, 14100, 13900, 15200, 12450],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + '₿';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Carriers Chart
+            const carriersCtx = document.getElementById('carriersChart').getContext('2d');
+            carriersChart = new Chart(carriersCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Flash Express', 'J&T Express', 'Kerry Express', 'ไปรษณีย์ไทย'],
+                    datasets: [{
+                        data: [45, 28, 18, 9],
+                        backgroundColor: [
+                            '#ff6b35',
+                            '#f7931e',
+                            '#1db584',
+                            '#3b82f6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function setTimeFilter(period) {
+            // Update active filter button
+            document.querySelectorAll('.filter-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update charts with new data (mock)
+            showToast(`แสดงข้อมูล${getPeriodLabel(period)}`, 'info');
+        }
+
+        function getPeriodLabel(period) {
+            const labels = {
+                'today': 'วันนี้',
+                'week': '7 วันล่าสุด',
+                'month': '30 วันล่าสุด',
+                'quarter': '3 เดือนล่าสุด'
+            };
+            return labels[period] || 'ช่วงเวลาที่เลือก';
+        }
+
+        function exportReport() {
+            showToast('กำลังส่งออกรายงาน... 📊', 'info');
+            setTimeout(() => {
+                showToast('ส่งออกรายงานสำเร็จ! ไฟล์บันทึกในโฟลเดอร์ Downloads', 'success');
+            }, 2000);
+        }
+
+        // Initialize charts when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initCharts, 100); // Small delay to ensure canvas is ready
+        });
+    </script>
+</body>
+</html>
