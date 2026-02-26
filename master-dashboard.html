@@ -114,6 +114,131 @@
                     </button>
                 </div>
 
+                <!-- Quick Order (Master Shortcut) -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800">⚡ ทางลัด — สร้างออเดอร์ใหม่</h2>
+                            <p class="text-sm text-gray-500 mt-1">Master สามารถลงออเดอร์โดยตรงได้</p>
+                        </div>
+                        <button onclick="toggleMasterOrder()" id="master-order-toggle"
+                                class="text-sm text-purple-600 hover:text-purple-800 font-medium bg-purple-50 px-3 py-1.5 rounded-lg transition-colors">
+                            ▼ ขยาย
+                        </button>
+                    </div>
+                    <div id="master-order-form" class="hidden">
+                        <div class="p-6">
+                            <form id="master-quick-order" class="space-y-5" onsubmit="submitMasterOrder(event)">
+
+                                <!-- Sender Info -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h3 class="text-sm font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                                        <span>📤</span> ข้อมูลผู้ส่ง
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ส่ง *</label>
+                                            <input type="text" required
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                   placeholder="นายวิชัย พัสดุดี">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรผู้ส่ง *</label>
+                                            <input type="tel" required
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                   placeholder="089-999-8888">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">ที่อยู่ผู้ส่ง *</label>
+                                        <textarea required rows="2"
+                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                  placeholder="99/9 ถ.เจริญกรุง แขวงสี่พระยา เขตบางรัก กรุงเทพมหานคร 10500"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Receiver Info -->
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                    <h3 class="text-sm font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                                        <span>📥</span> ข้อมูลผู้รับ
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้รับ *</label>
+                                            <input type="text" required
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                   placeholder="นายสมชาย ใจดี">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรผู้รับ *</label>
+                                            <input type="tel" required
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                   placeholder="081-234-5678">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">ที่อยู่จัดส่ง *</label>
+                                        <textarea required rows="2"
+                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                                  placeholder="123/45 ซ.รามคำแหง 39 แยก 20 ถ.รามคำแหง แขวงวังทองหลาง เขตวังทองหลาง กรุงเทพมหานคร 10310"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Carrier & Weight -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">บริษัทขนส่ง *</label>
+                                        <div class="grid grid-cols-4 gap-2">
+                                            <button type="button" onclick="selectMasterCarrier(this,'flash')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-yellow-400 transition-colors">
+                                                <div class="text-lg">⚡</div><div class="text-xs font-medium">Flash</div>
+                                            </button>
+                                            <button type="button" onclick="selectMasterCarrier(this,'jt')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-red-400 transition-colors">
+                                                <div class="text-lg">🔴</div><div class="text-xs font-medium">J&T</div>
+                                            </button>
+                                            <button type="button" onclick="selectMasterCarrier(this,'kerry')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-green-400 transition-colors">
+                                                <div class="text-lg">🟢</div><div class="text-xs font-medium">Kerry</div>
+                                            </button>
+                                            <button type="button" onclick="selectMasterCarrier(this,'thaipost')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-orange-400 transition-colors">
+                                                <div class="text-lg">🇹🇭</div><div class="text-xs font-medium">ไปรษณีย์</div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม) *</label>
+                                        <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                            <option value="">-- เลือกน้ำหนัก --</option>
+                                            <option value="0-3">0 – 3 กก.</option>
+                                            <option value="3-5">3 – 5 กก.</option>
+                                            <option value="5-10">5 – 10 กก.</option>
+                                            <option value="10-15">10 – 15 กก.</option>
+                                            <option value="15-20">15 – 20 กก.</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- COD Toggle -->
+                                <div class="flex items-center gap-4 bg-gray-50 rounded-lg p-3">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox" id="master-cod-toggle" class="sr-only" onchange="toggleMasterCOD()">
+                                            <div class="w-11 h-6 bg-gray-300 rounded-full shadow-inner" id="master-cod-bg"></div>
+                                            <div class="dot absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition" id="master-cod-dot"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-700">เก็บเงินปลายทาง (COD)</span>
+                                    </label>
+                                    <input type="number" id="master-cod-amount" placeholder="ยอด COD (฿)" 
+                                           class="hidden flex-1 px-3 py-2 border border-orange-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400">
+                                </div>
+
+                                <button type="submit"
+                                        class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
+                                    📦 สร้างออเดอร์
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Branch Management Table -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200">
@@ -330,6 +455,62 @@
 
         function addNewBranch() {
             showToast('เพิ่มสาขาใหม่ - ฟีเจอร์กำลังพัฒนา', 'info');
+        }
+
+        // Master quick order form
+        function toggleMasterOrder() {
+            const form = document.getElementById('master-order-form');
+            const btn = document.getElementById('master-order-toggle');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                btn.textContent = '▲ ย่อ';
+            } else {
+                form.classList.add('hidden');
+                btn.textContent = '▼ ขยาย';
+            }
+        }
+
+        let masterCarrierSelected = null;
+        function selectMasterCarrier(el, carrier) {
+            document.querySelectorAll('.master-carrier-btn').forEach(b => {
+                b.classList.remove('border-purple-500', 'bg-purple-50');
+                b.classList.add('border-gray-200');
+            });
+            el.classList.add('border-purple-500', 'bg-purple-50');
+            el.classList.remove('border-gray-200');
+            masterCarrierSelected = carrier;
+        }
+
+        function toggleMasterCOD() {
+            const checked = document.getElementById('master-cod-toggle').checked;
+            const amtInput = document.getElementById('master-cod-amount');
+            const bg = document.getElementById('master-cod-bg');
+            const dot = document.getElementById('master-cod-dot');
+            if (checked) {
+                amtInput.classList.remove('hidden');
+                bg.classList.replace('bg-gray-300', 'bg-orange-400');
+                dot.style.transform = 'translateX(20px)';
+            } else {
+                amtInput.classList.add('hidden');
+                bg.classList.replace('bg-orange-400', 'bg-gray-300');
+                dot.style.transform = '';
+            }
+        }
+
+        function submitMasterOrder(e) {
+            e.preventDefault();
+            if (!masterCarrierSelected) {
+                showToast('กรุณาเลือกบริษัทขนส่ง', 'error');
+                return;
+            }
+            const orderId = 'ORD' + Date.now();
+            showToast(`✅ สร้างออเดอร์สำเร็จ! #${orderId}`, 'success');
+            document.getElementById('master-quick-order').reset();
+            document.querySelectorAll('.master-carrier-btn').forEach(b => {
+                b.classList.remove('border-purple-500','bg-purple-50');
+                b.classList.add('border-gray-200');
+            });
+            masterCarrierSelected = null;
         }
 
         // Initialize page
