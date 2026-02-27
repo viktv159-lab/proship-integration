@@ -1,529 +1,917 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แดชบอร์ดหลัก - ProShip Easy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Prompt', sans-serif; }
-        .gradient-card { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
-        .stat-card { transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .branch-row:hover { background-color: #f8f9fa; transform: translateX(4px); }
-        .branch-row { transition: all 0.2s ease; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Master Admin — ProShip Easy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    #sidebar { background: #2d1b69; min-height: 100vh; width: 260px; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: rgba(255,255,255,0.75); border-radius: 10px; margin: 2px 10px; cursor: pointer; transition: all 0.2s; font-size: 0.92rem; }
+    .nav-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .nav-item.active { background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.35); }
+    .section { display: none; }
+    .section.active { display: block; }
+    .card { background:#fff; border-radius:16px; box-shadow:0 1px 8px rgba(0,0,0,0.07); border:1px solid #f0f0f0; }
+    .stat-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; border-radius:999px; font-size:0.72rem; font-weight:700; }
+    .toggle-sw { position:relative; display:inline-block; width:46px; height:24px; }
+    .toggle-sw input { opacity:0; width:0; height:0; }
+    .toggle-sl { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#cbd5e1; transition:.3s; border-radius:24px; }
+    .toggle-sl:before { position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background:#fff; transition:.3s; border-radius:50%; }
+    input:checked + .toggle-sl { background:#667eea; }
+    input:checked + .toggle-sl:before { transform:translateX(22px); }
+    .carrier-tab { cursor:pointer; padding:8px 16px; border-radius:8px; font-size:0.85rem; border:2px solid transparent; transition:all 0.2s; }
+    .carrier-tab.active { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; }
+    .carrier-tab:not(.active) { background:#f3f4f6; color:#374151; }
+    .carrier-tab:not(.active):hover { background:#e5e7eb; }
+    .tier-row { display:grid; grid-template-columns:1fr 1fr 80px; gap:8px; align-items:center; }
+    .status-badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:999px; font-size:0.78rem; font-weight:600; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; display:flex; align-items:center; justify-content:center; }
+    .modal-box { background:#fff; border-radius:16px; padding:28px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+    .toast { position:fixed; bottom:24px; right:24px; z-index:9999; padding:12px 20px; border-radius:10px; color:#fff; font-size:0.875rem; font-weight:600; max-width:380px; box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:opacity 0.3s; }
+    .carrier-select-btn { border:2px solid #e5e7eb; border-radius:10px; padding:10px; text-align:center; cursor:pointer; transition:all 0.2s; }
+    .carrier-select-btn:hover { border-color:#667eea; background:#f0f0ff; }
+    .carrier-select-btn.selected { border-color:#667eea; background:linear-gradient(135deg,#f3f0ff,#ede9fe); }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-64 h-screen fixed left-0 top-0" id="sidebar-container"></div>
+<body class="bg-gray-50">
 
-        <!-- Main Content -->
-        <div class="flex-1 ml-64">
-            <!-- Header -->
-            <div id="header-container"></div>
-
-            <!-- Page Content -->
-            <main class="p-6">
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-blue-100 rounded-lg">
-                                <span class="text-2xl text-blue-600">🏪</span>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">สาขาทั้งหมด</p>
-                                <p class="text-2xl font-bold text-gray-900">5</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-green-100 rounded-lg">
-                                <span class="text-2xl text-green-600">📦</span>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">ออเดอร์วันนี้</p>
-                                <p class="text-2xl font-bold text-gray-900">247</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-purple-100 rounded-lg">
-                                <span class="text-2xl text-purple-600">💰</span>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">รายได้วันนี้</p>
-                                <p class="text-2xl font-bold text-gray-900">12,450₿</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white stat-card rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex items-center">
-                            <div class="p-3 bg-yellow-100 rounded-lg">
-                                <span class="text-2xl text-yellow-600">⭐</span>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">คะแนนเฉลี่ย</p>
-                                <p class="text-2xl font-bold text-gray-900">4.8</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <button onclick="proshipNav.navigateToPage('settings.html')"
-                            class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-left">
-                        <div class="flex items-center">
-                            <span class="text-3xl mr-3">⚙️</span>
-                            <div>
-                                <h3 class="font-semibold text-gray-800">จัดการราคาต้นทุน</h3>
-                                <p class="text-sm text-gray-500">ตั้งค่าราคาส่งแต่ละบริษัท</p>
-                            </div>
-                        </div>
-                    </button>
-
-                    <button onclick="proshipNav.navigateToPage('reports.html')"
-                            class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-left">
-                        <div class="flex items-center">
-                            <span class="text-3xl mr-3">📈</span>
-                            <div>
-                                <h3 class="font-semibold text-gray-800">ดูรายงานยอดขาย</h3>
-                                <p class="text-sm text-gray-500">สถิติและกราฟแต่ละสาขา</p>
-                            </div>
-                        </div>
-                    </button>
-
-                    <button onclick="addNewBranch()"
-                            class="bg-gradient-to-r from-purple-500 to-blue-500 p-4 rounded-xl text-white hover:opacity-90 transition-opacity text-left">
-                        <div class="flex items-center">
-                            <span class="text-3xl mr-3">➕</span>
-                            <div>
-                                <h3 class="font-semibold">เพิ่มสาขาใหม่</h3>
-                                <p class="text-sm opacity-80">สร้างบัญชีสาขาใหม่</p>
-                            </div>
-                        </div>
-                    </button>
-                </div>
-
-                <!-- Quick Order (Master Shortcut) -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-lg font-semibold text-gray-800">⚡ ทางลัด — สร้างออเดอร์ใหม่</h2>
-                            <p class="text-sm text-gray-500 mt-1">Master สามารถลงออเดอร์โดยตรงได้</p>
-                        </div>
-                        <button onclick="toggleMasterOrder()" id="master-order-toggle"
-                                class="text-sm text-purple-600 hover:text-purple-800 font-medium bg-purple-50 px-3 py-1.5 rounded-lg transition-colors">
-                            ▼ ขยาย
-                        </button>
-                    </div>
-                    <div id="master-order-form" class="hidden">
-                        <div class="p-6">
-                            <form id="master-quick-order" class="space-y-5" onsubmit="submitMasterOrder(event)">
-
-                                <!-- Sender Info -->
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                    <h3 class="text-sm font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                                        <span>📤</span> ข้อมูลผู้ส่ง
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ส่ง *</label>
-                                            <input type="text" required
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                                   placeholder="นายวิชัย พัสดุดี">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรผู้ส่ง *</label>
-                                            <input type="tel" required
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                                   placeholder="089-999-8888">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">ที่อยู่ผู้ส่ง *</label>
-                                        <textarea required rows="2"
-                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                                  placeholder="99/9 ถ.เจริญกรุง แขวงสี่พระยา เขตบางรัก กรุงเทพมหานคร 10500"></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Receiver Info -->
-                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                                    <h3 class="text-sm font-semibold text-purple-800 mb-3 flex items-center gap-2">
-                                        <span>📥</span> ข้อมูลผู้รับ
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้รับ *</label>
-                                            <input type="text" required
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                                   placeholder="นายสมชาย ใจดี">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรผู้รับ *</label>
-                                            <input type="tel" required
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                                   placeholder="081-234-5678">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">ที่อยู่จัดส่ง *</label>
-                                        <textarea required rows="2"
-                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                                                  placeholder="123/45 ซ.รามคำแหง 39 แยก 20 ถ.รามคำแหง แขวงวังทองหลาง เขตวังทองหลาง กรุงเทพมหานคร 10310"></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Carrier & Weight -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">บริษัทขนส่ง *</label>
-                                        <div class="grid grid-cols-4 gap-2">
-                                            <button type="button" onclick="selectMasterCarrier(this,'flash')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-yellow-400 transition-colors">
-                                                <div class="text-lg">⚡</div><div class="text-xs font-medium">Flash</div>
-                                            </button>
-                                            <button type="button" onclick="selectMasterCarrier(this,'jt')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-red-400 transition-colors">
-                                                <div class="text-lg">🔴</div><div class="text-xs font-medium">J&T</div>
-                                            </button>
-                                            <button type="button" onclick="selectMasterCarrier(this,'kerry')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-green-400 transition-colors">
-                                                <div class="text-lg">🟢</div><div class="text-xs font-medium">Kerry</div>
-                                            </button>
-                                            <button type="button" onclick="selectMasterCarrier(this,'thaipost')" class="master-carrier-btn border-2 border-gray-200 rounded-lg p-2 text-center hover:border-orange-400 transition-colors">
-                                                <div class="text-lg">🇹🇭</div><div class="text-xs font-medium">ไปรษณีย์</div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม) *</label>
-                                        <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
-                                            <option value="">-- เลือกน้ำหนัก --</option>
-                                            <option value="0-3">0 – 3 กก.</option>
-                                            <option value="3-5">3 – 5 กก.</option>
-                                            <option value="5-10">5 – 10 กก.</option>
-                                            <option value="10-15">10 – 15 กก.</option>
-                                            <option value="15-20">15 – 20 กก.</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- COD Toggle -->
-                                <div class="flex items-center gap-4 bg-gray-50 rounded-lg p-3">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <div class="relative">
-                                            <input type="checkbox" id="master-cod-toggle" class="sr-only" onchange="toggleMasterCOD()">
-                                            <div class="w-11 h-6 bg-gray-300 rounded-full shadow-inner" id="master-cod-bg"></div>
-                                            <div class="dot absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition" id="master-cod-dot"></div>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-700">เก็บเงินปลายทาง (COD)</span>
-                                    </label>
-                                    <input type="number" id="master-cod-amount" placeholder="ยอด COD (฿)" 
-                                           class="hidden flex-1 px-3 py-2 border border-orange-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400">
-                                </div>
-
-                                <button type="submit"
-                                        class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
-                                    📦 สร้างออเดอร์
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Branch Management Table -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-semibold text-gray-800">จัดการสาขา</h2>
-                        <p class="text-sm text-gray-500 mt-1">คลิกที่ชื่อสาขาเพื่อเข้าไปดูรายละเอียด</p>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สาขา</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ออเดอร์วันนี้</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายได้</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปัจจุบัน</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">การดำเนินการ</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr class="branch-row" onclick="openBranch('สาขาสยาม')">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                                <span class="text-green-600 font-semibold">S</span>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาสยาม</div>
-                                                <div class="text-sm text-gray-500">เปิด 24 ชั่วโมง</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
-                                            🟢 เปิดใช้งาน
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">89</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">4,230₿</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 นาทีที่แล้ว</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="event.stopPropagation(); manageBranch('สาขาสยาม')" 
-                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
-                                    </td>
-                                </tr>
-
-                                <tr class="branch-row" onclick="openBranch('สาขาลาดพร้าว')">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                                <span class="text-blue-600 font-semibold">L</span>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาลาดพร้าว</div>
-                                                <div class="text-sm text-gray-500">ใกล้ BTS ลาดพร้าว</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
-                                            🟢 เปิดใช้งาน
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">67</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">3,120₿</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5 นาทีที่แล้ว</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="event.stopPropagation(); manageBranch('สาขาลาดพร้าว')" 
-                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
-                                    </td>
-                                </tr>
-
-                                <tr class="branch-row" onclick="openBranch('สาขาอ่อนนุช')">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                                <span class="text-purple-600 font-semibold">O</span>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาอ่อนนุช</div>
-                                                <div class="text-sm text-gray-500">ใกล้ห้างเซ็นทรัลพลาซา</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
-                                            🟢 เปิดใช้งาน
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">45</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">2,890₿</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8 นาทีที่แล้ว</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="event.stopPropagation(); manageBranch('สาขาอ่อนนุช')" 
-                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
-                                    </td>
-                                </tr>
-
-                                <tr class="branch-row" onclick="openBranch('สาขาบางนา')">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                                <span class="text-yellow-600 font-semibold">B</span>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขาบางนา</div>
-                                                <div class="text-sm text-gray-500">ใกล้เมกะบางนา</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">
-                                            🟡 ปิดชั่วคราว
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">0</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">0₿</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3 ชั่วโมงที่แล้ว</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="event.stopPropagation(); manageBranch('สาขาบางนา')" 
-                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
-                                    </td>
-                                </tr>
-
-                                <tr class="branch-row" onclick="openBranch('สาขารังสิต')">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                                <span class="text-red-600 font-semibold">R</span>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">สาขารังสิต</div>
-                                                <div class="text-sm text-gray-500">ใกล้ธรรมศาสตร์</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
-                                            🟢 เปิดใช้งาน
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">46</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">2,210₿</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 นาทีที่แล้ว</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="event.stopPropagation(); manageBranch('สาขารังสิต')" 
-                                                class="text-blue-600 hover:text-blue-900">จัดการ</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-semibold text-gray-800">กิจกรรมล่าสุด</h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                    <span class="text-green-600 text-sm">📦</span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm text-gray-800"><strong>สาขาสยาม</strong> สร้างออเดอร์ใหม่ 5 รายการ</p>
-                                    <p class="text-xs text-gray-500">2 นาทีที่แล้ว</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <span class="text-blue-600 text-sm">💰</span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm text-gray-800"><strong>สาขาลาดพร้าว</strong> รับเงิน COD 1,250₿</p>
-                                    <p class="text-xs text-gray-500">5 นาทีที่แล้ว</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <span class="text-purple-600 text-sm">⚙️</span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm text-gray-800">อัปเดตราคาต้นทุน <strong>Flash Express</strong></p>
-                                    <p class="text-xs text-gray-500">15 นาทีที่แล้ว</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+<!-- Sidebar -->
+<div id="sidebar">
+  <div class="p-5 border-b border-white/10">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">📦</div>
+      <div>
+        <div class="text-white font-bold text-base leading-tight">ProShip Easy</div>
+        <div class="text-white/50 text-xs">Master Admin</div>
+      </div>
     </div>
+  </div>
+  <div class="mt-4 space-y-0.5">
+    <div class="nav-item active" onclick="showSection('dashboard')" id="nav-dashboard">
+      <span>📊</span> หน้าหลัก
+    </div>
+    <div class="nav-item" onclick="showSection('branches')" id="nav-branches">
+      <span>🏢</span> สาขา
+    </div>
+    <div class="nav-item" onclick="showSection('topup')" id="nav-topup">
+      <span>💰</span> อนุมัติเติมเงิน
+      <span class="badge bg-red-500 text-white ml-auto" id="pending-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showSection('usage-report')" id="nav-usage-report">
+      <span>📈</span> รายงานการใช้งาน
+    </div>
+    <div class="nav-item" onclick="showSection('finance-report')" id="nav-finance-report">
+      <span>💵</span> รายงานการเงิน
+    </div>
+    <div class="nav-item" onclick="showSection('settings')" id="nav-settings">
+      <span>⚙️</span> ตั้งค่า
+    </div>
+  </div>
+  <div class="absolute bottom-4 left-0 right-0 px-3">
+    <div class="nav-item" onclick="logout()">
+      <span>🚪</span> ออกจากระบบ
+    </div>
+  </div>
+</div>
 
-    <script src="shared.js"></script>
-    <script>
-        // Branch management functions
-        function openBranch(branchName) {
-            const branchData = {
-                name: branchName,
-                id: branchName.replace('สาขา', '').toLowerCase(),
-                status: branchName === 'สาขาบางนา' ? 'maintenance' : 'active'
-            };
-            
-            proshipNav.openBranchView(branchData);
-        }
+<!-- Main -->
+<div class="ml-[260px] min-h-screen">
+  <!-- Top Header -->
+  <div class="sticky top-0 z-40 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-bold text-gray-800" id="page-title">แดชบอร์ดหลัก</h1>
+      <p class="text-xs text-gray-400" id="page-sub">ภาพรวมระบบ ProShip Easy</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-gray-500">👑 คุณจิ๋ว</span>
+      <div class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-bold">จ</div>
+    </div>
+  </div>
 
-        function manageBranch(branchName) {
-            showToast(`จัดการ${branchName} - ฟีเจอร์กำลังพัฒนา`, 'info');
-        }
+  <main class="p-6">
 
-        function addNewBranch() {
-            showToast('เพิ่มสาขาใหม่ - ฟีเจอร์กำลังพัฒนา', 'info');
-        }
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <div class="section active" id="section-dashboard">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="card stat-card p-5">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">🏪</div>
+            <div><p class="text-xs text-gray-500">สาขาทั้งหมด</p><p class="text-2xl font-bold">4</p></div>
+          </div>
+        </div>
+        <div class="card stat-card p-5">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 bg-green-100 rounded-xl flex items-center justify-center text-2xl">📦</div>
+            <div><p class="text-xs text-gray-500">ออเดอร์วันนี้</p><p class="text-2xl font-bold">247</p></div>
+          </div>
+        </div>
+        <div class="card stat-card p-5">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">💰</div>
+            <div><p class="text-xs text-gray-500">รายได้วันนี้</p><p class="text-2xl font-bold text-purple-700">฿12,450</p></div>
+          </div>
+        </div>
+        <div class="card stat-card p-5">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 bg-yellow-100 rounded-xl flex items-center justify-center text-2xl">💳</div>
+            <div><p class="text-xs text-gray-500">รอเติมเงิน</p><p class="text-2xl font-bold text-orange-600">3</p></div>
+          </div>
+        </div>
+      </div>
 
-        // Master quick order form
-        function toggleMasterOrder() {
-            const form = document.getElementById('master-order-form');
-            const btn = document.getElementById('master-order-toggle');
-            if (form.classList.contains('hidden')) {
-                form.classList.remove('hidden');
-                btn.textContent = '▲ ย่อ';
-            } else {
-                form.classList.add('hidden');
-                btn.textContent = '▼ ขยาย';
-            }
-        }
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <button onclick="showSection('branches')" class="card p-4 text-left hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3"><span class="text-3xl">🏢</span><div><p class="font-semibold text-gray-800">จัดการสาขา</p><p class="text-xs text-gray-500">สร้าง/แก้ไขสาขา</p></div></div>
+        </button>
+        <button onclick="showSection('topup')" class="card p-4 text-left hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3"><span class="text-3xl">💰</span><div><p class="font-semibold text-gray-800">อนุมัติเติมเงิน</p><p class="text-xs text-gray-500">3 รายการรอ</p></div></div>
+        </button>
+        <button onclick="showSection('settings')" class="card p-4 text-left hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3"><span class="text-3xl">⚙️</span><div><p class="font-semibold text-gray-800">ตั้งค่าราคา</p><p class="text-xs text-gray-500">จัดการต้นทุน</p></div></div>
+        </button>
+      </div>
 
-        let masterCarrierSelected = null;
-        function selectMasterCarrier(el, carrier) {
-            document.querySelectorAll('.master-carrier-btn').forEach(b => {
-                b.classList.remove('border-purple-500', 'bg-purple-50');
-                b.classList.add('border-gray-200');
-            });
-            el.classList.add('border-purple-500', 'bg-purple-50');
-            el.classList.remove('border-gray-200');
-            masterCarrierSelected = carrier;
-        }
+      <!-- Quick Order Shortcut -->
+      <div class="card mb-6 overflow-hidden">
+        <div class="px-5 py-4 flex items-center justify-between border-b border-gray-100">
+          <div>
+            <h2 class="font-bold text-gray-800">⚡ ทางลัด — สร้างออเดอร์ใหม่</h2>
+            <p class="text-xs text-gray-500 mt-0.5">Master สามารถลงออเดอร์โดยตรงได้</p>
+          </div>
+          <button onclick="toggleQuickOrder()" id="qo-btn"
+                  class="text-sm text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-lg font-medium transition-colors">▼ ขยาย</button>
+        </div>
+        <div id="quick-order-body" class="hidden p-5">
+          <form onsubmit="submitQuickOrder(event)" class="space-y-4">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <h3 class="text-sm font-semibold text-blue-800 mb-3">📤 ข้อมูลผู้ส่ง</h3>
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">ชื่อผู้ส่ง *</label>
+                  <input type="text" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="นายวิชัย พัสดุดี"></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">เบอร์โทร *</label>
+                  <input type="tel" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="089-999-8888"></div>
+              </div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">ที่อยู่ผู้ส่ง *</label>
+              <textarea required rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="99/9 ถ.เจริญกรุง กรุงเทพฯ 10500"></textarea>
+            </div>
+            <div class="bg-purple-50 border border-purple-200 rounded-xl p-4">
+              <h3 class="text-sm font-semibold text-purple-800 mb-3">📥 ข้อมูลผู้รับ</h3>
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">ชื่อผู้รับ *</label>
+                  <input type="text" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="นายสมชาย ใจดี"></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">เบอร์โทร *</label>
+                  <input type="tel" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="081-234-5678"></div>
+              </div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">ที่อยู่จัดส่ง *</label>
+              <textarea required rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="123/45 ซ.รามคำแหง 39 กรุงเทพฯ 10310"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-2">เลือกขนส่ง *</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <div class="carrier-select-btn" onclick="selCarrier(this,'flash')"><div class="text-xl">⚡</div><div class="text-xs font-medium">Flash</div></div>
+                  <div class="carrier-select-btn" onclick="selCarrier(this,'jt')"><div class="text-xl">🔴</div><div class="text-xs font-medium">J&amp;T</div></div>
+                  <div class="carrier-select-btn" onclick="selCarrier(this,'kerry')"><div class="text-xl">🟢</div><div class="text-xs font-medium">Kerry</div></div>
+                  <div class="carrier-select-btn" onclick="selCarrier(this,'post')"><div class="text-xl">🇹🇭</div><div class="text-xs font-medium">ไปรษณีย์</div></div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม) *</label>
+                <select required class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm">
+                  <option value="">-- เลือกน้ำหนัก --</option>
+                  <option>0 – 3 กก.</option><option>3 – 5 กก.</option>
+                  <option>5 – 10 กก.</option><option>10 – 15 กก.</option><option>15 – 20 กก.</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <label class="toggle-sw"><input type="checkbox" id="qo-cod" onchange="toggleQOCOD()"><span class="toggle-sl"></span></label>
+                <span class="text-sm font-medium text-gray-700">เก็บเงินปลายทาง (COD)</span>
+              </label>
+              <input type="number" id="qo-cod-amt" placeholder="ยอด COD (฿)"
+                     class="hidden flex-1 border border-orange-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
+            </div>
+            <button type="submit"
+                    class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold py-3 rounded-xl transition-all shadow-md">
+              📦 สร้างออเดอร์
+            </button>
+          </form>
+        </div>
+      </div>
 
-        function toggleMasterCOD() {
-            const checked = document.getElementById('master-cod-toggle').checked;
-            const amtInput = document.getElementById('master-cod-amount');
-            const bg = document.getElementById('master-cod-bg');
-            const dot = document.getElementById('master-cod-dot');
-            if (checked) {
-                amtInput.classList.remove('hidden');
-                bg.classList.replace('bg-gray-300', 'bg-orange-400');
-                dot.style.transform = 'translateX(20px)';
-            } else {
-                amtInput.classList.add('hidden');
-                bg.classList.replace('bg-orange-400', 'bg-gray-300');
-                dot.style.transform = '';
-            }
-        }
+      <!-- Branch Table -->
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="font-bold text-gray-800">สาขาทั้งหมด</h2>
+          <button onclick="showSection('branches')" class="text-sm text-purple-600 font-medium">จัดการสาขา →</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th class="px-5 py-3 text-left">สาขา</th>
+                <th class="px-5 py-3 text-left">สถานะ</th>
+                <th class="px-5 py-3 text-left">ออเดอร์วันนี้</th>
+                <th class="px-5 py-3 text-left">รายได้</th>
+                <th class="px-5 py-3 text-left">กระเป๋าเงิน</th>
+                <th class="px-5 py-3 text-left">อัปเดตล่าสุด</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">🏪 สาขาสยาม</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">🟢 เปิด</span></td>
+                <td class="px-5 py-3 font-medium">89</td>
+                <td class="px-5 py-3 font-medium text-green-600">฿4,230</td>
+                <td class="px-5 py-3">฿3,500</td>
+                <td class="px-5 py-3 text-gray-400">2 นาทีที่แล้ว</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">🏪 สาขาลาดพร้าว</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">🟢 เปิด</span></td>
+                <td class="px-5 py-3 font-medium">67</td>
+                <td class="px-5 py-3 font-medium text-green-600">฿3,120</td>
+                <td class="px-5 py-3">฿1,200</td>
+                <td class="px-5 py-3 text-gray-400">5 นาทีที่แล้ว</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">🏪 สาขาอุดมสุข</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">🟢 เปิด</span></td>
+                <td class="px-5 py-3 font-medium">45</td>
+                <td class="px-5 py-3 font-medium text-green-600">฿2,890</td>
+                <td class="px-5 py-3 text-orange-500 font-semibold">฿320 ⚠️</td>
+                <td class="px-5 py-3 text-gray-400">8 นาทีที่แล้ว</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">🏪 สาขาบางแค</td>
+                <td class="px-5 py-3"><span class="status-badge bg-yellow-100 text-yellow-700">🟡 ปิดชั่วคราว</span></td>
+                <td class="px-5 py-3 font-medium text-gray-400">0</td>
+                <td class="px-5 py-3 text-gray-400">฿0</td>
+                <td class="px-5 py-3">฿800</td>
+                <td class="px-5 py-3 text-gray-400">3 ชั่วโมงที่แล้ว</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /dashboard -->
 
-        function submitMasterOrder(e) {
-            e.preventDefault();
-            if (!masterCarrierSelected) {
-                showToast('กรุณาเลือกบริษัทขนส่ง', 'error');
-                return;
-            }
-            const orderId = 'ORD' + Date.now();
-            showToast(`✅ สร้างออเดอร์สำเร็จ! #${orderId}`, 'success');
-            document.getElementById('master-quick-order').reset();
-            document.querySelectorAll('.master-carrier-btn').forEach(b => {
-                b.classList.remove('border-purple-500','bg-purple-50');
-                b.classList.add('border-gray-200');
-            });
-            masterCarrierSelected = null;
-        }
+    <!-- ═══════════════ BRANCHES ═══════════════ -->
+    <div class="section" id="section-branches">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-800">🏢 จัดการสาขา</h2>
+        <button onclick="showSection('create-branch')"
+                class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity">
+          + สร้างสาขาใหม่
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card p-5">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center text-white text-xl">🏪</div>
+            <div><h3 class="font-bold text-gray-800">สาขาสยาม</h3><p class="text-xs text-gray-500">username: siam001</p></div>
+            <span class="ml-auto status-badge bg-green-100 text-green-700">🟢 เปิด</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 text-center text-sm">
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">ออเดอร์</p><p class="font-bold">89</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">รายได้</p><p class="font-bold text-green-600">฿4,230</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">เงินคงเหลือ</p><p class="font-bold">฿3,500</p></div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button onclick="alert('แก้ไขสาขาสยาม')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
+          </div>
+        </div>
+        <div class="card p-5">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white text-xl">🏪</div>
+            <div><h3 class="font-bold text-gray-800">สาขาลาดพร้าว</h3><p class="text-xs text-gray-500">username: ladprao01</p></div>
+            <span class="ml-auto status-badge bg-green-100 text-green-700">🟢 เปิด</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 text-center text-sm">
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">ออเดอร์</p><p class="font-bold">67</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">รายได้</p><p class="font-bold text-green-600">฿3,120</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">เงินคงเหลือ</p><p class="font-bold">฿1,200</p></div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button onclick="alert('แก้ไขสาขาลาดพร้าว')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
+          </div>
+        </div>
+        <div class="card p-5">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-xl flex items-center justify-center text-white text-xl">🏪</div>
+            <div><h3 class="font-bold text-gray-800">สาขาอุดมสุข</h3><p class="text-xs text-gray-500">username: udom001</p></div>
+            <span class="ml-auto status-badge bg-orange-100 text-orange-700">⚠️ เงินน้อย</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 text-center text-sm">
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">ออเดอร์</p><p class="font-bold">45</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">รายได้</p><p class="font-bold text-green-600">฿2,890</p></div>
+            <div class="bg-orange-50 rounded-lg p-2"><p class="text-orange-500 text-xs">เงินคงเหลือ</p><p class="font-bold text-orange-600">฿320</p></div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button onclick="alert('แก้ไขสาขาอุดมสุข')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
+          </div>
+        </div>
+        <div class="card p-5">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gray-300 rounded-xl flex items-center justify-center text-white text-xl">🏪</div>
+            <div><h3 class="font-bold text-gray-800">สาขาบางแค</h3><p class="text-xs text-gray-500">username: bangkae1</p></div>
+            <span class="ml-auto status-badge bg-yellow-100 text-yellow-700">🟡 ปิดชั่วคราว</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 text-center text-sm">
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">ออเดอร์</p><p class="font-bold text-gray-400">0</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">รายได้</p><p class="font-bold text-gray-400">฿0</p></div>
+            <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">เงินคงเหลือ</p><p class="font-bold">฿800</p></div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button onclick="alert('แก้ไขสาขาบางแค')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /branches -->
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', () => {
-            // Update stats periodically (mock)
-            setInterval(() => {
-                const orderCount = document.querySelector('.stat-card:nth-child(2) .text-2xl');
-                if (orderCount) {
-                    const current = parseInt(orderCount.textContent);
-                    orderCount.textContent = current + Math.floor(Math.random() * 3);
-                }
-            }, 30000);
-        });
-    </script>
+    <!-- ═══════════════ CREATE BRANCH ═══════════════ -->
+    <div class="section" id="section-create-branch">
+      <div class="flex items-center gap-3 mb-6">
+        <button onclick="showSection('branches')" class="text-gray-500 hover:text-gray-700 text-sm">← กลับ</button>
+        <h2 class="text-xl font-bold text-gray-800">➕ สร้างสาขาใหม่</h2>
+      </div>
+      <div class="card p-6 max-w-4xl">
+        <!-- Basic Info -->
+        <h3 class="font-bold text-gray-700 mb-4 text-base">ข้อมูลสาขา</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">ชื่อสาขา *</label>
+            <input type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="เช่น สาขารังสิต">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Username *</label>
+            <input type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="เช่น rangsit01">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Password *</label>
+            <input type="password" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="รหัสผ่าน">
+          </div>
+        </div>
+
+        <!-- Carrier Pricing Tiers -->
+        <h3 class="font-bold text-gray-700 mb-4 text-base">ราคาต้นทุนตามน้ำหนัก (กก.)</h3>
+        <!-- Carrier Tabs -->
+        <div class="flex gap-2 mb-5 flex-wrap" id="carrier-tabs">
+          <button class="carrier-tab active" onclick="switchCarrierTab(this,'jt')">⚡ J&amp;T Express</button>
+          <button class="carrier-tab" onclick="switchCarrierTab(this,'flash')">⚡ Flash Express</button>
+          <button class="carrier-tab" onclick="switchCarrierTab(this,'kerry')">🟢 Kerry</button>
+          <button class="carrier-tab" onclick="switchCarrierTab(this,'post')">🇹🇭 ไปรษณีย์ไทย</button>
+        </div>
+
+        <!-- Carrier Panels -->
+        <div id="carrier-panel-jt" class="carrier-panel">
+          <div class="space-y-2" id="tiers-jt">
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="20" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="25" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="35" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="50" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="20" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="70" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+          </div>
+          <button onclick="addTier('jt')" class="mt-3 text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1">
+            + เพิ่มช่วงน้ำหนัก
+          </button>
+        </div>
+        <div id="carrier-panel-flash" class="carrier-panel hidden">
+          <div class="space-y-2" id="tiers-flash">
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="18" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="22" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="30" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="45" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+            <div class="tier-row">
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+              <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="20" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="62" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+              <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>
+            </div>
+          </div>
+          <button onclick="addTier('flash')" class="mt-3 text-sm text-purple-600 hover:text-purple-800 font-medium">+ เพิ่มช่วงน้ำหนัก</button>
+        </div>
+        <div id="carrier-panel-kerry" class="carrier-panel hidden">
+          <div class="space-y-2" id="tiers-kerry">
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="22" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="28" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="38" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="55" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="20" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="75" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+          </div>
+          <button onclick="addTier('kerry')" class="mt-3 text-sm text-purple-600 hover:text-purple-800 font-medium">+ เพิ่มช่วงน้ำหนัก</button>
+        </div>
+        <div id="carrier-panel-post" class="carrier-panel hidden">
+          <div class="space-y-2" id="tiers-post">
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="20" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="5" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="28" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="10" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="40" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+            <div class="tier-row"><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="15" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div><div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="20" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="55" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div><button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button></div>
+          </div>
+          <button onclick="addTier('post')" class="mt-3 text-sm text-purple-600 hover:text-purple-800 font-medium">+ เพิ่มช่วงน้ำหนัก</button>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-100">
+          <button onclick="showSection('branches')" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-xl text-sm hover:bg-gray-50">ยกเลิก</button>
+          <button onclick="createBranch()"
+                  class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl text-sm font-semibold hover:opacity-90">
+            ✅ สร้างสาขา
+          </button>
+        </div>
+      </div>
+    </div><!-- /create-branch -->
+
+    <!-- ═══════════════ TOPUP APPROVAL ═══════════════ -->
+    <div class="section" id="section-topup">
+      <h2 class="text-xl font-bold text-gray-800 mb-6">💰 อนุมัติเติมเงิน</h2>
+
+      <!-- Pending -->
+      <div class="card mb-6 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800">รายการรอการอนุมัติ</h3>
+          <span class="badge bg-red-500 text-white text-sm px-3 py-1">3 รายการ</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th class="px-5 py-3 text-left">สาขา</th>
+                <th class="px-5 py-3 text-left">จำนวน</th>
+                <th class="px-5 py-3 text-left">วันเวลา</th>
+                <th class="px-5 py-3 text-left">สลิป</th>
+                <th class="px-5 py-3 text-left">การดำเนินการ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100" id="pending-table">
+              <tr id="pending-1">
+                <td class="px-5 py-4 font-medium">🏪 สาขาอุดมสุข</td>
+                <td class="px-5 py-4 font-bold text-green-600">฿1,000</td>
+                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 14:32</td>
+                <td class="px-5 py-4">
+                  <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors" onclick="alert('แสดงสลิปขนาดเต็ม')">
+                    <span class="text-2xl">🧾</span>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex gap-2">
+                    <button onclick="approveTopup('1','สาขาอุดมสุข','1,000')"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">✅ อนุมัติ</button>
+                    <button onclick="showRejectModal('1','สาขาอุดมสุข')"
+                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">❌ ปฏิเสธ</button>
+                  </div>
+                </td>
+              </tr>
+              <tr id="pending-2">
+                <td class="px-5 py-4 font-medium">🏪 สาขาสยาม</td>
+                <td class="px-5 py-4 font-bold text-green-600">฿2,000</td>
+                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 13:15</td>
+                <td class="px-5 py-4">
+                  <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors" onclick="alert('แสดงสลิปขนาดเต็ม')">
+                    <span class="text-2xl">🧾</span>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex gap-2">
+                    <button onclick="approveTopup('2','สาขาสยาม','2,000')"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">✅ อนุมัติ</button>
+                    <button onclick="showRejectModal('2','สาขาสยาม')"
+                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">❌ ปฏิเสธ</button>
+                  </div>
+                </td>
+              </tr>
+              <tr id="pending-3">
+                <td class="px-5 py-4 font-medium">🏪 สาขาบางแค</td>
+                <td class="px-5 py-4 font-bold text-green-600">฿500</td>
+                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 11:05</td>
+                <td class="px-5 py-4">
+                  <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors" onclick="alert('แสดงสลิปขนาดเต็ม')">
+                    <span class="text-2xl">🧾</span>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex gap-2">
+                    <button onclick="approveTopup('3','สาขาบางแค','500')"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">✅ อนุมัติ</button>
+                    <button onclick="showRejectModal('3','สาขาบางแค')"
+                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">❌ ปฏิเสธ</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div id="no-pending" class="hidden p-8 text-center text-gray-400">
+            <div class="text-4xl mb-2">✅</div>
+            <p class="font-medium">ไม่มีรายการรอการอนุมัติ</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800">ประวัติการอนุมัติ</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th class="px-5 py-3 text-left">สาขา</th>
+                <th class="px-5 py-3 text-left">จำนวน</th>
+                <th class="px-5 py-3 text-left">วันเวลา</th>
+                <th class="px-5 py-3 text-left">สถานะ</th>
+                <th class="px-5 py-3 text-left">เหตุผล</th>
+              </tr>
+            </thead>
+            <tbody id="history-table" class="divide-y divide-gray-100">
+              <tr>
+                <td class="px-5 py-3 font-medium">🏪 สาขาลาดพร้าว</td>
+                <td class="px-5 py-3 font-bold text-green-600">฿1,000</td>
+                <td class="px-5 py-3 text-gray-500">26 ก.พ. 2569, 16:20</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">✅ อนุมัติ</span></td>
+                <td class="px-5 py-3 text-gray-400">-</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium">🏪 สาขาบางแค</td>
+                <td class="px-5 py-3 font-bold text-red-500">฿300</td>
+                <td class="px-5 py-3 text-gray-500">25 ก.พ. 2569, 10:45</td>
+                <td class="px-5 py-3"><span class="status-badge bg-red-100 text-red-700">❌ ปฏิเสธ</span></td>
+                <td class="px-5 py-3 text-red-500 text-xs">สลิปไม่ชัดเจน</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium">🏪 สาขาสยาม</td>
+                <td class="px-5 py-3 font-bold text-green-600">฿2,000</td>
+                <td class="px-5 py-3 text-gray-500">24 ก.พ. 2569, 09:10</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">✅ อนุมัติ</span></td>
+                <td class="px-5 py-3 text-gray-400">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /topup -->
+
+    <!-- ═══════════════ USAGE REPORT ═══════════════ -->
+    <div class="section" id="section-usage-report">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-800">📈 รายงานการใช้งาน</h2>
+        <div class="flex gap-2">
+          <select class="border border-gray-300 rounded-xl px-3 py-2 text-sm"><option>7 วันล่าสุด</option><option>30 วัน</option><option>3 เดือน</option></select>
+          <select class="border border-gray-300 rounded-xl px-3 py-2 text-sm"><option>ทุกสาขา</option><option>สาขาสยาม</option><option>สาขาลาดพร้าว</option><option>สาขาอุดมสุข</option><option>สาขาบางแค</option></select>
+        </div>
+      </div>
+      <!-- Summary cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="card p-5 text-center"><p class="text-3xl font-bold text-purple-600">4</p><p class="text-xs text-gray-500 mt-1">สาขาทั้งหมด</p></div>
+        <div class="card p-5 text-center"><p class="text-3xl font-bold text-blue-600">1,847</p><p class="text-xs text-gray-500 mt-1">ออเดอร์รวม</p></div>
+        <div class="card p-5 text-center"><p class="text-3xl font-bold text-green-600">฿87,230</p><p class="text-xs text-gray-500 mt-1">รายได้รวม</p></div>
+        <div class="card p-5 text-center"><p class="text-3xl font-bold text-yellow-600">฿45,120</p><p class="text-xs text-gray-500 mt-1">กำไรรวม</p></div>
+      </div>
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100"><h3 class="font-bold text-gray-800">ประสิทธิภาพแต่ละสาขา</h3></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th class="px-5 py-3 text-left">สาขา</th>
+                <th class="px-5 py-3 text-left">ออเดอร์</th>
+                <th class="px-5 py-3 text-left">รายได้</th>
+                <th class="px-5 py-3 text-left">กำไร</th>
+                <th class="px-5 py-3 text-left">เติบโต</th>
+                <th class="px-5 py-3 text-left">ใช้งานล่าสุด</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 font-medium">🏪 สาขาสยาม</td><td class="px-5 py-3 font-bold">623</td><td class="px-5 py-3 text-green-600 font-bold">฿29,640</td><td class="px-5 py-3 text-green-600">฿15,230</td><td class="px-5 py-3"><span class="text-green-600 font-semibold">+18.5%</span></td><td class="px-5 py-3 text-gray-400">2 นาทีที่แล้ว</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 font-medium">🏪 สาขาลาดพร้าว</td><td class="px-5 py-3 font-bold">469</td><td class="px-5 py-3 text-green-600 font-bold">฿21,840</td><td class="px-5 py-3 text-green-600">฿11,650</td><td class="px-5 py-3"><span class="text-green-600 font-semibold">+12.3%</span></td><td class="px-5 py-3 text-gray-400">5 นาทีที่แล้ว</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 font-medium">🏪 สาขาอุดมสุข</td><td class="px-5 py-3 font-bold">433</td><td class="px-5 py-3 text-green-600 font-bold">฿20,230</td><td class="px-5 py-3 text-green-600">฿10,120</td><td class="px-5 py-3"><span class="text-green-600 font-semibold">+8.7%</span></td><td class="px-5 py-3 text-gray-400">8 นาทีที่แล้ว</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 font-medium">🏪 สาขาบางแค</td><td class="px-5 py-3 text-gray-400">322</td><td class="px-5 py-3 text-gray-400">฿15,520</td><td class="px-5 py-3 text-gray-400">฿8,120</td><td class="px-5 py-3"><span class="text-gray-400">ปิดชั่วคราว</span></td><td class="px-5 py-3 text-gray-400">3 ชั่วโมงที่แล้ว</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /usage-report -->
+
+    <!-- ═══════════════ FINANCE REPORT ═══════════════ -->
+    <div class="section" id="section-finance-report">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-800">💵 รายงานการเงิน</h2>
+        <button onclick="showToast('กำลังส่งออกรายงาน...','info')" class="border border-gray-300 text-gray-600 px-4 py-2 rounded-xl text-sm hover:bg-gray-50">📊 ส่งออก Excel</button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="card p-5"><p class="text-xs text-gray-500">เติมเงินรวมวันนี้</p><p class="text-2xl font-bold text-purple-600 mt-1">฿3,500</p></div>
+        <div class="card p-5"><p class="text-xs text-gray-500">ค่าส่งรวมวันนี้</p><p class="text-2xl font-bold text-blue-600 mt-1">฿12,450</p></div>
+        <div class="card p-5"><p class="text-xs text-gray-500">กำไรวันนี้</p><p class="text-2xl font-bold text-green-600 mt-1">฿6,230</p></div>
+        <div class="card p-5"><p class="text-xs text-gray-500">ยอดค้างชำระ</p><p class="text-2xl font-bold text-orange-600 mt-1">฿3,500</p></div>
+      </div>
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800">รายการเคลื่อนไหวกระเป๋าเงิน</h3>
+          <input type="date" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th class="px-5 py-3 text-left">วันเวลา</th>
+                <th class="px-5 py-3 text-left">สาขา</th>
+                <th class="px-5 py-3 text-left">ประเภท</th>
+                <th class="px-5 py-3 text-left">จำนวน</th>
+                <th class="px-5 py-3 text-left">ยอดคงเหลือ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 text-gray-500">27 ก.พ., 15:30</td><td class="px-5 py-3 font-medium">สาขาสยาม</td><td class="px-5 py-3"><span class="status-badge bg-blue-100 text-blue-700">ค่าส่ง</span></td><td class="px-5 py-3 text-red-500 font-medium">-฿42</td><td class="px-5 py-3">฿3,458</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 text-gray-500">27 ก.พ., 14:50</td><td class="px-5 py-3 font-medium">สาขาลาดพร้าว</td><td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">เติมเงิน</span></td><td class="px-5 py-3 text-green-600 font-medium">+฿1,000</td><td class="px-5 py-3">฿1,200</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 text-gray-500">27 ก.พ., 13:20</td><td class="px-5 py-3 font-medium">สาขาอุดมสุข</td><td class="px-5 py-3"><span class="status-badge bg-blue-100 text-blue-700">ค่าส่ง</span></td><td class="px-5 py-3 text-red-500 font-medium">-฿45</td><td class="px-5 py-3">฿320</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 text-gray-500">27 ก.พ., 11:00</td><td class="px-5 py-3 font-medium">สาขาบางแค</td><td class="px-5 py-3"><span class="status-badge bg-purple-100 text-purple-700">ประกัน</span></td><td class="px-5 py-3 text-red-500 font-medium">-฿15</td><td class="px-5 py-3">฿800</td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3 text-gray-500">26 ก.พ., 17:00</td><td class="px-5 py-3 font-medium">สาขาสยาม</td><td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">เติมเงิน</span></td><td class="px-5 py-3 text-green-600 font-medium">+฿2,000</td><td class="px-5 py-3">฿3,500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /finance-report -->
+
+    <!-- ═══════════════ SETTINGS ═══════════════ -->
+    <div class="section" id="section-settings">
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mb-6 flex items-center gap-3">
+        <span class="text-2xl">⚠️</span>
+        <p class="text-sm text-yellow-800 font-medium">หน้านี้สำหรับผู้ดูแลระบบเท่านั้น การเปลี่ยนแปลงจะมีผลกับทุกสาขาทันที</p>
+      </div>
+      <h2 class="text-xl font-bold text-gray-800 mb-6">⚙️ ตั้งค่าราคาต้นทุน</h2>
+      <!-- Per-branch pricing table -->
+      <div class="card mb-6 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100"><h3 class="font-bold text-gray-800">ราคาต้นทุนต่อสาขา (0-3 กก.)</h3><p class="text-xs text-gray-500 mt-0.5">ราคาต้นทุนที่ตั้งให้แต่ละสาขา — สาขาไม่สามารถแก้ไขได้</p></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th class="px-5 py-3 text-left">สาขา</th>
+                <th class="px-5 py-3 text-left">J&amp;T ⚡</th>
+                <th class="px-5 py-3 text-left">Flash ⚡</th>
+                <th class="px-5 py-3 text-left">Kerry 🟢</th>
+                <th class="px-5 py-3 text-left">ไปรษณีย์ 🇹🇭</th>
+                <th class="px-5 py-3 text-left">ราคาขายต่ำสุด</th>
+                <th class="px-5 py-3 text-left">ราคาขายสูงสุด</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">สาขาสยาม</td>
+                <td class="px-5 py-3"><input type="number" value="20" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="18" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="22" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="15" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="80" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">สาขาลาดพร้าว</td>
+                <td class="px-5 py-3"><input type="number" value="20" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="18" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="22" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="15" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="80" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">สาขาอุดมสุข</td>
+                <td class="px-5 py-3"><input type="number" value="21" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="19" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="23" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="16" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="38" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="85" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-medium">สาขาบางแค</td>
+                <td class="px-5 py-3"><input type="number" value="20" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="18" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="22" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="15" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3"><input type="number" value="80" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="px-5 py-4 flex justify-end">
+          <button onclick="showToast('บันทึกการตั้งค่าสำเร็จ! 🎉','success')"
+                  class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90">
+            💾 บันทึกการตั้งค่า
+          </button>
+        </div>
+      </div>
+    </div><!-- /settings -->
+
+  </main>
+</div>
+
+<!-- Reject Modal -->
+<div id="reject-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold text-gray-800 mb-2">❌ ปฏิเสธรายการเติมเงิน</h3>
+    <p class="text-sm text-gray-500 mb-4">สาขา: <span id="reject-branch-name" class="font-semibold text-gray-800"></span></p>
+    <label class="block text-sm font-medium text-gray-700 mb-2">เหตุผลในการปฏิเสธ *</label>
+    <textarea id="reject-reason" rows="3" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-500 focus:outline-none mb-4" placeholder="เช่น สลิปไม่ชัดเจน, จำนวนไม่ตรง..."></textarea>
+    <div class="flex gap-3">
+      <button onclick="closeRejectModal()" class="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-xl text-sm hover:bg-gray-50">ยกเลิก</button>
+      <button onclick="confirmReject()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-semibold">ยืนยันปฏิเสธ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let rejectingId = null;
+  let qoCarrier = null;
+
+  // Section navigation
+  const sectionTitles = {
+    'dashboard': ['แดชบอร์ดหลัก', 'ภาพรวมระบบ ProShip Easy'],
+    'branches': ['จัดการสาขา', 'สร้าง ดู แก้ไขสาขาในระบบ'],
+    'create-branch': ['สร้างสาขาใหม่', 'เพิ่มสาขาและตั้งราคาต้นทุน'],
+    'topup': ['อนุมัติเติมเงิน', 'รายการรอการอนุมัติจากสาขา'],
+    'usage-report': ['รายงานการใช้งาน', 'ออเดอร์และรายได้แต่ละสาขา'],
+    'finance-report': ['รายงานการเงิน', 'การเติมเงินและเคลื่อนไหวกระเป๋าเงิน'],
+    'settings': ['ตั้งค่าระบบ', 'จัดการราคาต้นทุนและขีดจำกัดราคา'],
+  };
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const el = document.getElementById('section-' + id);
+    if (el) el.classList.add('active');
+    const nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.add('active');
+    const t = sectionTitles[id] || [id, ''];
+    document.getElementById('page-title').textContent = t[0];
+    document.getElementById('page-sub').textContent = t[1];
+    window.scrollTo(0, 0);
+  }
+
+  // Quick order
+  function toggleQuickOrder() {
+    const body = document.getElementById('quick-order-body');
+    const btn = document.getElementById('qo-btn');
+    body.classList.toggle('hidden');
+    btn.textContent = body.classList.contains('hidden') ? '▼ ขยาย' : '▲ ย่อ';
+  }
+  function selCarrier(el, c) {
+    document.querySelectorAll('.carrier-select-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected'); qoCarrier = c;
+  }
+  function toggleQOCOD() {
+    const chk = document.getElementById('qo-cod');
+    const amt = document.getElementById('qo-cod-amt');
+    amt.classList.toggle('hidden', !chk.checked);
+  }
+  function submitQuickOrder(e) {
+    e.preventDefault();
+    if (!qoCarrier) { showToast('กรุณาเลือกขนส่ง','error'); return; }
+    showToast('✅ สร้างออเดอร์สำเร็จ! #ORD' + Date.now().toString(36).toUpperCase(),'success');
+    e.target.reset();
+    document.querySelectorAll('.carrier-select-btn').forEach(b => b.classList.remove('selected'));
+    qoCarrier = null;
+  }
+
+  // Carrier tabs
+  function switchCarrierTab(btn, id) {
+    document.querySelectorAll('.carrier-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.carrier-panel').forEach(p => p.classList.add('hidden'));
+    document.getElementById('carrier-panel-' + id).classList.remove('hidden');
+  }
+
+  // Tier management
+  function addTier(carrier) {
+    const container = document.getElementById('tiers-' + carrier);
+    const row = document.createElement('div');
+    row.className = 'tier-row';
+    row.innerHTML = `
+      <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+      <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+      <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>`;
+    container.appendChild(row);
+  }
+  function removeTier(btn) {
+    const row = btn.closest('.tier-row');
+    if (row) row.remove();
+  }
+
+  // Topup approval
+  function approveTopup(id, branch, amount) {
+    const row = document.getElementById('pending-' + id);
+    if (row) row.remove();
+    addHistory(branch, '฿' + amount, 'approve', '-');
+    updatePendingCount();
+    showToast('✅ อนุมัติเติมเงิน ' + branch + ' ฿' + amount + ' สำเร็จ', 'success');
+  }
+
+  let rejectBranchName = '';
+  function showRejectModal(id, branch) {
+    rejectingId = id; rejectBranchName = branch;
+    document.getElementById('reject-branch-name').textContent = branch;
+    document.getElementById('reject-reason').value = '';
+    document.getElementById('reject-modal').classList.remove('hidden');
+  }
+  function closeRejectModal() { document.getElementById('reject-modal').classList.add('hidden'); }
+  function confirmReject() {
+    const reason = document.getElementById('reject-reason').value.trim();
+    if (!reason) { alert('กรุณาระบุเหตุผล'); return; }
+    const row = document.getElementById('pending-' + rejectingId);
+    if (row) row.remove();
+    addHistory(rejectBranchName, '฿—', 'reject', reason);
+    updatePendingCount();
+    closeRejectModal();
+    showToast('❌ ปฏิเสธรายการของ ' + rejectBranchName, 'error');
+  }
+  function addHistory(branch, amount, type, reason) {
+    const tbody = document.getElementById('history-table');
+    const isApprove = type === 'approve';
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50';
+    tr.innerHTML = `<td class="px-5 py-3 font-medium">🏪 ${branch}</td>
+      <td class="px-5 py-3 font-bold ${isApprove ? 'text-green-600':'text-red-500'}">${amount}</td>
+      <td class="px-5 py-3 text-gray-500">เพิ่งดำเนินการ</td>
+      <td class="px-5 py-3"><span class="status-badge ${isApprove ? 'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${isApprove ? '✅ อนุมัติ':'❌ ปฏิเสธ'}</span></td>
+      <td class="px-5 py-3 text-${isApprove ? 'gray-400':'red-500'} text-xs">${reason}</td>`;
+    tbody.insertBefore(tr, tbody.firstChild);
+  }
+  function updatePendingCount() {
+    const remaining = document.querySelectorAll('#pending-table tr[id^="pending-"]').length;
+    document.getElementById('pending-badge').textContent = remaining;
+    if (remaining === 0) {
+      document.getElementById('pending-table').classList.add('hidden');
+      document.getElementById('no-pending').classList.remove('hidden');
+    }
+  }
+
+  // Create branch
+  function createBranch() {
+    showToast('✅ สร้างสาขาใหม่สำเร็จ! กำลังเปลี่ยนหน้า...', 'success');
+    setTimeout(() => showSection('branches'), 1500);
+  }
+
+  // Logout
+  function logout() { window.location.href = 'index.html'; }
+
+  // Toast
+  function showToast(msg, type = 'info') {
+    const colors = { success:'#16a34a', error:'#dc2626', info:'#2563eb', warning:'#d97706' };
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    t.style.background = colors[type] || colors.info; t.style.opacity = '0';
+    document.body.appendChild(t);
+    setTimeout(() => t.style.opacity = '1', 10);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3500);
+  }
+</script>
 </body>
 </html>

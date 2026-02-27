@@ -10,7 +10,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * { font-family: 'Prompt', sans-serif; }
-
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
@@ -18,13 +17,11 @@
       align-items: center;
       justify-content: center;
     }
-
     .card {
       background: rgba(255,255,255,0.97);
       border-radius: 24px;
       box-shadow: 0 25px 60px rgba(0,0,0,0.25);
     }
-
     .role-card {
       border: 2.5px solid transparent;
       cursor: pointer;
@@ -32,51 +29,43 @@
       border-radius: 16px;
       background: #f8f7ff;
     }
-    .role-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102,126,234,0.2);
-    }
+    .role-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.2); }
     .role-card.selected-master {
       border-color: #764ba2;
       background: linear-gradient(135deg, #f3f0ff, #ede9fe);
       box-shadow: 0 4px 16px rgba(118,75,162,0.25);
     }
     .role-card.selected-branch {
-      border-color: #667eea;
+      border-color: #3b82f6;
       background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-      box-shadow: 0 4px 16px rgba(102,126,234,0.25);
+      box-shadow: 0 4px 16px rgba(59,130,246,0.25);
     }
-
     .login-btn {
       background: linear-gradient(135deg, #667eea, #764ba2);
       transition: opacity 0.2s;
     }
     .login-btn:hover { opacity: 0.9; }
     .login-btn:active { opacity: 0.8; }
-
     input:focus {
       outline: none;
       border-color: #764ba2;
       box-shadow: 0 0 0 3px rgba(118,75,162,0.15);
     }
-
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      15%       { transform: translateX(-8px); }
-      30%       { transform: translateX(8px); }
-      45%       { transform: translateX(-6px); }
-      60%       { transform: translateX(6px); }
-      75%       { transform: translateX(-4px); }
-      90%       { transform: translateX(4px); }
+      0%,100% { transform: translateX(0); }
+      15%      { transform: translateX(-8px); }
+      30%      { transform: translateX(8px); }
+      45%      { transform: translateX(-6px); }
+      60%      { transform: translateX(6px); }
+      75%      { transform: translateX(-4px); }
+      90%      { transform: translateX(4px); }
     }
     .shake { animation: shake 0.5s ease; }
   </style>
 </head>
 <body>
-
   <div class="card w-full max-w-md mx-4 p-8">
-
-    <!-- Logo / Branding -->
+    <!-- Branding -->
     <div class="text-center mb-8">
       <div class="text-5xl mb-2">📦</div>
       <h1 class="text-2xl font-bold text-gray-800">ProShip Easy</h1>
@@ -84,23 +73,18 @@
     </div>
 
     <!-- Role Selection -->
-    <p class="text-sm font-medium text-gray-500 mb-3 text-center">เลือกประเภทผู้ใช้งาน</p>
+    <p class="text-sm font-medium text-gray-500 mb-3 text-center">เลือกประเภทผู้ใช้งานก่อนเข้าสู่ระบบ</p>
     <div class="grid grid-cols-2 gap-3 mb-6">
-
-      <!-- Master Admin Card -->
       <div id="role-master" class="role-card p-4 text-center" onclick="selectRole('master')">
         <div class="text-3xl mb-1">👑</div>
         <div class="font-semibold text-gray-700 text-sm">Master Admin</div>
         <div class="text-xs text-gray-400 mt-0.5">คุณจิ๋ว / ผู้ดูแลระบบ</div>
       </div>
-
-      <!-- Branch Card -->
       <div id="role-branch" class="role-card p-4 text-center" onclick="selectRole('branch')">
         <div class="text-3xl mb-1">🏪</div>
         <div class="font-semibold text-gray-700 text-sm">สาขา</div>
         <div class="text-xs text-gray-400 mt-0.5">ร้านรับพัสดุ</div>
       </div>
-
     </div>
 
     <!-- Error Message -->
@@ -110,106 +94,59 @@
     <form id="login-form" onsubmit="handleLogin(event)">
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-600 mb-1.5">ชื่อผู้ใช้งาน</label>
-        <input
-          id="username"
-          type="text"
-          placeholder="กรอกชื่อผู้ใช้งาน"
-          class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-gray-50 transition-all duration-200"
-          autocomplete="username"
-        />
+        <input id="username" type="text" placeholder="กรอกชื่อผู้ใช้งาน"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-gray-50 transition-all duration-200"
+               autocomplete="username" />
       </div>
       <div class="mb-6">
         <label class="block text-sm font-medium text-gray-600 mb-1.5">รหัสผ่าน</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="กรอกรหัสผ่าน"
-          class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-gray-50 transition-all duration-200"
-          autocomplete="current-password"
-        />
+        <input id="password" type="password" placeholder="กรอกรหัสผ่าน"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-gray-50 transition-all duration-200"
+               autocomplete="current-password" />
       </div>
-
       <button type="submit" class="login-btn w-full text-white font-semibold py-3.5 rounded-xl text-base">
         เข้าสู่ระบบ
       </button>
     </form>
 
-    <!-- Forgot Password -->
     <p class="text-center text-xs text-gray-400 mt-4">ลืมรหัสผ่าน? ติดต่อ Admin</p>
-
-    <!-- Mock Hint -->
-    <p class="text-center text-xs text-gray-300 mt-6 border-t border-gray-100 pt-4">
-      ทดลองใช้: admin/1234 (Master) หรือ branch1/1234 (สาขา)
+    <p class="text-center text-xs text-gray-300 mt-4 border-t border-gray-100 pt-4">
+      ทดลองใช้: admin/1234 หรือ branch1/1234
     </p>
-
   </div>
 
   <script>
     let selectedRole = null;
-
     function selectRole(role) {
       selectedRole = role;
-      const masterCard = document.getElementById('role-master');
-      const branchCard = document.getElementById('role-branch');
-
-      masterCard.classList.remove('selected-master', 'selected-branch');
-      branchCard.classList.remove('selected-master', 'selected-branch');
-
-      if (role === 'master') {
-        masterCard.classList.add('selected-master');
-      } else {
-        branchCard.classList.add('selected-branch');
-      }
-
+      document.getElementById('role-master').classList.remove('selected-master','selected-branch');
+      document.getElementById('role-branch').classList.remove('selected-master','selected-branch');
+      if (role === 'master') document.getElementById('role-master').classList.add('selected-master');
+      else document.getElementById('role-branch').classList.add('selected-branch');
       hideError();
     }
-
     function showError(msg) {
       const el = document.getElementById('error-msg');
-      el.textContent = msg;
-      el.classList.remove('hidden');
+      el.textContent = msg; el.classList.remove('hidden');
     }
-
-    function hideError() {
-      const el = document.getElementById('error-msg');
-      el.classList.add('hidden');
-    }
-
+    function hideError() { document.getElementById('error-msg').classList.add('hidden'); }
     function shakeForm() {
-      const form = document.getElementById('login-form');
-      form.classList.remove('shake');
-      void form.offsetWidth; // reflow to restart animation
-      form.classList.add('shake');
+      const f = document.getElementById('login-form');
+      f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake');
     }
-
     function handleLogin(e) {
-      e.preventDefault();
-      hideError();
-
-      if (!selectedRole) {
-        showError('กรุณาเลือกประเภทผู้ใช้งาน');
-        return;
+      e.preventDefault(); hideError();
+      if (!selectedRole) { showError('กรุณาเลือกประเภทผู้ใช้งาน'); return; }
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      if (selectedRole === 'master' && u === 'admin' && p === '1234') {
+        window.location.href = 'master-dashboard.html'; return;
       }
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-
-      if (selectedRole === 'master') {
-        if (username === 'admin' && password === '1234') {
-          window.location.href = 'master-dashboard.html';
-          return;
-        }
-      } else if (selectedRole === 'branch') {
-        if (username === 'branch1' && password === '1234') {
-          window.location.href = 'branch.html';
-          return;
-        }
+      if (selectedRole === 'branch' && u === 'branch1' && p === '1234') {
+        window.location.href = 'branch.html'; return;
       }
-
-      shakeForm();
-      showError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      shakeForm(); showError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
     }
   </script>
-
 </body>
 </html>
