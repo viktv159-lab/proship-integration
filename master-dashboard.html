@@ -268,7 +268,7 @@
     <div class="section" id="section-branches">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-800">🏢 จัดการสาขา</h2>
-        <button onclick="showSection('create-branch')"
+        <button onclick="resetCreateBranchForm(); showSection('create-branch')"
                 class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity">
           + สร้างสาขาใหม่
         </button>
@@ -286,7 +286,7 @@
             <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">เงินคงเหลือ</p><p class="font-bold">฿3,500</p></div>
           </div>
           <div class="flex gap-2 mt-4">
-            <button onclick="alert('แก้ไขสาขาสยาม')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="editBranch('siam')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
             <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
           </div>
         </div>
@@ -302,7 +302,7 @@
             <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">เงินคงเหลือ</p><p class="font-bold">฿1,200</p></div>
           </div>
           <div class="flex gap-2 mt-4">
-            <button onclick="alert('แก้ไขสาขาลาดพร้าว')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="editBranch('ladprao')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
             <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
           </div>
         </div>
@@ -318,7 +318,7 @@
             <div class="bg-orange-50 rounded-lg p-2"><p class="text-orange-500 text-xs">เงินคงเหลือ</p><p class="font-bold text-orange-600">฿320</p></div>
           </div>
           <div class="flex gap-2 mt-4">
-            <button onclick="alert('แก้ไขสาขาอุดมสุข')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="editBranch('udom')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
             <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
           </div>
         </div>
@@ -334,7 +334,7 @@
             <div class="bg-gray-50 rounded-lg p-2"><p class="text-gray-500 text-xs">เงินคงเหลือ</p><p class="font-bold">฿800</p></div>
           </div>
           <div class="flex gap-2 mt-4">
-            <button onclick="alert('แก้ไขสาขาบางแค')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
+            <button onclick="editBranch('bangkae')" class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50">✏️ แก้ไข</button>
             <button onclick="window.open('branch.html','_blank')" class="flex-1 border border-blue-300 text-blue-600 py-2 rounded-lg text-sm hover:bg-blue-50">👁️ ดู</button>
           </div>
         </div>
@@ -345,7 +345,7 @@
     <div class="section" id="section-create-branch">
       <div class="flex items-center gap-3 mb-6">
         <button onclick="showSection('branches')" class="text-gray-500 hover:text-gray-700 text-sm">← กลับ</button>
-        <h2 class="text-xl font-bold text-gray-800">➕ สร้างสาขาใหม่</h2>
+        <h2 class="text-xl font-bold text-gray-800" id="create-branch-title">➕ สร้างสาขาใหม่</h2>
       </div>
       <div class="card p-6 max-w-4xl">
         <!-- Basic Info -->
@@ -353,15 +353,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">ชื่อสาขา *</label>
-            <input type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="เช่น สาขารังสิต">
+            <input type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" id="input-branch-name" placeholder="เช่น สาขารังสิต">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Username *</label>
-            <input type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="เช่น rangsit01">
+            <input type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" id="input-branch-username" placeholder="เช่น rangsit01">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Password *</label>
-            <input type="password" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="รหัสผ่าน">
+            <input type="password" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none" id="input-branch-password" placeholder="รหัสผ่าน">
           </div>
         </div>
 
@@ -461,9 +461,10 @@
 
         <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-100">
           <button onclick="showSection('branches')" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-xl text-sm hover:bg-gray-50">ยกเลิก</button>
-          <button onclick="createBranch()"
+          <button onclick="saveBranchForm()"
+                  id="save-branch-btn"
                   class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl text-sm font-semibold hover:opacity-90">
-            ✅ สร้างสาขา
+            <span id="save-branch-text">✅ สร้างสาขา</span>
           </button>
         </div>
       </div>
@@ -893,10 +894,76 @@
     }
   }
 
-  // Create branch
-  function createBranch() {
-    showToast('✅ สร้างสาขาใหม่สำเร็จ! กำลังเปลี่ยนหน้า...', 'success');
-    setTimeout(() => showSection('branches'), 1500);
+  // Branch data store (mock)
+  const branchesData = {
+    siam:    { name: 'สาขาสยาม',    username: 'siam001',  password: 'siam1234',  tiers: { jt:[{f:0,t:3,p:20},{f:3,t:5,p:25},{f:5,t:10,p:35},{f:10,t:15,p:50},{f:15,t:20,p:70}], flash:[{f:0,t:3,p:18},{f:3,t:5,p:22},{f:5,t:10,p:30},{f:10,t:15,p:45},{f:15,t:20,p:62}], kerry:[{f:0,t:3,p:22},{f:3,t:5,p:28},{f:5,t:10,p:38},{f:10,t:15,p:55},{f:15,t:20,p:75}], post:[{f:0,t:3,p:15},{f:3,t:5,p:20},{f:5,t:10,p:28},{f:10,t:15,p:40},{f:15,t:20,p:55}] } },
+    ladprao: { name: 'สาขาลาดพร้าว', username: 'ladprao01', password: 'lprao456', tiers: { jt:[{f:0,t:3,p:21},{f:3,t:5,p:26},{f:5,t:10,p:36},{f:10,t:15,p:52},{f:15,t:20,p:72}], flash:[{f:0,t:3,p:19},{f:3,t:5,p:23},{f:5,t:10,p:31},{f:10,t:15,p:47},{f:15,t:20,p:64}], kerry:[{f:0,t:3,p:23},{f:3,t:5,p:29},{f:5,t:10,p:39},{f:10,t:15,p:57},{f:15,t:20,p:77}], post:[{f:0,t:3,p:16},{f:3,t:5,p:21},{f:5,t:10,p:29},{f:10,t:15,p:42},{f:15,t:20,p:57}] } },
+    udom:    { name: 'สาขาอุดมสุข',  username: 'udom001',  password: 'udom5678', tiers: { jt:[{f:0,t:3,p:20},{f:3,t:5,p:25},{f:5,t:10,p:35},{f:10,t:15,p:50},{f:15,t:20,p:70}], flash:[{f:0,t:3,p:18},{f:3,t:5,p:22},{f:5,t:10,p:30},{f:10,t:15,p:45},{f:15,t:20,p:62}], kerry:[{f:0,t:3,p:22},{f:3,t:5,p:28},{f:5,t:10,p:38},{f:10,t:15,p:55},{f:15,t:20,p:75}], post:[{f:0,t:3,p:15},{f:3,t:5,p:20},{f:5,t:10,p:28},{f:10,t:15,p:40},{f:15,t:20,p:55}] } },
+    bangkae: { name: 'สาขาบางแค',   username: 'bangkae1', password: 'bkae9012', tiers: { jt:[{f:0,t:3,p:19},{f:3,t:5,p:24},{f:5,t:10,p:33},{f:10,t:15,p:48},{f:15,t:20,p:68}], flash:[{f:0,t:3,p:17},{f:3,t:5,p:21},{f:5,t:10,p:29},{f:10,t:15,p:44},{f:15,t:20,p:60}], kerry:[{f:0,t:3,p:21},{f:3,t:5,p:27},{f:5,t:10,p:37},{f:10,t:15,p:53},{f:15,t:20,p:73}], post:[{f:0,t:3,p:14},{f:3,t:5,p:19},{f:5,t:10,p:27},{f:10,t:15,p:39},{f:15,t:20,p:53}] } },
+  };
+  let editingBranchId = null;
+
+  function editBranch(id) {
+    const data = branchesData[id];
+    if (!data) return;
+    editingBranchId = id;
+
+    // Pre-fill fields
+    document.getElementById('input-branch-name').value = data.name;
+    document.getElementById('input-branch-username').value = data.username;
+    document.getElementById('input-branch-password').value = data.password;
+
+    // Fill tier data for all carriers
+    const carriers = ['jt','flash','kerry','post'];
+    carriers.forEach(carrier => {
+      const container = document.getElementById('tiers-' + carrier);
+      container.innerHTML = '';
+      (data.tiers[carrier] || []).forEach(tier => {
+        const row = document.createElement('div');
+        row.className = 'tier-row';
+        row.innerHTML = \`
+          <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="\${tier.f}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+          <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="\${tier.t}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="\${tier.p}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+          <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>\`;
+        container.appendChild(row);
+      });
+    });
+
+    // Reset to first carrier tab
+    document.querySelectorAll('.carrier-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+    document.querySelectorAll('.carrier-panel').forEach((p,i) => p.classList.toggle('hidden', i!==0));
+
+    // Update title & button
+    document.getElementById('create-branch-title').textContent = '✏️ แก้ไขสาขา — ' + data.name;
+    document.getElementById('save-branch-text').textContent = '💾 บันทึกการแก้ไข';
+
+    showSection('create-branch');
+    // Override page title (showSection already ran)
+    document.getElementById('page-title').textContent = 'แก้ไขสาขา';
+    document.getElementById('page-sub').textContent = data.name;
+  }
+
+  function resetCreateBranchForm() {
+    editingBranchId = null;
+    document.getElementById('create-branch-title').textContent = '➕ สร้างสาขาใหม่';
+    document.getElementById('save-branch-text').textContent = '✅ สร้างสาขา';
+    document.getElementById('input-branch-name').value = '';
+    document.getElementById('input-branch-username').value = '';
+    document.getElementById('input-branch-password').value = '';
+  }
+
+  function saveBranchForm() {
+    const name = document.getElementById('input-branch-name').value.trim();
+    if (!name) { showToast('กรุณากรอกชื่อสาขา', 'error'); return; }
+    if (editingBranchId) {
+      // Update mock data
+      branchesData[editingBranchId].name = name;
+      branchesData[editingBranchId].username = document.getElementById('input-branch-username').value.trim();
+      showToast('✅ บันทึกข้อมูลสาขา ' + name + ' สำเร็จ!', 'success');
+    } else {
+      showToast('✅ สร้างสาขา ' + name + ' สำเร็จ!', 'success');
+    }
+    setTimeout(() => { resetCreateBranchForm(); showSection('branches'); }, 1500);
   }
 
   // Logout
