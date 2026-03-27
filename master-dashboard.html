@@ -184,11 +184,11 @@
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม) *</label>
-                <select required class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm">
-                  <option value="">-- เลือกน้ำหนัก --</option>
-                  <option>0 – 3 กก.</option><option>3 – 5 กก.</option>
-                  <option>5 – 10 กก.</option><option>10 – 15 กก.</option><option>15 – 20 กก.</option>
-                </select>
+                <div class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-purple-500">
+                  <input type="number" required min="0.01" step="0.01" placeholder="เช่น 1.50"
+                         class="w-full text-sm focus:outline-none bg-transparent text-gray-800">
+                  <span class="text-gray-500 text-sm font-medium flex-shrink-0">กก.</span>
+                </div>
               </div>
             </div>
             <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-3">

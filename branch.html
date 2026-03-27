@@ -151,15 +151,12 @@
           <div class="card p-5 space-y-4">
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">น้ำหนักพัสดุ (กิโลกรัม) *</label>
-              <select id="weight-select" required onchange="calcTotal()"
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <option value="">-- เลือกน้ำหนัก --</option>
-                <option value="1">0 – 3 กก.</option>
-                <option value="2">3 – 5 กก.</option>
-                <option value="3">5 – 10 กก.</option>
-                <option value="4">10 – 15 กก.</option>
-                <option value="5">15 – 20 กก.</option>
-              </select>
+              <div class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-blue-500">
+                <input type="number" id="weight-input" required min="0.01" step="0.01" placeholder="เช่น 1.50"
+                       onchange="calcTotal()" oninput="calcTotal()"
+                       class="w-full text-sm focus:outline-none bg-transparent text-gray-800">
+                <span class="text-gray-500 text-sm font-medium flex-shrink-0">กก.</span>
+              </div>
             </div>
 
             <!-- ประกันสินค้า -->
@@ -504,7 +501,7 @@ function calcTotal() {
 function submitOrder(e) {
   e.preventDefault();
   if (!selectedCarrier) { showToast('กรุณาเลือกบริษัทขนส่ง', 'error'); return; }
-  if (!document.getElementById('weight-select').value) { showToast('กรุณาเลือกน้ำหนัก','error'); return; }
+  const weightVal = parseFloat(document.getElementById('weight-input').value); if (!weightVal || weightVal <= 0) { showToast('กรุณากรอกน้ำหนักพัสดุ','error'); return; }
   const ins = document.getElementById('insurance-toggle').checked ? insuranceFee : 0;
   const total = selectedCarrierPrice + ins;
   if (walletBalance < total) { showToast('ยอดเงินในกระเป๋าไม่เพียงพอ กรุณาเติมเงิน','error'); return; }
@@ -514,7 +511,7 @@ function submitOrder(e) {
     id: 'ORD-NEW-' + Date.now().toString(36).toUpperCase().slice(-6),
     recipient: e.target.querySelector('input[type=text]').value || 'ผู้รับ',
     carrier: selectedCarrier,
-    weight: document.getElementById('weight-select').options[document.getElementById('weight-select').selectedIndex].text,
+    weight: weightVal.toFixed(2) + ' กก.',
     price: selectedCarrierPrice,
     status: 'รอรับพัสดุ',
     tracking: selectedCarrier.toUpperCase() + Math.random().toString(36).slice(-8).toUpperCase() + 'TH',
