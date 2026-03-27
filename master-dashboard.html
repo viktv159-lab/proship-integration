@@ -472,126 +472,117 @@
 
     <!-- ═══════════════ TOPUP APPROVAL ═══════════════ -->
     <div class="section" id="section-topup">
-      <h2 class="text-xl font-bold text-gray-800 mb-6">💰 อนุมัติเติมเงิน</h2>
-
-      <!-- Pending -->
-      <div class="card mb-6 overflow-hidden">
-        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 class="font-bold text-gray-800">รายการรอการอนุมัติ</h3>
-          <span class="badge bg-red-500 text-white text-sm px-3 py-1">3 รายการ</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-              <tr>
-                <th class="px-5 py-3 text-left">สาขา</th>
-                <th class="px-5 py-3 text-left">จำนวน</th>
-                <th class="px-5 py-3 text-left">วันเวลา</th>
-                <th class="px-5 py-3 text-left">สลิป</th>
-                <th class="px-5 py-3 text-left">การดำเนินการ</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100" id="pending-table">
-              <tr id="pending-1">
-                <td class="px-5 py-4 font-medium">🏪 สาขาอุดมสุข</td>
-                <td class="px-5 py-4 font-bold text-green-600">฿1,000</td>
-                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 14:32</td>
-                <td class="px-5 py-4">
-                  <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors" onclick="alert('แสดงสลิปขนาดเต็ม')">
-                    <span class="text-2xl">🧾</span>
-                  </div>
-                </td>
-                <td class="px-5 py-4">
-                  <div class="flex gap-2">
-                    <button onclick="approveTopup('1','สาขาอุดมสุข','1,000')"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">✅ อนุมัติ</button>
-                    <button onclick="showRejectModal('1','สาขาอุดมสุข')"
-                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">❌ ปฏิเสธ</button>
-                  </div>
-                </td>
-              </tr>
-              <tr id="pending-2">
-                <td class="px-5 py-4 font-medium">🏪 สาขาสยาม</td>
-                <td class="px-5 py-4 font-bold text-green-600">฿2,000</td>
-                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 13:15</td>
-                <td class="px-5 py-4">
-                  <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors" onclick="alert('แสดงสลิปขนาดเต็ม')">
-                    <span class="text-2xl">🧾</span>
-                  </div>
-                </td>
-                <td class="px-5 py-4">
-                  <div class="flex gap-2">
-                    <button onclick="approveTopup('2','สาขาสยาม','2,000')"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">✅ อนุมัติ</button>
-                    <button onclick="showRejectModal('2','สาขาสยาม')"
-                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">❌ ปฏิเสธ</button>
-                  </div>
-                </td>
-              </tr>
-              <tr id="pending-3">
-                <td class="px-5 py-4 font-medium">🏪 สาขาบางแค</td>
-                <td class="px-5 py-4 font-bold text-green-600">฿500</td>
-                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 11:05</td>
-                <td class="px-5 py-4">
-                  <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors" onclick="alert('แสดงสลิปขนาดเต็ม')">
-                    <span class="text-2xl">🧾</span>
-                  </div>
-                </td>
-                <td class="px-5 py-4">
-                  <div class="flex gap-2">
-                    <button onclick="approveTopup('3','สาขาบางแค','500')"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">✅ อนุมัติ</button>
-                    <button onclick="showRejectModal('3','สาขาบางแค')"
-                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">❌ ปฏิเสธ</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div id="no-pending" class="hidden p-8 text-center text-gray-400">
-            <div class="text-4xl mb-2">✅</div>
-            <p class="font-medium">ไม่มีรายการรอการอนุมัติ</p>
-          </div>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-800">💰 อนุมัติเติมเงิน</h2>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-500">รอดำเนินการ:</span>
+          <span class="badge bg-red-500 text-white px-3 py-1 text-sm" id="pending-badge">3</span>
         </div>
       </div>
 
-      <!-- History -->
       <div class="card overflow-hidden">
-        <div class="px-5 py-4 border-b border-gray-100">
-          <h3 class="font-bold text-gray-800">ประวัติการอนุมัติ</h3>
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800">รายการทั้งหมด</h3>
+          <select id="topup-filter" onchange="filterTopup(this.value)" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-600">
+            <option value="all">ทุกสถานะ</option>
+            <option value="pending">รอดำเนินการ</option>
+            <option value="approved">อนุมัติแล้ว</option>
+            <option value="partial">อนุมัติบางส่วน</option>
+            <option value="rejected">ปฏิเสธแล้ว</option>
+          </select>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
               <tr>
                 <th class="px-5 py-3 text-left">สาขา</th>
-                <th class="px-5 py-3 text-left">จำนวน</th>
-                <th class="px-5 py-3 text-left">วันเวลา</th>
+                <th class="px-5 py-3 text-left">ยอดที่ขอ</th>
+                <th class="px-5 py-3 text-left">ยอดที่อนุมัติ</th>
+                <th class="px-5 py-3 text-left">วันที่</th>
+                <th class="px-5 py-3 text-left">สลิป</th>
                 <th class="px-5 py-3 text-left">สถานะ</th>
-                <th class="px-5 py-3 text-left">เหตุผล</th>
+                <th class="px-5 py-3 text-left">การดำเนินการ</th>
               </tr>
             </thead>
-            <tbody id="history-table" class="divide-y divide-gray-100">
-              <tr>
+            <tbody id="topup-table" class="divide-y divide-gray-100">
+              <tr class="hover:bg-gray-50" data-status="pending" id="topup-row-1">
+                <td class="px-5 py-4 font-medium">🏪 สาขาอุดมสุข</td>
+                <td class="px-5 py-4 font-bold text-gray-800">฿1,000</td>
+                <td class="px-5 py-4 text-gray-400">—</td>
+                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 14:32</td>
+                <td class="px-5 py-4"><div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200" onclick="alert('แสดงสลิป')"><span class="text-xl">🧾</span></div></td>
+                <td class="px-5 py-4"><span class="status-badge bg-orange-100 text-orange-700">⏳ รอดำเนินการ</span></td>
+                <td class="px-5 py-4">
+                  <button onclick="openApproveModal('1','สาขาอุดมสุข',1000,'27 ก.พ. 2569, 14:32')"
+                          class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold">
+                    ✅ อนุมัติ
+                  </button>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50" data-status="pending" id="topup-row-2">
+                <td class="px-5 py-4 font-medium">🏪 สาขาสยาม</td>
+                <td class="px-5 py-4 font-bold text-gray-800">฿2,000</td>
+                <td class="px-5 py-4 text-gray-400">—</td>
+                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 13:15</td>
+                <td class="px-5 py-4"><div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200" onclick="alert('แสดงสลิป')"><span class="text-xl">🧾</span></div></td>
+                <td class="px-5 py-4"><span class="status-badge bg-orange-100 text-orange-700">⏳ รอดำเนินการ</span></td>
+                <td class="px-5 py-4">
+                  <button onclick="openApproveModal('2','สาขาสยาม',2000,'27 ก.พ. 2569, 13:15')"
+                          class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold">
+                    ✅ อนุมัติ
+                  </button>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50" data-status="pending" id="topup-row-3">
+                <td class="px-5 py-4 font-medium">🏪 สาขาบางแค</td>
+                <td class="px-5 py-4 font-bold text-gray-800">฿500</td>
+                <td class="px-5 py-4 text-gray-400">—</td>
+                <td class="px-5 py-4 text-gray-500">27 ก.พ. 2569, 11:05</td>
+                <td class="px-5 py-4"><div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200" onclick="alert('แสดงสลิป')"><span class="text-xl">🧾</span></div></td>
+                <td class="px-5 py-4"><span class="status-badge bg-orange-100 text-orange-700">⏳ รอดำเนินการ</span></td>
+                <td class="px-5 py-4">
+                  <button onclick="openApproveModal('3','สาขาบางแค',500,'27 ก.พ. 2569, 11:05')"
+                          class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold">
+                    ✅ อนุมัติ
+                  </button>
+                </td>
+              </tr>
+              <!-- History -->
+              <tr class="hover:bg-gray-50" data-status="approved">
                 <td class="px-5 py-3 font-medium">🏪 สาขาลาดพร้าว</td>
+                <td class="px-5 py-3 text-gray-700">฿1,000</td>
                 <td class="px-5 py-3 font-bold text-green-600">฿1,000</td>
                 <td class="px-5 py-3 text-gray-500">26 ก.พ. 2569, 16:20</td>
-                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">✅ อนุมัติ</span></td>
-                <td class="px-5 py-3 text-gray-400">-</td>
+                <td class="px-5 py-3 text-gray-400">—</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">✅ อนุมัติแล้ว</span></td>
+                <td class="px-5 py-3 text-gray-400 text-xs">—</td>
               </tr>
-              <tr>
+              <tr class="hover:bg-gray-50" data-status="partial">
+                <td class="px-5 py-3 font-medium">🏪 สาขาลาดพร้าว</td>
+                <td class="px-5 py-3 text-gray-700">฿2,000</td>
+                <td class="px-5 py-3 font-bold text-blue-600">฿1,500</td>
+                <td class="px-5 py-3 text-gray-500">25 ก.พ. 2569, 15:30</td>
+                <td class="px-5 py-3 text-gray-400">—</td>
+                <td class="px-5 py-3"><span class="status-badge bg-blue-100 text-blue-700">🔵 อนุมัติบางส่วน</span></td>
+                <td class="px-5 py-3 text-gray-400 text-xs">—</td>
+              </tr>
+              <tr class="hover:bg-gray-50" data-status="rejected">
                 <td class="px-5 py-3 font-medium">🏪 สาขาบางแค</td>
-                <td class="px-5 py-3 font-bold text-red-500">฿300</td>
+                <td class="px-5 py-3 text-gray-700">฿300</td>
+                <td class="px-5 py-3 text-gray-400">—</td>
                 <td class="px-5 py-3 text-gray-500">25 ก.พ. 2569, 10:45</td>
-                <td class="px-5 py-3"><span class="status-badge bg-red-100 text-red-700">❌ ปฏิเสธ</span></td>
+                <td class="px-5 py-3 text-gray-400">—</td>
+                <td class="px-5 py-3"><span class="status-badge bg-red-100 text-red-700">❌ ปฏิเสธแล้ว</span></td>
                 <td class="px-5 py-3 text-red-500 text-xs">สลิปไม่ชัดเจน</td>
               </tr>
-              <tr>
+              <tr class="hover:bg-gray-50" data-status="approved">
                 <td class="px-5 py-3 font-medium">🏪 สาขาสยาม</td>
+                <td class="px-5 py-3 text-gray-700">฿2,000</td>
                 <td class="px-5 py-3 font-bold text-green-600">฿2,000</td>
                 <td class="px-5 py-3 text-gray-500">24 ก.พ. 2569, 09:10</td>
-                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">✅ อนุมัติ</span></td>
-                <td class="px-5 py-3 text-gray-400">-</td>
+                <td class="px-5 py-3 text-gray-400">—</td>
+                <td class="px-5 py-3"><span class="status-badge bg-green-100 text-green-700">✅ อนุมัติแล้ว</span></td>
+                <td class="px-5 py-3 text-gray-400 text-xs">—</td>
               </tr>
             </tbody>
           </table>
@@ -777,40 +768,15 @@
         <span class="text-gray-600" id="modal-date">—</span>
       </div>
     </div>
-    <!-- Approve Options -->
+    <!-- Editable Amount -->
     <div class="mb-5">
-      <p class="text-sm font-semibold text-gray-700 mb-3">เลือกจำนวนที่ต้องการอนุมัติ</p>
-      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer mb-2 transition-all"
-             id="opt-full-label"
-             onclick="selectApproveOption('full')"
-             style="border-color:#667eea; background:#f5f3ff;">
-        <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" id="radio-full" style="border-color:#667eea;">
-          <div class="w-2.5 h-2.5 rounded-full bg-purple-600"></div>
-        </div>
-        <div>
-          <p class="text-sm font-semibold text-gray-800">อนุมัติเต็มจำนวน</p>
-          <p class="text-xs text-gray-500">อนุมัติตามยอดที่สาขาส่งมา: <span class="font-bold text-green-600" id="opt-full-amount">—</span></p>
-        </div>
-      </label>
-      <label class="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-xl cursor-pointer transition-all"
-             id="opt-custom-label"
-             onclick="selectApproveOption('custom')">
-        <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0" id="radio-custom">
-          <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
-        </div>
-        <div class="flex-1">
-          <p class="text-sm font-semibold text-gray-800">ระบุจำนวนเอง</p>
-          <p class="text-xs text-gray-500">กรอกยอดที่ต้องการอนุมัติ (บางส่วน)</p>
-        </div>
-      </label>
-      <!-- Custom amount input -->
-      <div id="custom-amount-wrap" class="hidden mt-3 px-1">
-        <label class="block text-xs font-medium text-gray-600 mb-1.5">จำนวนเงินที่อนุมัติ (บาท)</label>
-        <div class="flex items-center gap-2">
-          <span class="text-gray-500 font-medium">฿</span>
-          <input type="number" id="custom-amount-input" min="1" placeholder="เช่น 500"
-                 class="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
-        </div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">จำนวนเงินที่อนุมัติ (บาท)</label>
+      <p class="text-xs text-gray-400 mb-3">ค้างไว้ตามยอดที่ขอมา — แก้ไขได้ก่อนอนุมัติ</p>
+      <div class="flex items-center gap-2 border-2 border-purple-300 rounded-xl px-4 py-2.5 focus-within:border-purple-500 bg-white">
+        <span class="text-gray-500 font-semibold text-base">฿</span>
+        <input type="number" id="approve-amount-input" min="1"
+               class="flex-1 text-lg font-bold text-gray-800 focus:outline-none bg-transparent"
+               placeholder="0">
       </div>
     </div>
     <!-- Action Buttons -->
@@ -921,85 +887,41 @@
     if (row) row.remove();
   }
 
-  // ─── Topup Approval (new popup flow) ───
+  // ─── Topup Approval (popup flow) ───
   let approvingId = null, approvingBranch = '', approvingRequested = 0, approvingDate = '';
-  let approveOption = 'full'; // 'full' | 'custom'
 
   function openApproveModal(id, branch, requested, date) {
     approvingId = id; approvingBranch = branch;
     approvingRequested = requested; approvingDate = date;
-    approveOption = 'full';
     document.getElementById('modal-branch-name').textContent = branch;
     document.getElementById('modal-requested-amount').textContent = '฿' + requested.toLocaleString();
     document.getElementById('modal-date').textContent = date;
-    document.getElementById('opt-full-amount').textContent = '฿' + requested.toLocaleString();
-    document.getElementById('custom-amount-input').value = '';
-    document.getElementById('custom-amount-wrap').classList.add('hidden');
-    selectApproveOption('full');
+    // Pre-fill amount with requested amount (editable)
+    document.getElementById('approve-amount-input').value = requested;
     document.getElementById('approve-modal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('approve-amount-input').focus(), 100);
   }
   function closeApproveModal() { document.getElementById('approve-modal').classList.add('hidden'); }
 
-  function selectApproveOption(opt) {
-    approveOption = opt;
-    const fullLabel = document.getElementById('opt-full-label');
-    const customLabel = document.getElementById('opt-custom-label');
-    const radioFull = document.getElementById('radio-full');
-    const radioCustom = document.getElementById('radio-custom');
-    const customWrap = document.getElementById('custom-amount-wrap');
-    if (opt === 'full') {
-      fullLabel.style.borderColor = '#667eea';
-      fullLabel.style.background = '#f5f3ff';
-      radioFull.style.borderColor = '#667eea';
-      radioFull.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-purple-600"></div>';
-      customLabel.style.borderColor = '#e5e7eb';
-      customLabel.style.background = '';
-      radioCustom.style.borderColor = '#d1d5db';
-      radioCustom.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-white"></div>';
-      customWrap.classList.add('hidden');
-    } else {
-      customLabel.style.borderColor = '#667eea';
-      customLabel.style.background = '#f5f3ff';
-      radioCustom.style.borderColor = '#667eea';
-      radioCustom.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-purple-600"></div>';
-      fullLabel.style.borderColor = '#e5e7eb';
-      fullLabel.style.background = '';
-      radioFull.style.borderColor = '#d1d5db';
-      radioFull.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-white"></div>';
-      customWrap.classList.remove('hidden');
-      document.getElementById('custom-amount-input').focus();
-    }
-  }
-
   function confirmApprove() {
-    let approvedAmt = approvingRequested;
-    let isPartial = false;
-    if (approveOption === 'custom') {
-      const val = parseInt(document.getElementById('custom-amount-input').value);
-      if (!val || val <= 0) { showToast('กรุณาระบุจำนวนเงินที่ถูกต้อง', 'error'); return; }
-      approvedAmt = val;
-      isPartial = approvedAmt < approvingRequested;
-    }
+    const val = parseInt(document.getElementById('approve-amount-input').value);
+    if (!val || val <= 0) { showToast('กรุณาระบุจำนวนเงินที่ถูกต้อง', 'error'); return; }
+    const approvedAmt = val;
+    const isPartial = approvedAmt < approvingRequested;
     const row = document.getElementById('topup-row-' + approvingId);
     if (row) {
-      const statusType = isPartial ? 'partial' : 'approved';
-      row.setAttribute('data-status', statusType);
+      row.setAttribute('data-status', isPartial ? 'partial' : 'approved');
       const cells = row.querySelectorAll('td');
-      // ยอดที่อนุมัติ (col index 2)
       cells[2].innerHTML = `<span class="font-bold ${isPartial ? 'text-blue-600' : 'text-green-600'}">฿${approvedAmt.toLocaleString()}</span>`;
-      // สถานะ (col index 5)
-      if (isPartial) {
-        cells[5].innerHTML = '<span class="status-badge bg-blue-100 text-blue-700">🔵 อนุมัติบางส่วน</span>';
-      } else {
-        cells[5].innerHTML = '<span class="status-badge bg-green-100 text-green-700">✅ อนุมัติแล้ว</span>';
-      }
-      // ดำเนินการ (col index 6) — clear button
+      cells[5].innerHTML = isPartial
+        ? '<span class="status-badge bg-blue-100 text-blue-700">🔵 อนุมัติบางส่วน</span>'
+        : '<span class="status-badge bg-green-100 text-green-700">✅ อนุมัติแล้ว</span>';
       cells[6].innerHTML = '<span class="text-gray-400 text-xs">—</span>';
     }
     updatePendingCount();
     closeApproveModal();
     const msg = isPartial
-      ? `✅ อนุมัติบางส่วน ${approvingBranch} ฿${approvedAmt.toLocaleString()} (จากยอดขอ ฿${approvingRequested.toLocaleString()})`
+      ? `✅ อนุมัติบางส่วน ${approvingBranch} ฿${approvedAmt.toLocaleString()} (ยอดขอ ฿${approvingRequested.toLocaleString()})`
       : `✅ อนุมัติเติมเงิน ${approvingBranch} ฿${approvedAmt.toLocaleString()} สำเร็จ`;
     showToast(msg, 'success');
   }
