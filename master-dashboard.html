@@ -594,9 +594,24 @@
     <div class="section" id="section-usage-report">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-800">📈 รายงานการใช้งาน</h2>
-        <div class="flex gap-2">
-          <select class="border border-gray-300 rounded-xl px-3 py-2 text-sm"><option>7 วันล่าสุด</option><option>30 วัน</option><option>3 เดือน</option></select>
-          <select class="border border-gray-300 rounded-xl px-3 py-2 text-sm"><option>ทุกสาขา</option><option>สาขาสยาม</option><option>สาขาลาดพร้าว</option><option>สาขาอุดมสุข</option><option>สาขาบางแค</option></select>
+        <div class="flex flex-wrap gap-2 items-center">
+          <div class="flex items-center gap-2 bg-white border border-gray-300 rounded-xl px-3 py-2 text-sm">
+            <span class="text-gray-500 text-xs font-medium">จาก</span>
+            <input type="date" id="usage-date-from" class="border-0 text-sm text-gray-700 focus:outline-none bg-transparent" onchange="applyUsageDateFilter()">
+          </div>
+          <span class="text-gray-400 text-sm">—</span>
+          <div class="flex items-center gap-2 bg-white border border-gray-300 rounded-xl px-3 py-2 text-sm">
+            <span class="text-gray-500 text-xs font-medium">ถึง</span>
+            <input type="date" id="usage-date-to" class="border-0 text-sm text-gray-700 focus:outline-none bg-transparent" onchange="applyUsageDateFilter()">
+          </div>
+          <select id="usage-branch-filter" class="border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white">
+            <option>ทุกสาขา</option>
+            <option>สาขาสยาม</option>
+            <option>สาขาลาดพร้าว</option>
+            <option>สาขาอุดมสุข</option>
+            <option>สาขาบางแค</option>
+          </select>
+          <button onclick="resetUsageDateFilter()" class="text-xs text-purple-600 hover:text-purple-800 font-medium px-2 py-1 rounded-lg hover:bg-purple-50 transition-colors">รีเซ็ต</button>
         </div>
       </div>
       <!-- Summary cards -->
@@ -824,6 +839,34 @@
     'finance-report': ['รายงานการเงิน', 'การเติมเงินและเคลื่อนไหวกระเป๋าเงิน'],
     'settings': ['ตั้งค่าระบบ', 'จัดการราคาต้นทุนและขีดจำกัดราคา'],
   };
+
+  // Usage report date filter
+  function initUsageDates() {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    document.getElementById('usage-date-from').value = sevenDaysAgo.toISOString().split('T')[0];
+    document.getElementById('usage-date-to').value = today.toISOString().split('T')[0];
+  }
+  function applyUsageDateFilter() {
+    const from = document.getElementById('usage-date-from').value;
+    const to = document.getElementById('usage-date-to').value;
+    if (from && to && from > to) {
+      showToast('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด', 'error');
+      return;
+    }
+    // In real system: fetch data for range. Here just show toast.
+    if (from && to) showToast('กำลังแสดงข้อมูล ' + formatDateTH(from) + ' — ' + formatDateTH(to), 'success');
+  }
+  function resetUsageDateFilter() {
+    initUsageDates();
+    showToast('รีเซ็ตวันที่แล้วครับ', 'success');
+  }
+  function formatDateTH(dateStr) {
+    const d = new Date(dateStr);
+    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + (d.getFullYear() + 543);
+  }
 
   function showSection(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
