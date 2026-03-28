@@ -16,9 +16,6 @@
     .card { background:#fff; border-radius:14px; box-shadow:0 1px 6px rgba(0,0,0,0.07); border:1px solid #f0f0f0; }
     .stat-card { transition: transform 0.2s, box-shadow 0.2s; }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-    .filter-btn { padding:7px 14px; border-radius:8px; font-size:0.82rem; cursor:pointer; transition:all 0.2s; border:1px solid #e5e7eb; }
-    .filter-btn.active { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-color:transparent; }
-    .filter-btn:not(.active):hover { background:#f3f4f6; }
     .toast { position:fixed; bottom:24px; right:24px; z-index:9999; padding:12px 20px; border-radius:10px; color:#fff; font-size:0.875rem; font-weight:600; max-width:380px; box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:opacity 0.3s; }
   </style>
 </head>
@@ -64,17 +61,15 @@
     <!-- Filters -->
     <div class="card p-4 mb-6">
       <div class="flex flex-wrap gap-3 items-center">
-        <div class="flex gap-2">
-          <button class="filter-btn active" onclick="setFilter(this,'today')">วันนี้</button>
-          <button class="filter-btn" onclick="setFilter(this,'week')">7 วัน</button>
-          <button class="filter-btn" onclick="setFilter(this,'month')">30 วัน</button>
-          <button class="filter-btn" onclick="setFilter(this,'quarter')">3 เดือน</button>
-        </div>
-        <div class="flex items-center gap-2 ml-2">
+        <span class="text-sm text-gray-500 font-medium">ช่วงวันที่:</span>
+        <div class="flex items-center gap-2">
           <input type="date" id="date-from" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
           <span class="text-gray-400 text-sm">ถึง</span>
           <input type="date" id="date-to" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
         </div>
+        <button onclick="applyDateFilter()" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:opacity-90">
+          ค้นหา
+        </button>
         <select id="filter-branch" class="border border-gray-300 rounded-xl px-3 py-2 text-sm ml-auto">
           <option>ทุกสาขา</option>
           <option>สาขาสยาม</option>
@@ -118,14 +113,14 @@
       <div class="card p-5">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-bold text-gray-800">รายได้รายวัน</h2>
-          <span class="text-xs text-gray-400">7 วันล่าสุด</span>
+          <span class="text-xs text-gray-400" id="chart-range-label">7 วันล่าสุด</span>
         </div>
         <div style="height:240px"><canvas id="revenueChart"></canvas></div>
       </div>
       <div class="card p-5">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-bold text-gray-800">ออเดอร์ตามขนส่ง</h2>
-          <span class="text-xs text-gray-400">7 วันล่าสุด</span>
+          <span class="text-xs text-gray-400" id="chart-range-label2">7 วันล่าสุด</span>
         </div>
         <div style="height:240px"><canvas id="carriersChart"></canvas></div>
       </div>
@@ -238,6 +233,13 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // Set default date range: last 7 days
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 6);
+    document.getElementById('date-to').value = today.toISOString().split('T')[0];
+    document.getElementById('date-from').value = sevenDaysAgo.toISOString().split('T')[0];
+
     // Revenue chart
     new Chart(document.getElementById('revenueChart').getContext('2d'), {
       type: 'line',
@@ -274,14 +276,16 @@
     });
   });
 
-  function setFilter(btn, period) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const data = { today:[247,'฿12,450'], week:[1847,'฿87,230'], month:[7230,'฿342,800'], quarter:[21500,'฿1,020,000'] };
-    const d = data[period];
-    document.getElementById('total-orders').textContent = d[0].toLocaleString();
-    document.getElementById('total-revenue').textContent = d[1];
-    showToast('แสดงข้อมูล ' + btn.textContent.trim(), 'info');
+  function applyDateFilter() {
+    const from = document.getElementById('date-from').value;
+    const to = document.getElementById('date-to').value;
+    if (!from || !to) { showToast('กรุณาเลือกวันที่เริ่มต้นและสิ้นสุด', 'warning'); return; }
+    if (from > to) { showToast('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด', 'warning'); return; }
+    const fromFmt = new Date(from).toLocaleDateString('th-TH', { day:'numeric', month:'short' });
+    const toFmt = new Date(to).toLocaleDateString('th-TH', { day:'numeric', month:'short' });
+    document.getElementById('chart-range-label').textContent = fromFmt + ' – ' + toFmt;
+    document.getElementById('chart-range-label2').textContent = fromFmt + ' – ' + toFmt;
+    showToast('แสดงข้อมูล ' + fromFmt + ' – ' + toFmt, 'info');
   }
 
   function exportReport() {
