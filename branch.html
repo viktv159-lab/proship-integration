@@ -159,21 +159,6 @@
               </div>
             </div>
 
-            <!-- ประกันสินค้า -->
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-semibold text-gray-700">ประกันสินค้า</span>
-                <label class="toggle-sw"><input type="checkbox" id="insurance-toggle" onchange="toggleInsurance()"><span class="toggle-sl"></span></label>
-              </div>
-              <div id="insurance-section" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
-                <label class="block text-xs font-medium text-gray-700 mb-1.5">มูลค่าพัสดุ (฿)</label>
-                <input type="number" id="item-value" min="0" placeholder="เช่น 2000"
-                       oninput="calcInsurance()"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-                <p class="text-xs text-gray-500 mt-1.5">ค่าประกัน: <strong id="insurance-fee-label" class="text-yellow-700">฿0</strong> (0.5% ขั้นต่ำ ฿5)</p>
-              </div>
-            </div>
-
             <!-- COD -->
             <div>
               <div class="flex items-center justify-between mb-2">
@@ -184,6 +169,21 @@
                 <label class="block text-xs font-medium text-gray-700 mb-1.5">ยอด COD (฿)</label>
                 <input type="number" id="cod-amount" min="0" placeholder="เช่น 350"
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
+              </div>
+            </div>
+
+            <!-- ประกันสินค้า -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-semibold text-gray-700">ประกันสินค้า</span>
+                <label class="toggle-sw"><input type="checkbox" id="insurance-toggle" onchange="toggleInsurance()"><span class="toggle-sl"></span></label>
+              </div>
+              <div id="insurance-section" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                <label class="block text-xs font-medium text-gray-700 mb-1.5">มูลค่าของสินค้า (฿)</label>
+                <input type="number" id="item-value" min="0" placeholder="เช่น 2000"
+                       oninput="calcInsurance()"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+                <p class="text-xs text-gray-500 mt-1.5">ค่าประกัน: <strong id="insurance-fee-label" class="text-yellow-700">฿0</strong> (0.5% ขั้นต่ำ ฿5)</p>
               </div>
             </div>
           </div>

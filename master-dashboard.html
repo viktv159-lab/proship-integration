@@ -199,6 +199,21 @@
               <input type="number" id="qo-cod-amt" placeholder="ยอด COD (฿)"
                      class="hidden flex-1 border border-orange-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
             </div>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <label class="toggle-sw"><input type="checkbox" id="qo-insurance" onchange="toggleQOInsurance()"><span class="toggle-sl"></span></label>
+                  <span class="text-sm font-medium text-gray-700">ประกันสินค้า</span>
+                </label>
+              </div>
+              <div id="qo-insurance-section" class="hidden mt-2">
+                <label class="block text-xs font-medium text-gray-700 mb-1">มูลค่าของสินค้า (฿)</label>
+                <input type="number" id="qo-insurance-value" min="0" placeholder="เช่น 2000"
+                       oninput="calcQOInsurance()"
+                       class="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+                <p class="text-xs text-gray-500 mt-1">ค่าประกัน: <strong id="qo-insurance-fee" class="text-yellow-700">฿0</strong> (0.5% ขั้นต่ำ ฿5)</p>
+              </div>
+            </div>
             <button type="submit"
                     class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold py-3 rounded-xl transition-all shadow-md">
               📦 สร้างออเดอร์
@@ -891,6 +906,16 @@
   function selCarrier(el, c) {
     document.querySelectorAll('.carrier-select-btn').forEach(b => b.classList.remove('selected'));
     el.classList.add('selected'); qoCarrier = c;
+  }
+  function toggleQOInsurance() {
+    const on = document.getElementById('qo-insurance').checked;
+    document.getElementById('qo-insurance-section').classList.toggle('hidden', !on);
+    if (!on) { document.getElementById('qo-insurance-value').value = ''; document.getElementById('qo-insurance-fee').textContent = '฿0'; }
+  }
+  function calcQOInsurance() {
+    const val = parseFloat(document.getElementById('qo-insurance-value').value) || 0;
+    const fee = val > 0 ? Math.max(5, val * 0.005) : 0;
+    document.getElementById('qo-insurance-fee').textContent = '฿' + fee.toFixed(2);
   }
   function toggleQOCOD() {
     const chk = document.getElementById('qo-cod');
