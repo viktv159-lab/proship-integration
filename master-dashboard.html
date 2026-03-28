@@ -1033,10 +1033,10 @@
       (data.tiers[carrier] || []).forEach(tier => {
         const row = document.createElement('div');
         row.className = 'tier-row';
-        row.innerHTML = \`
+        row.innerHTML = `
           <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="\${tier.f}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
           <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="\${tier.t}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="\${tier.p}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
-          <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>\`;
+          <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>`;
         container.appendChild(row);
       });
     });
