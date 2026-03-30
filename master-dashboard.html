@@ -1061,6 +1061,23 @@
     if (!on) qoUpdateSummary();
   }
 
+  function getInsuranceFee(carrier, val) {
+    if (!val || val <= 0) return 0;
+    if (carrier === 'flash') {
+      if (val <= 5000) return 7;
+      if (val <= 10000) return 20;
+      if (val <= 20000) return 30;
+      if (val <= 30000) return 50;
+      if (val <= 50000) return 80;
+      if (val <= 100000) return 190;
+      if (val <= 200000) return 340;
+      if (val <= 300000) return 570;
+      if (val <= 400000) return 760;
+      return 950;
+    }
+    return Math.max(5, val * 0.005);
+  }
+
   function qoCalcInsurance(i) {
     const card = document.getElementById('qo-rec-' + i);
     const carrier = card ? card.dataset.carrier : null;
