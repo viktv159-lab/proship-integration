@@ -1018,8 +1018,8 @@
     const grid = document.getElementById('qo-rec-' + i + '-carriers');
     if (grid) grid.querySelectorAll('.carrier-select-btn').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
-    el.closest('[id^="qo-rec-"]').dataset.carrier = carrier;
-    el.closest('[id^="qo-rec-"]').dataset.price = price;
+    const qoCard = document.getElementById('qo-rec-' + i);
+    if (qoCard) { qoCard.dataset.carrier = carrier; qoCard.dataset.price = price; }
     const insOn = document.getElementById('qo-rec-' + i + '-ins-toggle');
     if (insOn && insOn.checked) qoCalcInsurance(i);
     qoUpdateRecSubtotal(i);
