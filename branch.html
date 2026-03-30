@@ -659,7 +659,7 @@ function showToast(msg, type = 'info') {
     const h = parseFloat(document.getElementById('dim-h').value) || 0;
     if (w > 0 && l > 0 && h > 0) {
       const kg = (w * l * h) / 6000;
-      document.getElementById('weight-input').value = kg.toFixed(2);
+      document.getElementById('weight-dim').value = kg.toFixed(2);
     } else {
       document.getElementById('weight-manual').value = '';
     document.getElementById('weight-dim').value = '';
