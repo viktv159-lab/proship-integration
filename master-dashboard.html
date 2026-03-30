@@ -1094,46 +1094,46 @@
     if (!data) return;
     editingBranchId = id;
 
-    // Pre-fill fields
-    document.getElementById('input-branch-name').value = data.name;
-    document.getElementById('input-branch-username').value = data.username;
-    document.getElementById('input-branch-password').value = data.password;
-
-    // Fill tier data for all carriers
-    const carriers = ['jt','flash','kerry','post'];
-    carriers.forEach(carrier => {
-      const container = document.getElementById('tiers-' + carrier);
-      container.innerHTML = '';
-      (data.tiers[carrier] || []).forEach(tier => {
-        const row = document.createElement('div');
-        row.className = 'tier-row';
-        row.innerHTML = `
-          <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="\${tier.f}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
-          <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="\${tier.t}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="\${tier.p}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
-          <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>`;
-        container.appendChild(row);
-      });
-    });
-
-    // Fill COD %
-    const cod = data.cod || { jt:0, flash:0, kerry:0, post:0 };
-    document.getElementById('cod-jt').value = cod.jt || '';
-    document.getElementById('cod-flash').value = cod.flash || '';
-    document.getElementById('cod-kerry').value = cod.kerry || '';
-    document.getElementById('cod-post').value = cod.post || '';
-
-    // Reset to first carrier tab
-    document.querySelectorAll('.carrier-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-    document.querySelectorAll('.carrier-panel').forEach((p,i) => p.classList.toggle('hidden', i!==0));
-
-    // Update title & button
+    // Show section FIRST, then fill (avoids browser clearing values on hidden elements)
     document.getElementById('create-branch-title').textContent = '✏️ แก้ไขสาขา — ' + data.name;
     document.getElementById('save-branch-text').textContent = '💾 บันทึกการแก้ไข';
-
     showSection('create-branch');
-    // Override page title (showSection already ran)
     document.getElementById('page-title').textContent = 'แก้ไขสาขา';
     document.getElementById('page-sub').textContent = data.name;
+
+    // Pre-fill fields after section is visible
+    setTimeout(() => {
+      document.getElementById('input-branch-name').value = data.name;
+      document.getElementById('input-branch-username').value = data.username;
+      document.getElementById('input-branch-password').value = data.password;
+
+      // Fill tier data for all carriers
+      const carriers = ['jt','flash','kerry','post'];
+      carriers.forEach(carrier => {
+        const container = document.getElementById('tiers-' + carrier);
+        container.innerHTML = '';
+        (data.tiers[carrier] || []).forEach(tier => {
+          const row = document.createElement('div');
+          row.className = 'tier-row';
+          row.innerHTML = `
+            <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">จาก</span><input type="number" value="\${tier.f}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span></div>
+            <div class="flex gap-2 items-center"><span class="text-xs text-gray-500 w-6">ถึง</span><input type="number" value="\${tier.t}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">กก.</span><span class="text-xs text-gray-400 mx-1">→</span><input type="number" value="\${tier.p}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"><span class="text-xs text-gray-500">฿</span></div>
+            <button onclick="removeTier(this)" class="text-red-400 hover:text-red-600 text-lg font-bold">×</button>`;
+          container.appendChild(row);
+        });
+      });
+
+      // Fill COD %
+      const cod = data.cod || { jt:0, flash:0, kerry:0, post:0 };
+      document.getElementById('cod-jt').value = cod.jt || '';
+      document.getElementById('cod-flash').value = cod.flash || '';
+      document.getElementById('cod-kerry').value = cod.kerry || '';
+      document.getElementById('cod-post').value = cod.post || '';
+
+      // Reset to first carrier tab
+      document.querySelectorAll('.carrier-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+      document.querySelectorAll('.carrier-panel').forEach((p,i) => p.classList.toggle('hidden', i!==0));
+    }, 50);
   }
 
   function resetCreateBranchForm() {
