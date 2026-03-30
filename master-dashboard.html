@@ -183,11 +183,45 @@
                 </div>
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม) *</label>
-                <div class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-purple-500">
-                  <input type="number" required min="0.01" step="0.01" placeholder="เช่น 1.50"
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-medium text-gray-700">น้ำหนัก (กิโลกรัม) *</label>
+                  <label class="flex items-center gap-1.5 cursor-pointer">
+                    <span class="text-xs text-gray-400">คำนวณจากขนาด</span>
+                    <label class="toggle-sw"><input type="checkbox" id="qo-dim-toggle" onchange="toggleQODim()"><span class="toggle-sl"></span></label>
+                  </label>
+                </div>
+                <!-- Manual -->
+                <div id="qo-manual-weight-wrap" class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-purple-500">
+                  <input type="number" id="qo-weight" required min="0.01" step="0.01" placeholder="เช่น 1.50"
                          class="w-full text-sm focus:outline-none bg-transparent text-gray-800">
                   <span class="text-gray-500 text-sm font-medium flex-shrink-0">กก.</span>
+                </div>
+                <!-- Dimension calc -->
+                <div id="qo-dim-wrap" class="hidden mt-2 space-y-2">
+                  <div class="grid grid-cols-3 gap-2">
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">กว้าง (ซม.)</label>
+                      <input type="number" id="qo-dim-w" min="0" step="0.1" placeholder="กว้าง" oninput="calcQODimWeight()"
+                             class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-400 focus:outline-none">
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">ยาว (ซม.)</label>
+                      <input type="number" id="qo-dim-l" min="0" step="0.1" placeholder="ยาว" oninput="calcQODimWeight()"
+                             class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-400 focus:outline-none">
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">สูง (ซม.)</label>
+                      <input type="number" id="qo-dim-h" min="0" step="0.1" placeholder="สูง" oninput="calcQODimWeight()"
+                             class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-purple-400 focus:outline-none">
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 border border-purple-200 rounded-lg px-3 py-2 bg-purple-50">
+                    <span class="text-xs text-purple-400 flex-shrink-0">น้ำหนัก</span>
+                    <input type="number" id="qo-weight" readonly required min="0.01" step="0.01" placeholder="—"
+                           class="w-full text-sm font-semibold text-purple-700 focus:outline-none bg-transparent text-right">
+                    <span class="text-purple-400 text-sm font-medium flex-shrink-0">กก.</span>
+                  </div>
+                  <p class="text-xs text-gray-400">สูตร: (กว้าง × ยาว × สูง) ÷ 6,000</p>
                 </div>
               </div>
             </div>
@@ -1142,6 +1176,29 @@
     document.body.appendChild(t);
     setTimeout(() => t.style.opacity = '1', 10);
     setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3500);
+  }
+
+  function toggleQODim() {
+    const on = document.getElementById('qo-dim-toggle').checked;
+    document.getElementById('qo-manual-weight-wrap').classList.toggle('hidden', on);
+    document.getElementById('qo-dim-wrap').classList.toggle('hidden', !on);
+    document.getElementById('qo-weight').value = '';
+    if (!on) {
+      document.getElementById('qo-dim-w').value = '';
+      document.getElementById('qo-dim-l').value = '';
+      document.getElementById('qo-dim-h').value = '';
+    }
+  }
+
+  function calcQODimWeight() {
+    const w = parseFloat(document.getElementById('qo-dim-w').value) || 0;
+    const l = parseFloat(document.getElementById('qo-dim-l').value) || 0;
+    const h = parseFloat(document.getElementById('qo-dim-h').value) || 0;
+    if (w > 0 && l > 0 && h > 0) {
+      document.getElementById('qo-weight').value = ((w * l * h) / 6000).toFixed(2);
+    } else {
+      document.getElementById('qo-weight').value = '';
+    }
   }
 </script>
 </body>

@@ -150,12 +150,52 @@
           <!-- น้ำหนัก + ตัวเลือก -->
           <div class="card p-5 space-y-4">
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">น้ำหนักพัสดุ (กิโลกรัม) *</label>
-              <div class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-blue-500">
+              <!-- Weight toggle row -->
+              <div class="flex items-center justify-between mb-2">
+                <label class="block text-sm font-semibold text-gray-700">น้ำหนักพัสดุ (กิโลกรัม) *</label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <span class="text-xs text-gray-500">คำนวณจากขนาด</span>
+                  <label class="toggle-sw"><input type="checkbox" id="dim-toggle" onchange="toggleDimCalc()"><span class="toggle-sl"></span></label>
+                </label>
+              </div>
+              <!-- Manual weight input -->
+              <div id="manual-weight-wrap" class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-blue-500">
                 <input type="number" id="weight-input" required min="0.01" step="0.01" placeholder="เช่น 1.50"
                        onchange="calcTotal()" oninput="calcTotal()"
                        class="w-full text-sm focus:outline-none bg-transparent text-gray-800">
                 <span class="text-gray-500 text-sm font-medium flex-shrink-0">กก.</span>
+              </div>
+              <!-- Dimension inputs (hidden by default) -->
+              <div id="dim-calc-wrap" class="hidden mt-2 space-y-2">
+                <div class="grid grid-cols-3 gap-2">
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">กว้าง (ซม.)</label>
+                    <input type="number" id="dim-w" min="0" step="0.1" placeholder="กว้าง"
+                           oninput="calcDimWeight()"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">ยาว (ซม.)</label>
+                    <input type="number" id="dim-l" min="0" step="0.1" placeholder="ยาว"
+                           oninput="calcDimWeight()"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">สูง (ซม.)</label>
+                    <input type="number" id="dim-h" min="0" step="0.1" placeholder="สูง"
+                           oninput="calcDimWeight()"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 border border-blue-200 rounded-lg px-3 py-2.5 bg-blue-50">
+                  <span class="text-xs text-blue-500 flex-shrink-0">น้ำหนัก (คำนวณ)</span>
+                  <input type="number" id="weight-input" required min="0.01" step="0.01" readonly
+                         placeholder="—"
+                         onchange="calcTotal()" oninput="calcTotal()"
+                         class="w-full text-sm font-semibold text-blue-700 focus:outline-none bg-transparent text-right">
+                  <span class="text-blue-500 text-sm font-medium flex-shrink-0">กก.</span>
+                </div>
+                <p class="text-xs text-gray-400">สูตร: (กว้าง × ยาว × สูง) ÷ 6,000</p>
               </div>
             </div>
 
@@ -597,6 +637,33 @@ function showToast(msg, type = 'info') {
   setTimeout(() => t.style.opacity = '1', 10);
   setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3500);
 }
+
+  function toggleDimCalc() {
+    const on = document.getElementById('dim-toggle').checked;
+    document.getElementById('manual-weight-wrap').classList.toggle('hidden', on);
+    document.getElementById('dim-calc-wrap').classList.toggle('hidden', !on);
+    // clear weight when switching
+    document.getElementById('weight-input').value = '';
+    if (!on) {
+      document.getElementById('dim-w').value = '';
+      document.getElementById('dim-l').value = '';
+      document.getElementById('dim-h').value = '';
+    }
+    calcTotal();
+  }
+
+  function calcDimWeight() {
+    const w = parseFloat(document.getElementById('dim-w').value) || 0;
+    const l = parseFloat(document.getElementById('dim-l').value) || 0;
+    const h = parseFloat(document.getElementById('dim-h').value) || 0;
+    if (w > 0 && l > 0 && h > 0) {
+      const kg = (w * l * h) / 6000;
+      document.getElementById('weight-input').value = kg.toFixed(2);
+    } else {
+      document.getElementById('weight-input').value = '';
+    }
+    calcTotal();
+  }
 </script>
 </body>
 </html>
