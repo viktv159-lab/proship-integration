@@ -1075,6 +1075,18 @@
       if (val <= 400000) return 760;
       return 950;
     }
+    if (carrier === 'jt') {
+      if (val <= 5000) return 10;
+      if (val <= 10000) return 20;
+      if (val <= 15000) return 30;
+      if (val <= 20000) return 40;
+      if (val <= 25000) return 50;
+      if (val <= 30000) return 60;
+      if (val <= 35000) return 70;
+      if (val <= 40000) return 80;
+      if (val <= 45000) return 90;
+      return 100;
+    }
     return Math.max(5, val * 0.005);
   }
 
@@ -1087,7 +1099,7 @@
     if (lbl) {
       lbl.textContent = '฿' + fee;
       const hint = document.getElementById('qo-rec-' + i + '-ins-hint');
-      if (hint) hint.textContent = carrier === 'flash' ? 'อัตรา Flash (tier)' : '0.5% ขั้นต่ำ ฿5';
+      if (hint) hint.textContent = carrier === 'flash' ? 'อัตรา Flash (tier)' : carrier === 'jt' ? 'อัตรา J&T (tier)' : '0.5% ขั้นต่ำ ฿5';
     }
     qoUpdateRecSubtotal(i);
     qoUpdateSummary();
