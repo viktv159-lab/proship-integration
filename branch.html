@@ -160,7 +160,7 @@
               </div>
               <!-- Manual weight input -->
               <div id="manual-weight-wrap" class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2.5 bg-white focus-within:ring-2 focus-within:ring-blue-500">
-                <input type="number" id="weight-input" required min="0.01" step="0.01" placeholder="เช่น 1.50"
+                <input type="number" id="weight-manual" required min="0.01" step="0.01" placeholder="เช่น 1.50"
                        onchange="calcTotal()" oninput="calcTotal()"
                        class="w-full text-sm focus:outline-none bg-transparent text-gray-800">
                 <span class="text-gray-500 text-sm font-medium flex-shrink-0">กก.</span>
@@ -189,9 +189,8 @@
                 </div>
                 <div class="flex items-center gap-2 border border-blue-200 rounded-lg px-3 py-2.5 bg-blue-50">
                   <span class="text-xs text-blue-500 flex-shrink-0">น้ำหนัก (คำนวณ)</span>
-                  <input type="number" id="weight-input" required min="0.01" step="0.01" readonly
+                  <input type="number" id="weight-dim" required min="0.01" step="0.01" readonly
                          placeholder="—"
-                         onchange="calcTotal()" oninput="calcTotal()"
                          class="w-full text-sm font-semibold text-blue-700 focus:outline-none bg-transparent text-right">
                   <span class="text-blue-500 text-sm font-medium flex-shrink-0">กก.</span>
                 </div>
@@ -541,7 +540,8 @@ function calcTotal() {
 function submitOrder(e) {
   e.preventDefault();
   if (!selectedCarrier) { showToast('กรุณาเลือกบริษัทขนส่ง', 'error'); return; }
-  const weightVal = parseFloat(document.getElementById('weight-input').value); if (!weightVal || weightVal <= 0) { showToast('กรุณากรอกน้ำหนักพัสดุ','error'); return; }
+  const dimOn = document.getElementById('dim-toggle').checked;
+  const weightVal = parseFloat(document.getElementById(dimOn ? 'weight-dim' : 'weight-manual').value); if (!weightVal || weightVal <= 0) { showToast('กรุณากรอกน้ำหนักพัสดุ','error'); return; }
   const ins = document.getElementById('insurance-toggle').checked ? insuranceFee : 0;
   const total = selectedCarrierPrice + ins;
   if (walletBalance < total) { showToast('ยอดเงินในกระเป๋าไม่เพียงพอ กรุณาเติมเงิน','error'); return; }
@@ -643,7 +643,8 @@ function showToast(msg, type = 'info') {
     document.getElementById('manual-weight-wrap').classList.toggle('hidden', on);
     document.getElementById('dim-calc-wrap').classList.toggle('hidden', !on);
     // clear weight when switching
-    document.getElementById('weight-input').value = '';
+    document.getElementById('weight-manual').value = '';
+    document.getElementById('weight-dim').value = '';
     if (!on) {
       document.getElementById('dim-w').value = '';
       document.getElementById('dim-l').value = '';
@@ -660,7 +661,8 @@ function showToast(msg, type = 'info') {
       const kg = (w * l * h) / 6000;
       document.getElementById('weight-input').value = kg.toFixed(2);
     } else {
-      document.getElementById('weight-input').value = '';
+      document.getElementById('weight-manual').value = '';
+    document.getElementById('weight-dim').value = '';
     }
     calcTotal();
   }
