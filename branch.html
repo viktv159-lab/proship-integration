@@ -7,6 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { font-family: 'Prompt', sans-serif; }
     #sidebar { background: #1e2d4e; min-height: 100vh; width: 240px; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; }
@@ -954,12 +956,37 @@ function closeReceipt() {
 }
 
 function printReceipt() {
+  // Direct print — no download, straight to printer dialog
   const content = document.getElementById('receipt-content').innerHTML;
   const printArea = document.getElementById('receipt-print-area');
   printArea.innerHTML = content;
   printArea.style.display = 'block';
   window.print();
   printArea.style.display = 'none';
+}
+
+async function downloadReceiptPDF() {
+  const btn = document.querySelector('button[onclick="downloadReceiptPDF()"]');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '⏳ กำลังสร้าง...';
+  btn.disabled = true;
+  try {
+    const el = document.getElementById('receipt-content');
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'px', format: [canvas.width / 2, canvas.height / 2] });
+    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+    const fileName = 'receipt_' + new Date().toISOString().slice(0,10) + '_' + Date.now().toString(36).toUpperCase().slice(-6) + '.pdf';
+    pdf.save(fileName);
+    showToast('✅ ดาวน์โหลด PDF สำเร็จ', 'success');
+  } catch(e) {
+    showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
+    console.error(e);
+  } finally {
+    btn.innerHTML = origText;
+    btn.disabled = false;
+  }
 }
 </script>
 
@@ -970,7 +997,8 @@ function printReceipt() {
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
       <h3 class="font-bold text-gray-800 text-lg">🧾 ใบเสร็จรับเงิน</h3>
       <div class="flex gap-2">
-        <button onclick="printReceipt()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">🖨️ พิมพ์</button>
+        <button onclick="downloadReceiptPDF()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">⬇️ ดาวน์โหลด PDF</button>
+        <button onclick="printReceipt()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">🖨️ สั่งพิมพ์</button>
         <button onclick="closeReceipt()" class="text-gray-400 hover:text-gray-600 text-xl font-bold px-2">×</button>
       </div>
     </div>
