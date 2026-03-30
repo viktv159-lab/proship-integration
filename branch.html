@@ -41,6 +41,13 @@
     .cb-post { background:#eff6ff; color:#1e40af; }
     .toast { position:fixed; bottom:24px; right:24px; z-index:9999; padding:12px 20px; border-radius:10px; color:#fff; font-size:0.875rem; font-weight:600; max-width:380px; box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:opacity 0.3s; }
     .locked-input { background:#f9fafb; color:#6b7280; cursor:not-allowed; }
+    /* Receipt print */
+    @media print {
+      body > *:not(#receipt-print-area) { display: none !important; }
+      #receipt-print-area { display: block !important; position: static !important; padding: 0 !important; }
+      #receipt-print-area * { visibility: visible !important; }
+    }
+
   </style>
 </head>
 <body class="bg-gray-50">
@@ -167,9 +174,9 @@
 
     <!-- ═══════════════ รายการทั้งหมด ═══════════════ -->
     <div class="section" id="section-orders">
-      <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
         <h2 class="text-xl font-bold text-gray-800">📋 รายการทั้งหมด</h2>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
           <select id="filter-carrier" onchange="filterOrders()" class="border border-gray-300 rounded-xl px-3 py-2 text-sm">
             <option value="">ขนส่งทั้งหมด</option>
             <option value="flash">Flash</option>
@@ -186,11 +193,18 @@
           </select>
         </div>
       </div>
+      <!-- Receipt action bar -->
+      <div id="receipt-bar" class="hidden mb-3 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+        <span class="text-sm font-semibold text-blue-700">เลือกแล้ว <span id="selected-count">0</span> รายการ</span>
+        <button onclick="openReceipt()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">🧾 ออกใบเสร็จรับเงิน</button>
+        <button onclick="clearSelection()" class="text-sm text-gray-500 hover:text-gray-700">ยกเลิกการเลือก</button>
+      </div>
       <div class="card overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
               <tr>
+                <th class="px-4 py-3 text-left w-8"><input type="checkbox" id="select-all-orders" onchange="toggleSelectAll(this)" class="rounded"></th>
                 <th class="px-4 py-3 text-left">เลขออเดอร์</th>
                 <th class="px-4 py-3 text-left">ผู้รับ</th>
                 <th class="px-4 py-3 text-left">ขนส่ง</th>
@@ -807,6 +821,167 @@ function exportToExcel() {
   XLSX.writeFile(wb, `report${dateLabel}.xlsx`);
   showToast(`✅ ดาวน์โหลด Excel ${filtered.length} รายการสำเร็จ`, 'success');
 }
+
+// ────────── Receipt / Order Selection ──────────
+let selectedOrderIds = new Set();
+
+function renderOrders(orders) {
+  const tbody = document.getElementById('orders-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = orders.map(o => `
+    <tr class="hover:bg-gray-50" id="row-${o.id}">
+      <td class="px-4 py-3"><input type="checkbox" class="order-chk rounded" value="${o.id}" onchange="onOrderCheck(this)"></td>
+      <td class="px-4 py-3 font-mono text-xs text-gray-600">${o.id}</td>
+      <td class="px-4 py-3 font-medium">${o.recipient}</td>
+      <td class="px-4 py-3"><span class="sb ${carrierClass[o.carrier]}">${carrierLabel[o.carrier]}</span></td>
+      <td class="px-4 py-3 text-gray-600">${o.weight}</td>
+      <td class="px-4 py-3 font-bold text-gray-800">฿${o.price}</td>
+      <td class="px-4 py-3"><span class="sb ${statusClass[o.status]}">${o.status}</span></td>
+      <td class="px-4 py-3 font-mono text-xs text-blue-600 cursor-pointer hover:underline" onclick="showToast('Tracking: ${o.tracking}','info')">${o.tracking}</td>
+      <td class="px-4 py-3 text-gray-400 text-xs">${o.date}</td>
+    </tr>
+  `).join('');
+  // restore checked state
+  document.querySelectorAll('.order-chk').forEach(chk => {
+    if (selectedOrderIds.has(chk.value)) chk.checked = true;
+  });
+}
+
+function onOrderCheck(chk) {
+  if (chk.checked) selectedOrderIds.add(chk.value);
+  else selectedOrderIds.delete(chk.value);
+  updateReceiptBar();
+}
+
+function toggleSelectAll(masterChk) {
+  document.querySelectorAll('.order-chk').forEach(chk => {
+    chk.checked = masterChk.checked;
+    if (masterChk.checked) selectedOrderIds.add(chk.value);
+    else selectedOrderIds.delete(chk.value);
+  });
+  updateReceiptBar();
+}
+
+function updateReceiptBar() {
+  const bar = document.getElementById('receipt-bar');
+  const cnt = document.getElementById('selected-count');
+  const n = selectedOrderIds.size;
+  bar.classList.toggle('hidden', n === 0);
+  bar.classList.toggle('flex', n > 0);
+  if (cnt) cnt.textContent = n;
+}
+
+function clearSelection() {
+  selectedOrderIds.clear();
+  document.querySelectorAll('.order-chk').forEach(chk => chk.checked = false);
+  const sa = document.getElementById('select-all-orders');
+  if (sa) sa.checked = false;
+  updateReceiptBar();
+}
+
+function openReceipt() {
+  if (selectedOrderIds.size === 0) { showToast('กรุณาเลือกรายการอย่างน้อย 1 รายการ', 'error'); return; }
+  const items = mockOrders.filter(o => selectedOrderIds.has(o.id));
+  const total = items.reduce((s, o) => s + o.price, 0);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' });
+  const timeStr = now.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+  const carrierMap = { flash:'Flash Express', jt:'J&T Express', kerry:'Kerry Express', post:'ไปรษณีย์ไทย' };
+
+  const html = `
+    <div style="font-family:'Prompt',sans-serif; max-width:420px; margin:auto; padding:20px;">
+      <!-- Header -->
+      <div style="text-align:center; border-bottom:2px solid #1e3a8a; padding-bottom:16px; margin-bottom:16px;">
+        <div style="font-size:1.4rem; font-weight:700; color:#1e3a8a;">ProShip Easy</div>
+        <div style="font-size:1rem; font-weight:600; color:#374151; margin-top:4px;">สาขาสยาม</div>
+        <div style="font-size:0.75rem; color:#6b7280; margin-top:2px;">ใบเสร็จรับเงิน</div>
+        <div style="font-size:0.75rem; color:#6b7280;">วันที่ ${dateStr} เวลา ${timeStr} น.</div>
+        <div style="font-size:0.75rem; color:#6b7280;">เลขที่ใบเสร็จ: REC-${Date.now().toString(36).toUpperCase().slice(-8)}</div>
+      </div>
+      <!-- Items -->
+      <table style="width:100%; border-collapse:collapse; font-size:0.78rem; margin-bottom:16px;">
+        <thead>
+          <tr style="background:#f3f4f6; text-align:left;">
+            <th style="padding:6px 8px; border:1px solid #e5e7eb;">#</th>
+            <th style="padding:6px 8px; border:1px solid #e5e7eb;">ผู้รับ</th>
+            <th style="padding:6px 8px; border:1px solid #e5e7eb;">ขนส่ง</th>
+            <th style="padding:6px 8px; border:1px solid #e5e7eb;">Tracking</th>
+            <th style="padding:6px 8px; border:1px solid #e5e7eb; text-align:right;">ราคา</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map((o, idx) => `
+            <tr>
+              <td style="padding:6px 8px; border:1px solid #e5e7eb;">${idx+1}</td>
+              <td style="padding:6px 8px; border:1px solid #e5e7eb;">${o.recipient}</td>
+              <td style="padding:6px 8px; border:1px solid #e5e7eb;">${carrierMap[o.carrier]||o.carrier}</td>
+              <td style="padding:6px 8px; border:1px solid #e5e7eb; font-size:0.7rem; color:#2563eb;">${o.tracking}</td>
+              <td style="padding:6px 8px; border:1px solid #e5e7eb; text-align:right; font-weight:600;">฿${o.price}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <!-- Total -->
+      <div style="display:flex; justify-content:space-between; align-items:center; background:#eff6ff; border:2px solid #bfdbfe; border-radius:8px; padding:10px 16px; margin-bottom:24px;">
+        <span style="font-weight:700; color:#1e40af; font-size:0.9rem;">ยอดรวมทั้งสิ้น</span>
+        <span style="font-weight:700; color:#1e40af; font-size:1.1rem;">฿${total.toLocaleString('th-TH')}</span>
+      </div>
+      <!-- Signature -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:8px;">
+        <div style="text-align:center;">
+          <div style="border-top:1px solid #9ca3af; padding-top:8px; margin-top:40px; font-size:0.75rem; color:#6b7280;">ลายเซ็นผู้รับเงิน</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="border-top:1px solid #9ca3af; padding-top:8px; margin-top:40px; font-size:0.75rem; color:#6b7280;">ลายเซ็นผู้จ่ายเงิน</div>
+        </div>
+      </div>
+      <!-- Footer -->
+      <div style="text-align:center; margin-top:16px; font-size:0.7rem; color:#9ca3af; border-top:1px dashed #e5e7eb; padding-top:12px;">
+        ขอบคุณที่ใช้บริการ ProShip Easy<br>www.proship.co.th
+      </div>
+    </div>
+  `;
+  document.getElementById('receipt-content').innerHTML = html;
+  const modal = document.getElementById('receipt-modal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeReceipt() {
+  const modal = document.getElementById('receipt-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+function printReceipt() {
+  const content = document.getElementById('receipt-content').innerHTML;
+  const printArea = document.getElementById('receipt-print-area');
+  printArea.innerHTML = content;
+  printArea.style.display = 'block';
+  window.print();
+  printArea.style.display = 'none';
+}
 </script>
+
+<!-- ═══ Receipt Modal ═══ -->
+<div id="receipt-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 overflow-auto py-8">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 flex flex-col">
+    <!-- Modal header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h3 class="font-bold text-gray-800 text-lg">🧾 ใบเสร็จรับเงิน</h3>
+      <div class="flex gap-2">
+        <button onclick="printReceipt()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">🖨️ พิมพ์</button>
+        <button onclick="closeReceipt()" class="text-gray-400 hover:text-gray-600 text-xl font-bold px-2">×</button>
+      </div>
+    </div>
+    <!-- Receipt content -->
+    <div id="receipt-content" class="p-6 font-mono text-sm">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Hidden print area -->
+<div id="receipt-print-area" style="display:none;"></div>
 </body>
 </html>
