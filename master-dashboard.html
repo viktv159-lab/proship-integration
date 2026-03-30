@@ -974,7 +974,7 @@
           <label class="toggle-sw"><input type="checkbox" id="qo-rec-${i}-cod-toggle" onchange="qoToggleCOD(${i})"><span class="toggle-sl"></span></label>
         </div>
         <div id="qo-rec-${i}-cod-section" class="hidden bg-orange-50 border border-orange-200 rounded-lg p-2.5 mt-1">
-          <input type="number" id="qo-rec-${i}-cod-amount" min="0" placeholder="ยอด COD (฿)" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-orange-400 focus:outline-none">
+          <input type="number" id="qo-rec-${i}-cod-amount" min="0" placeholder="ยอด COD (฿)" oninput="qoUpdateRecSubtotal(${i}); qoUpdateSummary();" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-orange-400 focus:outline-none">
         </div>
       </div>
       <!-- Insurance -->
@@ -985,7 +985,7 @@
         </div>
         <div id="qo-rec-${i}-ins-section" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-2.5 mt-1">
           <input type="number" id="qo-rec-${i}-item-value" min="0" placeholder="มูลค่าสินค้า (฿)" oninput="qoCalcInsurance(${i})" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-yellow-400 focus:outline-none">
-          <p class="text-xs text-gray-400 mt-1">ค่าประกัน: <strong id="qo-rec-${i}-ins-fee">฿0</strong> (0.5% ขั้นต่ำ ฿5)</p>
+          <p class="text-xs text-gray-400 mt-1">ค่าประกัน: <strong id="qo-rec-${i}-ins-fee" class="text-purple-700">฿0</strong> <span id="qo-rec-${i}-ins-hint" class="text-gray-400">(เลือกขนส่งก่อน)</span></p>
         </div>
       </div>
       <!-- Subtotal -->
@@ -1020,8 +1020,9 @@
     el.classList.add('selected');
     el.closest('[id^="qo-rec-"]').dataset.carrier = carrier;
     el.closest('[id^="qo-rec-"]').dataset.price = price;
-    const sub = document.getElementById('qo-rec-' + i + '-subtotal');
-    if (sub) sub.textContent = '฿' + price;
+    const insOn = document.getElementById('qo-rec-' + i + '-ins-toggle');
+    if (insOn && insOn.checked) qoCalcInsurance(i);
+    qoUpdateRecSubtotal(i);
     qoUpdateSummary();
   }
 
@@ -1050,6 +1051,8 @@
   function qoToggleCOD(i) {
     const on = document.getElementById('qo-rec-' + i + '-cod-toggle').checked;
     document.getElementById('qo-rec-' + i + '-cod-section').classList.toggle('hidden', !on);
+    qoUpdateRecSubtotal(i);
+    qoUpdateSummary();
   }
 
   function qoToggleInsurance(i) {
@@ -1059,33 +1062,72 @@
   }
 
   function qoCalcInsurance(i) {
+    const card = document.getElementById('qo-rec-' + i);
+    const carrier = card ? card.dataset.carrier : null;
     const val = parseFloat(document.getElementById('qo-rec-' + i + '-item-value').value) || 0;
-    const fee = Math.max(5, val * 0.005);
+    const fee = getInsuranceFee(carrier, val);
     const lbl = document.getElementById('qo-rec-' + i + '-ins-fee');
-    if (lbl) lbl.textContent = '฿' + fee.toFixed(2);
+    if (lbl) {
+      lbl.textContent = '฿' + fee;
+      const hint = document.getElementById('qo-rec-' + i + '-ins-hint');
+      if (hint) hint.textContent = carrier === 'flash' ? 'อัตรา Flash (tier)' : '0.5% ขั้นต่ำ ฿5';
+    }
+    qoUpdateRecSubtotal(i);
     qoUpdateSummary();
+  }
+
+  function qoUpdateRecSubtotal(i) {
+    const card = document.getElementById('qo-rec-' + i);
+    if (!card) return;
+    const carrier = card.dataset.carrier;
+    const price = parseFloat(card.dataset.price) || 0;
+    const insOn = document.getElementById('qo-rec-' + i + '-ins-toggle') && document.getElementById('qo-rec-' + i + '-ins-toggle').checked;
+    const insVal = parseFloat((document.getElementById('qo-rec-' + i + '-item-value') || {}).value) || 0;
+    const ins = insOn ? getInsuranceFee(carrier, insVal) : 0;
+    const codOn = document.getElementById('qo-rec-' + i + '-cod-toggle') && document.getElementById('qo-rec-' + i + '-cod-toggle').checked;
+    const codAmt = parseFloat((document.getElementById('qo-rec-' + i + '-cod-amount') || {}).value) || 0;
+    const codRates = { flash:2.5, jt:2.5, kerry:2.0, post:3.0 };
+    const codFee = codOn && carrier ? Math.round(codAmt * (codRates[carrier] || 2.5) / 100 * 100) / 100 : 0;
+    const total = price + ins + codFee;
+    const el = document.getElementById('qo-rec-' + i + '-subtotal');
+    if (el) {
+      let parts = [];
+      if (price > 0) parts.push('ค่าส่ง ฿' + price);
+      if (codFee > 0) parts.push('COD fee ฿' + codFee.toFixed(2));
+      if (ins > 0) parts.push('ประกัน ฿' + ins);
+      el.innerHTML = parts.length ? parts.join(' + ') + ' = <span class="text-blue-600 font-bold">฿' + total.toFixed(2) + '</span>' : '฿0';
+    }
   }
 
   function qoUpdateSummary() {
     const cards = qoGetActiveRecipients();
     let total = 0;
     cards.forEach(card => {
+      const i = card.id.replace('qo-rec-', '');
+      const carrier = card.dataset.carrier;
       const price = parseFloat(card.dataset.price) || 0;
-      const insOn = card.querySelector('[id$="-ins-toggle"]')?.checked;
+      const insToggle = document.getElementById('qo-rec-' + i + '-ins-toggle');
       let ins = 0;
-      if (insOn) {
-        const valEl = card.querySelector('[id$="-item-value"]');
-        const val = parseFloat(valEl?.value) || 0;
-        ins = Math.max(5, val * 0.005);
+      if (insToggle && insToggle.checked) {
+        const valEl = document.getElementById('qo-rec-' + i + '-item-value');
+        const val = parseFloat(valEl ? valEl.value : 0) || 0;
+        ins = getInsuranceFee(carrier, val);
       }
-      total += price + ins;
+      const codToggle = document.getElementById('qo-rec-' + i + '-cod-toggle');
+      let codFee = 0;
+      if (codToggle && codToggle.checked) {
+        const codAmt = parseFloat((document.getElementById('qo-rec-' + i + '-cod-amount') || {}).value) || 0;
+        const codRates = { flash:2.5, jt:2.5, kerry:2.0, post:3.0 };
+        codFee = codAmt * (codRates[carrier] || 2.5) / 100;
+      }
+      total += price + ins + codFee;
     });
     const n = cards.length;
     const tc = document.getElementById('qo-total-count');
     const tco = document.getElementById('qo-total-cost');
     const sc = document.getElementById('qo-submit-count');
     if (tc) tc.textContent = n;
-    if (tco) tco.textContent = '฿' + total;
+    if (tco) tco.textContent = '฿' + total.toFixed(2);
     if (sc) sc.textContent = n;
   }
 
