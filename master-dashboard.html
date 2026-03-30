@@ -134,7 +134,7 @@
           <div class="flex items-center gap-3"><span class="text-3xl">💰</span><div><p class="font-semibold text-gray-800">อนุมัติเติมเงิน</p><p class="text-xs text-gray-500">3 รายการรอ</p></div></div>
         </button>
         <button onclick="showSection('settings')" class="card p-4 text-left hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3"><span class="text-3xl">⚙️</span><div><p class="font-semibold text-gray-800">ตั้งค่าราคา</p><p class="text-xs text-gray-500">จัดการต้นทุน</p></div></div>
+          <div class="flex items-center gap-3"><span class="text-3xl">⚙️</span><div><p class="font-semibold text-gray-800">ตั้งค่าสาขา</p><p class="text-xs text-gray-500">จัดการ user/password</p></div></div>
         </button>
       </div>
 
@@ -741,72 +741,49 @@
 
     <!-- ═══════════════ SETTINGS ═══════════════ -->
     <div class="section" id="section-settings">
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mb-6 flex items-center gap-3">
-        <span class="text-2xl">⚠️</span>
-        <p class="text-sm text-yellow-800 font-medium">หน้านี้สำหรับผู้ดูแลระบบเท่านั้น การเปลี่ยนแปลงจะมีผลกับทุกสาขาทันที</p>
-      </div>
-      <h2 class="text-xl font-bold text-gray-800 mb-6">⚙️ ตั้งค่าราคาต้นทุน</h2>
-      <!-- Per-branch pricing table -->
-      <div class="card mb-6 overflow-hidden">
-        <div class="px-5 py-4 border-b border-gray-100"><h3 class="font-bold text-gray-800">ราคาต้นทุนต่อสาขา (0-3 กก.)</h3><p class="text-xs text-gray-500 mt-0.5">ราคาต้นทุนที่ตั้งให้แต่ละสาขา — สาขาไม่สามารถแก้ไขได้</p></div>
+      <h2 class="text-xl font-bold text-gray-800 mb-6">⚙️ ตั้งค่าสาขา</h2>
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800">ข้อมูล Username / Password ต่อสาขา</h3>
+          <p class="text-xs text-gray-500 mt-0.5">แก้ไข username และ password ของแต่ละสาขาได้ที่นี่</p>
+        </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
               <tr>
                 <th class="px-5 py-3 text-left">สาขา</th>
-                <th class="px-5 py-3 text-left">J&amp;T ⚡</th>
-                <th class="px-5 py-3 text-left">Flash ⚡</th>
-                <th class="px-5 py-3 text-left">Kerry 🟢</th>
-                <th class="px-5 py-3 text-left">ไปรษณีย์ 🇹🇭</th>
-                <th class="px-5 py-3 text-left">ราคาขายต่ำสุด</th>
-                <th class="px-5 py-3 text-left">ราคาขายสูงสุด</th>
+                <th class="px-5 py-3 text-left">Username</th>
+                <th class="px-5 py-3 text-left">Password</th>
+                <th class="px-5 py-3 text-left"></th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-gray-100" id="settings-branch-table">
               <tr class="hover:bg-gray-50">
-                <td class="px-5 py-3 font-medium">สาขาสยาม</td>
-                <td class="px-5 py-3"><input type="number" value="20" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="18" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="22" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="15" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="80" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3 font-medium text-gray-800">สาขาสยาม</td>
+                <td class="px-5 py-3"><input type="text" value="siam001" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><input type="text" value="siam1234" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><button onclick="showToast('บันทึกสาขาสยามสำเร็จ ✅','success')" class="text-xs text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-lg">บันทึก</button></td>
               </tr>
               <tr class="hover:bg-gray-50">
-                <td class="px-5 py-3 font-medium">สาขาลาดพร้าว</td>
-                <td class="px-5 py-3"><input type="number" value="20" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="18" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="22" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="15" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="80" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3 font-medium text-gray-800">สาขาลาดพร้าว</td>
+                <td class="px-5 py-3"><input type="text" value="ladprao01" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><input type="text" value="lprao456" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><button onclick="showToast('บันทึกสาขาลาดพร้าวสำเร็จ ✅','success')" class="text-xs text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-lg">บันทึก</button></td>
               </tr>
               <tr class="hover:bg-gray-50">
-                <td class="px-5 py-3 font-medium">สาขาอุดมสุข</td>
-                <td class="px-5 py-3"><input type="number" value="21" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="19" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="23" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="16" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="38" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="85" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3 font-medium text-gray-800">สาขาอุดมสุข</td>
+                <td class="px-5 py-3"><input type="text" value="udom001" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><input type="text" value="udom5678" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><button onclick="showToast('บันทึกสาขาอุดมสุขสำเร็จ ✅','success')" class="text-xs text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-lg">บันทึก</button></td>
               </tr>
               <tr class="hover:bg-gray-50">
-                <td class="px-5 py-3 font-medium">สาขาบางแค</td>
-                <td class="px-5 py-3"><input type="number" value="20" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="18" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="22" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="15" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
-                <td class="px-5 py-3"><input type="number" value="80" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center"> ฿</td>
+                <td class="px-5 py-3 font-medium text-gray-800">สาขาบางแค</td>
+                <td class="px-5 py-3"><input type="text" value="bangkae1" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><input type="text" value="bkae9012" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-36 focus:ring-2 focus:ring-purple-400 focus:outline-none"></td>
+                <td class="px-5 py-3"><button onclick="showToast('บันทึกสาขาบางแคสำเร็จ ✅','success')" class="text-xs text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-lg">บันทึก</button></td>
               </tr>
             </tbody>
           </table>
-        </div>
-        <div class="px-5 py-4 flex justify-end">
-          <button onclick="showToast('บันทึกการตั้งค่าสำเร็จ! 🎉','success')"
-                  class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90">
-            💾 บันทึกการตั้งค่า
-          </button>
         </div>
       </div>
     </div><!-- /settings -->
@@ -890,7 +867,7 @@
     'topup': ['อนุมัติเติมเงิน', 'รายการรอการอนุมัติจากสาขา'],
     'usage-report': ['รายงานการใช้งาน', 'ออเดอร์และรายได้แต่ละสาขา'],
     'finance-report': ['รายงานการเงิน', 'การเติมเงินและเคลื่อนไหวกระเป๋าเงิน'],
-    'settings': ['ตั้งค่าระบบ', 'จัดการราคาต้นทุนและขีดจำกัดราคา'],
+    'settings': ['ตั้งค่าสาขา', 'จัดการ username และ password ต่อสาขา'],
   };
 
   // Usage report date filter
