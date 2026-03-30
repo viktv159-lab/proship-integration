@@ -1196,7 +1196,7 @@
     const l = parseFloat(document.getElementById('qo-dim-l').value) || 0;
     const h = parseFloat(document.getElementById('qo-dim-h').value) || 0;
     if (w > 0 && l > 0 && h > 0) {
-      document.getElementById('qo-weight').value = ((w * l * h) / 6000).toFixed(2);
+      document.getElementById('qo-weight-dim').value = ((w * l * h) / 6000).toFixed(2);
     } else {
       document.getElementById('qo-weight-manual').value = '';
     document.getElementById('qo-weight-dim').value = '';
