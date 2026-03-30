@@ -90,51 +90,49 @@
 
     <!-- ═══════════════ สร้างรายการ ═══════════════ -->
     <div class="section active" id="section-create">
-      <div class="flex items-center justify-between mb-5">
-        <h2 class="text-xl font-bold text-gray-800">📦 สร้างรายการส่งพัสดุ</h2>
-      </div>
+      <h2 class="text-xl font-bold text-gray-800 mb-5">📦 สร้างรายการส่งพัสดุ</h2>
       <div class="max-w-3xl">
 
-        <!-- Sender shared -->
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-5" id="sender-section">
-          <h3 class="font-semibold text-blue-800 text-sm mb-4">📤 ข้อมูลผู้ส่ง (ร่วมกันทุกออเดอร์)</h3>
+        <!-- ผู้ส่ง (ร่วมกัน) -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-5">
+          <h3 class="font-semibold text-blue-800 text-sm mb-4 flex items-center gap-2">📤 ข้อมูลผู้ส่ง <span class="text-xs font-normal text-blue-500">(ร่วมกันทุกออเดอร์)</span></h3>
           <div class="grid grid-cols-2 gap-3 mb-3">
             <div><label class="block text-xs font-medium text-gray-700 mb-1.5">ชื่อผู้ส่ง *</label>
-              <input type="text" id="sender-name" required class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="นายวิชัย พัสดุดี"></div>
+              <input type="text" id="sender-name" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="นายวิชัย พัสดุดี"></div>
             <div><label class="block text-xs font-medium text-gray-700 mb-1.5">เบอร์โทร *</label>
-              <input type="tel" id="sender-phone" required class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="089-999-8888"></div>
+              <input type="tel" id="sender-phone" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="089-999-8888"></div>
           </div>
           <label class="block text-xs font-medium text-gray-700 mb-1.5">ที่อยู่ผู้ส่ง *</label>
-          <textarea id="sender-addr" required rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="99/9 ถ.เจริญกรุง แขวงสี่พระยา เขตบางรัก กรุงเทพฯ 10500"></textarea>
+          <textarea id="sender-addr" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="99/9 ถ.เจริญกรุง แขวงสี่พระยา เขตบางรัก กรุงเทพฯ 10500"></textarea>
         </div>
 
-        <!-- Recipients list -->
+        <!-- รายการผู้รับ -->
         <div id="recipients-list" class="space-y-4"></div>
 
-        <!-- Add recipient button -->
+        <!-- + เพิ่มผู้รับ -->
         <button onclick="addRecipient()" class="w-full mt-4 mb-5 border-2 border-dashed border-purple-300 text-purple-600 py-3 rounded-xl text-sm font-semibold hover:bg-purple-50 transition-all">
           + เพิ่มผู้รับ
         </button>
 
-        <!-- Total summary -->
-        <div class="card p-4 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 mb-4">
-          <div class="flex items-center justify-between">
+        <!-- สรุปรวม -->
+        <div class="card p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 mb-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
             <span class="text-sm text-gray-600">รวม <span id="total-count" class="font-bold text-purple-600">1</span> ออเดอร์</span>
             <span class="text-sm text-gray-600">ค่าส่งรวม <span id="total-cost" class="font-bold text-blue-600">฿0</span></span>
             <span class="text-xs text-gray-400">คงเหลือหลังชำระ <span id="total-remaining" class="font-semibold text-gray-700">฿1,250</span></span>
           </div>
         </div>
 
-        <!-- Submit -->
-        <div class="flex gap-3 mb-6">
+        <!-- ปุ่ม -->
+        <div class="flex gap-3 mb-8">
           <button type="button" onclick="clearAllOrders()" class="flex-1 border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50">🗑️ ล้างทั้งหมด</button>
-          <button type="button" onclick="submitAllOrders()" class="flex-2 flex-grow bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-xl text-sm hover:opacity-90">
+          <button type="button" onclick="submitAllOrders()" class="flex-[2] bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-xl text-sm hover:opacity-90 shadow-md">
             ✅ สร้างออเดอร์ทั้งหมด (<span id="submit-count">1</span> รายการ)
           </button>
         </div>
 
-        <!-- Pricing Table -->
-        <div class="card mt-6 overflow-hidden">
+        <!-- ตารางราคาขาย -->
+        <div class="card mt-2 overflow-hidden">
           <div class="px-5 py-4 border-b border-gray-100">
             <h3 class="font-bold text-gray-800">ตารางราคาขาย</h3>
             <p class="text-xs text-gray-500 mt-0.5">ราคาต้นทุน 🔒 ถูกล็อกโดย Admin • แก้ไขได้เฉพาะราคาขาย</p>
@@ -150,40 +148,21 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100">
-                <tr class="hover:bg-gray-50">
-                  <td class="px-5 py-3"><span class="sb sb-gray">⚡ Flash</span></td>
-                  <td class="px-5 py-3"><input type="number" value="18" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td>
-                  <td class="px-5 py-3"><input type="number" value="42" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,18)"> ฿</td>
-                  <td class="px-5 py-3 font-bold text-green-600 profit-cell">฿24</td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-5 py-3"><span class="sb sb-gray">🔴 J&amp;T</span></td>
-                  <td class="px-5 py-3"><input type="number" value="20" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td>
-                  <td class="px-5 py-3"><input type="number" value="45" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,20)"> ฿</td>
-                  <td class="px-5 py-3 font-bold text-green-600 profit-cell">฿25</td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-5 py-3"><span class="sb sb-gray">🟢 Kerry</span></td>
-                  <td class="px-5 py-3"><input type="number" value="22" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td>
-                  <td class="px-5 py-3"><input type="number" value="48" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,22)"> ฿</td>
-                  <td class="px-5 py-3 font-bold text-green-600 profit-cell">฿26</td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-5 py-3"><span class="sb sb-gray">🇹🇭 ไปรษณีย์</span></td>
-                  <td class="px-5 py-3"><input type="number" value="15" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td>
-                  <td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,15)"> ฿</td>
-                  <td class="px-5 py-3 font-bold text-green-600 profit-cell">฿20</td>
-                </tr>
+                <tr class="hover:bg-gray-50"><td class="px-5 py-3"><span class="sb sb-gray">⚡ Flash</span></td><td class="px-5 py-3"><input type="number" value="18" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td><td class="px-5 py-3"><input type="number" value="42" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,18)"> ฿</td><td class="px-5 py-3 font-bold text-green-600 profit-cell">฿24</td></tr>
+                <tr class="hover:bg-gray-50"><td class="px-5 py-3"><span class="sb sb-gray">🔴 J&amp;T</span></td><td class="px-5 py-3"><input type="number" value="20" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td><td class="px-5 py-3"><input type="number" value="45" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,20)"> ฿</td><td class="px-5 py-3 font-bold text-green-600 profit-cell">฿25</td></tr>
+                <tr class="hover:bg-gray-50"><td class="px-5 py-3"><span class="sb sb-gray">🟢 Kerry</span></td><td class="px-5 py-3"><input type="number" value="22" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td><td class="px-5 py-3"><input type="number" value="48" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,22)"> ฿</td><td class="px-5 py-3 font-bold text-green-600 profit-cell">฿26</td></tr>
+                <tr class="hover:bg-gray-50"><td class="px-5 py-3"><span class="sb sb-gray">🇹🇭 ไปรษณีย์</span></td><td class="px-5 py-3"><input type="number" value="15" readonly class="locked-input w-16 border border-gray-200 rounded-lg px-2 py-1 text-center text-sm"> ฿</td><td class="px-5 py-3"><input type="number" value="35" class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-center text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="updateProfit(this,15)"> ฿</td><td class="px-5 py-3 font-bold text-green-600 profit-cell">฿20</td></tr>
               </tbody>
             </table>
           </div>
           <div class="px-5 py-4 flex justify-end">
-            <button onclick="showToast('บันทึกราคาขายสำเร็จ! 🎉','success')"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-semibold">💾 บันทึกราคา</button>
+            <button onclick="showToast('บันทึกราคาขายสำเร็จ! 🎉','success')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-semibold">💾 บันทึกราคา</button>
           </div>
         </div>
       </div>
     </div><!-- /create -->
+
+
 
     <!-- ═══════════════ รายการทั้งหมด ═══════════════ -->
     <div class="section" id="section-orders">
@@ -332,7 +311,6 @@
 <script>
 // ────────── State ──────────
 let walletBalance = 1250;
-let recipients = [];
 let recCounter = 0;
 
 const mockOrders = [
@@ -384,34 +362,20 @@ function updateWallet() {
     badge.className = 'flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm bg-white/80 border border-gray-200 text-gray-800 hover:scale-105 transition-all shadow-sm';
     document.getElementById('wallet-icon').textContent = '💰';
   }
-  updateSummary();
 }
 
 // ────────── Multi-recipient ──────────
 function initRecipients() {
-  recipients = [];
   recCounter = 0;
   document.getElementById('recipients-list').innerHTML = '';
   addRecipient();
-}
-
-function addRecipient() {
-  const i = recCounter++;
-  recipients.push({ carrier: null, price: 0, insAmt: 0 });
-  const card = document.createElement('div');
-  card.className = 'card p-5 border-l-4 border-purple-400';
-  card.id = 'rec-' + i;
-  card.innerHTML = buildRecipientHTML(i);
-  document.getElementById('recipients-list').appendChild(card);
-  updateRemoveButtons();
-  updateSummary();
 }
 
 function buildRecipientHTML(i) {
   return `
     <div class="flex items-center justify-between mb-3">
       <span class="font-bold text-purple-700 text-sm">📥 ผู้รับที่ ${i + 1}</span>
-      <button onclick="removeRecipient(${i})" id="rec-${i}-remove" class="text-red-400 hover:text-red-600 text-sm font-medium">✕ ลบ</button>
+      <button onclick="removeRecipient(${i})" id="rec-${i}-remove" class="text-red-400 hover:text-red-600 text-sm font-medium px-2 py-1 rounded hover:bg-red-50">✕ ลบ</button>
     </div>
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div><label class="block text-xs font-medium text-gray-700 mb-1">ชื่อผู้รับ *</label>
@@ -430,7 +394,6 @@ function buildRecipientHTML(i) {
       <div class="carrier-card text-center py-2 cursor-pointer" onclick="selectRecCarrier(this,${i},'kerry',48)"><div class="text-xl">🟢</div><div class="text-xs font-semibold">Kerry</div><div class="text-xs text-gray-400">฿48</div></div>
       <div class="carrier-card text-center py-2 cursor-pointer" onclick="selectRecCarrier(this,${i},'post',35)"><div class="text-xl">🇹🇭</div><div class="text-xs font-semibold">ไปรษณีย์</div><div class="text-xs text-gray-400">฿35</div></div>
     </div>
-    <!-- Weight -->
     <div class="mb-3">
       <div class="flex items-center justify-between mb-1">
         <label class="text-xs font-medium text-gray-700">น้ำหนัก (กก.) *</label>
@@ -439,29 +402,24 @@ function buildRecipientHTML(i) {
           <label class="toggle-sw"><input type="checkbox" id="rec-${i}-dim-toggle" onchange="toggleRecDim(${i})"><span class="toggle-sl"></span></label>
         </label>
       </div>
-      <div id="rec-${i}-manual-wrap" class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 bg-white">
-        <input type="number" id="rec-${i}-weight-manual" min="0.01" step="0.01" placeholder="เช่น 1.50" oninput="updateSummary()"
-               class="w-full text-sm focus:outline-none bg-transparent">
+      <div id="rec-${i}-manual-wrap" class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-blue-400">
+        <input type="number" id="rec-${i}-weight-manual" min="0.01" step="0.01" placeholder="เช่น 1.50" oninput="updateSummary()" class="w-full text-sm focus:outline-none bg-transparent">
         <span class="text-gray-400 text-xs">กก.</span>
       </div>
       <div id="rec-${i}-dim-wrap" class="hidden mt-2 space-y-2">
         <div class="grid grid-cols-3 gap-2">
-          <div><label class="text-xs text-gray-400">กว้าง (ซม.)</label>
-            <input type="number" id="rec-${i}-dim-w" min="0" step="0.1" oninput="calcRecDimWeight(${i})" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none mt-0.5"></div>
-          <div><label class="text-xs text-gray-400">ยาว (ซม.)</label>
-            <input type="number" id="rec-${i}-dim-l" min="0" step="0.1" oninput="calcRecDimWeight(${i})" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none mt-0.5"></div>
-          <div><label class="text-xs text-gray-400">สูง (ซม.)</label>
-            <input type="number" id="rec-${i}-dim-h" min="0" step="0.1" oninput="calcRecDimWeight(${i})" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none mt-0.5"></div>
+          <div><label class="text-xs text-gray-400">กว้าง (ซม.)</label><input type="number" id="rec-${i}-dim-w" min="0" step="0.1" oninput="calcRecDimWeight(${i})" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none mt-0.5"></div>
+          <div><label class="text-xs text-gray-400">ยาว (ซม.)</label><input type="number" id="rec-${i}-dim-l" min="0" step="0.1" oninput="calcRecDimWeight(${i})" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none mt-0.5"></div>
+          <div><label class="text-xs text-gray-400">สูง (ซม.)</label><input type="number" id="rec-${i}-dim-h" min="0" step="0.1" oninput="calcRecDimWeight(${i})" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none mt-0.5"></div>
         </div>
         <div class="flex items-center gap-2 border border-blue-200 rounded-lg px-3 py-2 bg-blue-50">
-          <span class="text-xs text-blue-400">น้ำหนัก</span>
+          <span class="text-xs text-blue-400 flex-shrink-0">น้ำหนัก</span>
           <input type="number" id="rec-${i}-weight-dim" readonly placeholder="—" class="w-full text-sm font-semibold text-blue-700 bg-transparent focus:outline-none text-right">
           <span class="text-xs text-blue-400">กก.</span>
         </div>
         <p class="text-xs text-gray-400">สูตร: (กว้าง×ยาว×สูง)÷6,000</p>
       </div>
     </div>
-    <!-- COD -->
     <div class="mb-2">
       <div class="flex items-center justify-between mb-1">
         <span class="text-xs font-medium text-gray-700">เก็บเงินปลายทาง (COD)</span>
@@ -471,8 +429,7 @@ function buildRecipientHTML(i) {
         <input type="number" id="rec-${i}-cod-amount" min="0" placeholder="ยอด COD (฿)" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-orange-400 focus:outline-none">
       </div>
     </div>
-    <!-- Insurance -->
-    <div class="mb-3">
+    <div class="mb-2">
       <div class="flex items-center justify-between mb-1">
         <span class="text-xs font-medium text-gray-700">ประกันสินค้า</span>
         <label class="toggle-sw"><input type="checkbox" id="rec-${i}-ins-toggle" onchange="toggleRecInsurance(${i})"><span class="toggle-sl"></span></label>
@@ -482,11 +439,21 @@ function buildRecipientHTML(i) {
         <p class="text-xs text-gray-400 mt-1">ค่าประกัน: <strong id="rec-${i}-ins-fee">฿0</strong> (0.5% ขั้นต่ำ ฿5)</p>
       </div>
     </div>
-    <!-- Subtotal -->
-    <div class="text-right text-xs text-gray-500 pt-2 border-t border-gray-100">
+    <div class="text-right text-xs text-gray-500 pt-2 border-t border-gray-100 mt-3">
       ค่าส่ง: <span id="rec-${i}-subtotal" class="font-bold text-blue-600">฿0</span>
     </div>
   `;
+}
+
+function addRecipient() {
+  const i = recCounter++;
+  const card = document.createElement('div');
+  card.className = 'card p-5 border-l-4 border-purple-400';
+  card.id = 'rec-' + i;
+  card.innerHTML = buildRecipientHTML(i);
+  document.getElementById('recipients-list').appendChild(card);
+  updateRemoveButtons();
+  updateSummary();
 }
 
 function removeRecipient(i) {
@@ -498,7 +465,7 @@ function removeRecipient(i) {
 
 function updateRemoveButtons() {
   const cards = document.querySelectorAll('#recipients-list > div');
-  cards.forEach((card) => {
+  cards.forEach(card => {
     const btn = card.querySelector('[id$="-remove"]');
     if (btn) btn.style.display = cards.length <= 1 ? 'none' : '';
   });
@@ -512,8 +479,8 @@ function selectRecCarrier(el, i, carrier, price) {
   const grid = document.getElementById('rec-' + i + '-carriers');
   if (grid) grid.querySelectorAll('.carrier-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
-  el.closest('[id^="rec-"]').dataset.carrier = carrier;
-  el.closest('[id^="rec-"]').dataset.price = price;
+  const card = document.getElementById('rec-' + i);
+  if (card) { card.dataset.carrier = carrier; card.dataset.price = price; }
   const sub = document.getElementById('rec-' + i + '-subtotal');
   if (sub) sub.textContent = '฿' + price;
   updateSummary();
@@ -534,11 +501,7 @@ function calcRecDimWeight(i) {
   const l = parseFloat(document.getElementById('rec-' + i + '-dim-l').value) || 0;
   const h = parseFloat(document.getElementById('rec-' + i + '-dim-h').value) || 0;
   const el = document.getElementById('rec-' + i + '-weight-dim');
-  if (w > 0 && l > 0 && h > 0) {
-    el.value = ((w * l * h) / 6000).toFixed(2);
-  } else {
-    el.value = '';
-  }
+  if (el) el.value = (w > 0 && l > 0 && h > 0) ? ((w * l * h) / 6000).toFixed(2) : '';
 }
 
 function toggleRecCOD(i) {
@@ -549,7 +512,7 @@ function toggleRecCOD(i) {
 function toggleRecInsurance(i) {
   const on = document.getElementById('rec-' + i + '-ins-toggle').checked;
   document.getElementById('rec-' + i + '-ins-section').classList.toggle('hidden', !on);
-  if (!on) updateSummary();
+  updateSummary();
 }
 
 function calcRecInsurance(i) {
@@ -565,34 +528,30 @@ function updateSummary() {
   let total = 0;
   cards.forEach(card => {
     const price = parseFloat(card.dataset.price) || 0;
-    const insOn = card.querySelector('[id$="-ins-toggle"]')?.checked;
+    const insToggle = card.querySelector('[id$="-ins-toggle"]');
     let ins = 0;
-    if (insOn) {
+    if (insToggle && insToggle.checked) {
       const valEl = card.querySelector('[id$="-item-value"]');
-      const val = parseFloat(valEl?.value) || 0;
+      const val = parseFloat(valEl ? valEl.value : 0) || 0;
       ins = Math.max(5, val * 0.005);
     }
     total += price + ins;
   });
   const n = cards.length;
-  const tc = document.getElementById('total-count');
-  const tco = document.getElementById('total-cost');
-  const tr = document.getElementById('total-remaining');
-  const sc = document.getElementById('submit-count');
-  if (tc) tc.textContent = n;
-  if (tco) tco.textContent = '฿' + total;
-  if (tr) tr.textContent = '฿' + (walletBalance - total).toLocaleString('th-TH');
-  if (sc) sc.textContent = n;
+  const tc = document.getElementById('total-count'); if (tc) tc.textContent = n;
+  const tco = document.getElementById('total-cost'); if (tco) tco.textContent = '฿' + total;
+  const tr = document.getElementById('total-remaining'); if (tr) tr.textContent = '฿' + (walletBalance - total).toLocaleString('th-TH');
+  const sc = document.getElementById('submit-count'); if (sc) sc.textContent = n;
 }
 
 function submitAllOrders() {
-  const senderName = document.getElementById('sender-name')?.value?.trim();
-  const senderPhone = document.getElementById('sender-phone')?.value?.trim();
-  const senderAddr = document.getElementById('sender-addr')?.value?.trim();
-  if (!senderName || !senderPhone || !senderAddr) { showToast('กรุณากรอกข้อมูลผู้ส่งให้ครบ', 'error'); return; }
+  const sName = (document.getElementById('sender-name').value || '').trim();
+  const sPhone = (document.getElementById('sender-phone').value || '').trim();
+  const sAddr = (document.getElementById('sender-addr').value || '').trim();
+  if (!sName || !sPhone || !sAddr) { showToast('กรุณากรอกข้อมูลผู้ส่งให้ครบ', 'error'); return; }
 
   const cards = getActiveRecipients();
-  if (cards.length === 0) { showToast('กรุณาเพิ่มผู้รับอย่างน้อย 1 คน', 'error'); return; }
+  if (!cards.length) { showToast('กรุณาเพิ่มผู้รับอย่างน้อย 1 คน', 'error'); return; }
 
   let totalCost = 0;
   const orders = [];
@@ -600,40 +559,36 @@ function submitAllOrders() {
   for (let idx = 0; idx < cards.length; idx++) {
     const card = cards[idx];
     const i = card.id.replace('rec-', '');
-    const name = document.getElementById('rec-' + i + '-name')?.value?.trim();
-    const phone = document.getElementById('rec-' + i + '-phone')?.value?.trim();
-    const addr = document.getElementById('rec-' + i + '-addr')?.value?.trim();
+    const name = (document.getElementById('rec-' + i + '-name').value || '').trim();
+    const phone = (document.getElementById('rec-' + i + '-phone').value || '').trim();
+    const addr = (document.getElementById('rec-' + i + '-addr').value || '').trim();
     const carrier = card.dataset.carrier;
     const price = parseFloat(card.dataset.price) || 0;
-    const dimOn = document.getElementById('rec-' + i + '-dim-toggle')?.checked;
-    const weight = parseFloat(document.getElementById(dimOn ? 'rec-' + i + '-weight-dim' : 'rec-' + i + '-weight-manual')?.value);
+    const dimOn = document.getElementById('rec-' + i + '-dim-toggle').checked;
+    const weightEl = document.getElementById(dimOn ? 'rec-' + i + '-weight-dim' : 'rec-' + i + '-weight-manual');
+    const weight = parseFloat(weightEl ? weightEl.value : 0);
 
-    if (!name) { showToast('ผู้รับที่ ' + (idx + 1) + ': กรุณากรอกชื่อ', 'error'); return; }
-    if (!phone) { showToast('ผู้รับที่ ' + (idx + 1) + ': กรุณากรอกเบอร์', 'error'); return; }
-    if (!carrier) { showToast('ผู้รับที่ ' + (idx + 1) + ': กรุณาเลือกขนส่ง', 'error'); return; }
-    if (!weight || weight <= 0) { showToast('ผู้รับที่ ' + (idx + 1) + ': กรุณากรอกน้ำหนัก', 'error'); return; }
+    if (!name) { showToast('ผู้รับที่ ' + (idx+1) + ': กรุณากรอกชื่อ', 'error'); return; }
+    if (!phone) { showToast('ผู้รับที่ ' + (idx+1) + ': กรุณากรอกเบอร์', 'error'); return; }
+    if (!carrier) { showToast('ผู้รับที่ ' + (idx+1) + ': กรุณาเลือกขนส่ง', 'error'); return; }
+    if (!weight || weight <= 0) { showToast('ผู้รับที่ ' + (idx+1) + ': กรุณากรอกน้ำหนัก', 'error'); return; }
 
-    const insOn = document.getElementById('rec-' + i + '-ins-toggle')?.checked;
-    const insVal = parseFloat(document.getElementById('rec-' + i + '-item-value')?.value) || 0;
+    const insOn = document.getElementById('rec-' + i + '-ins-toggle').checked;
+    const insVal = parseFloat((document.getElementById('rec-' + i + '-item-value') || {}).value) || 0;
     const ins = insOn ? Math.max(5, insVal * 0.005) : 0;
     totalCost += price + ins;
-
     orders.push({ recipient: name, carrier, weight: weight.toFixed(2) + ' กก.', price });
   }
 
   if (walletBalance < totalCost) { showToast('ยอดเงินไม่เพียงพอ กรุณาเติมเงิน', 'error'); return; }
-
   walletBalance -= totalCost;
   updateWallet();
 
   orders.forEach(o => {
     mockOrders.unshift({
       id: 'ORD-' + Date.now().toString(36).toUpperCase().slice(-6),
-      recipient: o.recipient,
-      carrier: o.carrier,
-      weight: o.weight,
-      price: o.price,
-      status: 'รอรับพัสดุ',
+      recipient: o.recipient, carrier: o.carrier,
+      weight: o.weight, price: o.price, status: 'รอรับพัสดุ',
       tracking: o.carrier.toUpperCase() + Math.random().toString(36).slice(-8).toUpperCase() + 'TH',
       date: 'เพิ่งสร้าง',
     });
@@ -644,12 +599,9 @@ function submitAllOrders() {
 }
 
 function clearAllOrders() {
-  const sn = document.getElementById('sender-name');
-  const sp = document.getElementById('sender-phone');
-  const sa = document.getElementById('sender-addr');
-  if (sn) sn.value = '';
-  if (sp) sp.value = '';
-  if (sa) sa.value = '';
+  document.getElementById('sender-name').value = '';
+  document.getElementById('sender-phone').value = '';
+  document.getElementById('sender-addr').value = '';
   initRecipients();
 }
 
@@ -674,10 +626,7 @@ function renderOrders(orders) {
 function filterOrders() {
   const carrier = document.getElementById('filter-carrier').value;
   const status = document.getElementById('filter-status').value;
-  const filtered = mockOrders.filter(o =>
-    (!carrier || o.carrier === carrier) && (!status || o.status === status)
-  );
-  renderOrders(filtered);
+  renderOrders(mockOrders.filter(o => (!carrier || o.carrier === carrier) && (!status || o.status === status)));
 }
 
 // ────────── Pricing Table ──────────
@@ -690,9 +639,7 @@ function updateProfit(input, cost) {
 }
 
 // ────────── Top-up ──────────
-function setAmount(amt) {
-  document.getElementById('topup-amount').value = amt;
-}
+function setAmount(amt) { document.getElementById('topup-amount').value = amt; }
 function handleSlipFile(input) {
   if (input.files[0]) document.getElementById('slip-name').textContent = '✅ ' + input.files[0].name;
 }
