@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProShip Team — บทบาทและหน้าที่</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Sarabun', sans-serif; }
+  body { background: #f0f2f8; }
+  .navbar-brand { font-weight: 700; font-size: 1.2rem; }
+  .nav-top { background: linear-gradient(135deg, #6c3fc5 0%, #4a90d9 100%); }
+
+  .page-header {
+    background: linear-gradient(135deg, #6c3fc5 0%, #4a90d9 100%);
+    color: white; padding: 40px 0 30px;
+    margin-bottom: 30px;
+  }
+
+  /* Role cards */
+  .role-card {
+    border: none; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 24px; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .role-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.13); }
+  .role-header {
+    padding: 20px 24px 16px;
+    color: white;
+  }
+  .role-header.coo    { background: linear-gradient(135deg, #1a1a2e, #4a90d9); }
+  .role-header.cs-lead{ background: linear-gradient(135deg, #6c3fc5, #a855f7); }
+  .role-header.cs-pro { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+  .role-header.cs-chat{ background: linear-gradient(135deg, #059669, #34d399); }
+  .role-header.graphic{ background: linear-gradient(135deg, #d97706, #fbbf24); }
+
+  .role-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .badge-role {
+    font-size: 0.75rem; padding: 4px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.25); color: white;
+  }
+  .badge-warn {
+    font-size: 0.7rem; padding: 3px 8px; border-radius: 20px;
+    background: #fee2e2; color: #dc2626;
+  }
+  .role-body { padding: 20px 24px; background: white; }
+
+  .section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; margin-top: 16px;
+  }
+  .task-list { list-style: none; padding: 0; margin: 0; }
+  .task-list li {
+    padding: 6px 0; border-bottom: 1px solid #f3f4f6;
+    font-size: 0.9rem; color: #374151;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .task-list li:last-child { border-bottom: none; }
+  .task-list li::before { content: '▸'; color: #6c3fc5; font-size: 0.75rem; margin-top: 2px; flex-shrink: 0; }
+
+  .flow-step {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.85rem; margin-bottom: 8px;
+  }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #6c3fc5; color: white;
+    font-size: 0.7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-num.green  { background: #059669; }
+  .step-num.blue   { background: #0ea5e9; }
+  .step-num.orange { background: #d97706; }
+  .step-num.dark   { background: #1a1a2e; }
+
+  .track-pill {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600; margin: 3px;
+  }
+  .tp-purple { background: #ede9fe; color: #6c3fc5; }
+  .tp-blue   { background: #e0f2fe; color: #0369a1; }
+  .tp-green  { background: #d1fae5; color: #065f46; }
+  .tp-orange { background: #fef3c7; color: #92400e; }
+  .tp-red    { background: #fee2e2; color: #991b1b; }
+
+  .org-chart {
+    background: white; border-radius: 16px;
+    padding: 24px; margin-bottom: 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .org-node {
+    text-align: center; padding: 12px 16px; border-radius: 12px;
+    font-size: 0.85rem; font-weight: 600;
+  }
+  .org-node.top  { background: linear-gradient(135deg,#1a1a2e,#4a90d9); color:white; }
+  .org-node.mid  { background: linear-gradient(135deg,#6c3fc5,#a855f7); color:white; }
+  .org-node.leaf { background: #f0f2f8; color: #374151; border: 2px solid #e5e7eb; }
+  .org-node.leaf.leaving { border-color: #fca5a5; background: #fff5f5; color: #991b1b; }
+  .org-node.leaf.graphic { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+  .org-connector { border-left: 2px dashed #d1d5db; margin: 0 auto; height: 20px; width: 0; }
+
+  .alert-resign {
+    background: #fff1f2; border: 1px solid #fecaca; border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 24px;
+    font-size: 0.88rem; color: #dc2626;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { padding: 24px 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar nav-top navbar-dark px-3">
+  <span class="navbar-brand">🚢 ProShip</span>
+  <span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Team — บทบาทและหน้าที่</span>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="container">
+    <h4 class="mb-1 fw-bold">👥 โครงสร้างทีม ProShip</h4>
+    <p class="mb-0 opacity-75" style="font-size:0.9rem;">บทบาท · หน้าที่ · Workflow · Tracking</p>
+  </div>
+</div>
+
+<div class="container pb-5">
+
+  <!-- Alert: Mod leaving -->
+  <div class="alert-resign">
+    ⚠️ <strong>หมายเหตุ:</strong> มด จะลาออกหลังจากเดือนหน้า — ต้องวางแผนกระจายงานให้ทีมที่เหลือ
+  </div>
+
+  <!-- Org Chart -->
+  <div class="org-chart">
+    <p class="section-label mb-3">โครงสร้างองค์กร</p>
+    <div class="row justify-content-center">
+      <div class="col-4 col-md-2">
+        <div class="org-node top">👔 สิงห์<br><small style="opacity:0.8">COO</small></div>
+      </div>
+    </div>
+    <div class="org-connector mt-1"></div>
+    <div class="row justify-content-center">
+      <div class="col-6 col-md-3">
+        <div class="org-node mid">🎯 เอม<br><small style="opacity:0.8">CS Lead</small></div>
+      </div>
+    </div>
+    <div class="org-connector mt-1"></div>
+    <div class="row justify-content-center g-2 mt-0">
+      <div class="col-5 col-md-2">
+        <div class="org-node leaf leaving">📦 มด<br><small>CS / ProShip</small><br><span style="font-size:0.7rem;">🔴 กำลังลาออก</span></div>
+      </div>
+      <div class="col-5 col-md-2">
+        <div class="org-node leaf">💬 ก้อย<br><small>CS / OneChat</small></div>
+      </div>
+      <div class="col-5 col-md-2 mt-2 mt-md-0">
+        <div class="org-node leaf graphic">🎨 นุ่น<br><small>Graphic</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards Row -->
+  <div class="row">
+
+    <!-- Singh -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="role-card">
+        <div class="role-header coo">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="role-avatar">👔</div>
+            <div>
+              <div class="fw-bold fs-5">สิงห์</div>
+              <span class="badge-role">COO</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">หน้าที่หลัก</div>
+          <ul class="task-list">
+            <li>กำกับทิศทาง product และ operations ทั้งหมด</li>
+            <li>ตัดสินใจ business decisions</li>
+            <li>ประสานงานกับ K. Jiaw และ clients สำคัญ</li>
+            <li>Approve งาน mockup / real build</li>
+            <li>คุยงานกับ B (orchestrator)</li>
+          </ul>
+          <div class="section-label">Tracking</div>
+          <div>
+            <span class="track-pill tp-purple">Product roadmap</span>
+            <span class="track-pill tp-blue">Client relations</span>
+            <span class="track-pill tp-orange">Budget</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aem -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="role-card">
+        <div class="role-header cs-lead">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="role-avatar">🎯</div>
+            <div>
+              <div class="fw-bold fs-5">เอม</div>
+              <span class="badge-role">CS Lead</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">หน้าที่หลัก</div>
+          <ul class="task-list">
+            <li>รับปัญหาจาก มด และ ก้อย — escalate ให้ IT</li>
+            <li>คุยกับลูกค้าโดยตรง กรณีปัญหาซับซ้อน</li>
+            <li>รวบรวม feedback → ส่งให้ dev team</li>
+            <li>ประสานงานกับ B (agent)</li>
+            <li>ดูภาพรวม CS ทั้งทีม</li>
+          </ul>
+          <div class="section-label">Workflow</div>
+          <div class="flow-step"><div class="step-num">1</div>รับแจ้งปัญหาจาก มด / ก้อย</div>
+          <div class="flow-step"><div class="step-num">2</div>ประเมิน — แก้ได้เองหรือต้อง IT?</div>
+          <div class="flow-step"><div class="step-num">3</div>Escalate → IT หรือ ลุยแก้เอง</div>
+          <div class="flow-step"><div class="step-num">4</div>Follow up + แจ้งลูกค้า / ทีม</div>
+          <div class="section-label">Tracking</div>
+          <div>
+            <span class="track-pill tp-purple">Issues log</span>
+            <span class="track-pill tp-blue">IT escalations</span>
+            <span class="track-pill tp-green">Customer feedback</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mod -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="role-card">
+        <div class="role-header cs-pro">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="role-avatar">📦</div>
+            <div>
+              <div class="fw-bold fs-5">มด <span class="badge-warn ms-1">🔴 กำลังลาออก</span></div>
+              <span class="badge-role">CS / ProShip</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">หน้าที่หลัก</div>
+          <ul class="task-list">
+            <li>แก้ปัญหารายวัน ProShip (edit/match orders)</li>
+            <li>สอนการใช้งานระบบให้ลูกค้าใหม่</li>
+            <li>ทำ monthly feedback report</li>
+            <li>รายงานปัญหา → เอม</li>
+          </ul>
+          <div class="section-label">Workflow</div>
+          <div class="flow-step"><div class="step-num blue">1</div>รับแจ้งปัญหาจากลูกค้า (LINE / FB)</div>
+          <div class="flow-step"><div class="step-num blue">2</div>เช็คระบบ — แก้ได้ทันที?</div>
+          <div class="flow-step"><div class="step-num blue">3</div>ถ้าแก้ไม่ได้ → escalate เอม</div>
+          <div class="flow-step"><div class="step-num blue">4</div>รวบรวมปัญหา → รายงานรายเดือน</div>
+          <div class="section-label">Tracking</div>
+          <div>
+            <span class="track-pill tp-blue">Order issues</span>
+            <span class="track-pill tp-blue">Monthly report</span>
+            <span class="track-pill tp-red">Leaving soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goi -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="role-card">
+        <div class="role-header cs-chat">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="role-avatar">💬</div>
+            <div>
+              <div class="fw-bold fs-5">ก้อย</div>
+              <span class="badge-role">CS / OneChat + ProShip</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">หน้าที่หลัก</div>
+          <ul class="task-list">
+            <li>ดูแล OneChat — subscriptions, payments</li>
+            <li>Support + Sales ลูกค้า OneChat</li>
+            <li>ปิดการขาย (close sales)</li>
+            <li>ดูแล ProShip เมื่อมีเวลาเหลือ</li>
+            <li>รายงานปัญหา → เอม</li>
+          </ul>
+          <div class="section-label">Workflow</div>
+          <div class="flow-step"><div class="step-num green">1</div>รับลูกค้าใหม่ OneChat</div>
+          <div class="flow-step"><div class="step-num green">2</div>Setup + สอนใช้งาน</div>
+          <div class="flow-step"><div class="step-num green">3</div>จัดการ subscription / billing</div>
+          <div class="flow-step"><div class="step-num green">4</div>Follow up + ต่ออายุ</div>
+          <div class="section-label">Tracking</div>
+          <div>
+            <span class="track-pill tp-green">OneChat subscriptions</span>
+            <span class="track-pill tp-green">Sales pipeline</span>
+            <span class="track-pill tp-blue">ProShip support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Noon -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="role-card">
+        <div class="role-header graphic">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="role-avatar">🎨</div>
+            <div>
+              <div class="fw-bold fs-5">นุ่น</div>
+              <span class="badge-role">Graphic Designer</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">หน้าที่หลัก</div>
+          <ul class="task-list">
+            <li>ออกแบบ visual content ทั้งหมด</li>
+            <li>Social media graphics (FB, LINE, IG)</li>
+            <li>งาน marketing materials</li>
+            <li>คุยงานกับ B ทุกวัน</li>
+          </ul>
+          <div class="section-label">Workflow</div>
+          <div class="flow-step"><div class="step-num orange">1</div>รับ brief จาก B / Singh</div>
+          <div class="flow-step"><div class="step-num orange">2</div>ร่าง concept → ส่ง review</div>
+          <div class="flow-step"><div class="step-num orange">3</div>รับ feedback → แก้ไข</div>
+          <div class="flow-step"><div class="step-num orange">4</div>Finalize → ส่งงาน</div>
+          <div class="section-label">Tracking</div>
+          <div>
+            <span class="track-pill tp-orange">Content calendar</span>
+            <span class="track-pill tp-orange">Design assets</span>
+            <span class="track-pill tp-orange">Revision rounds</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- After Mod leaves -->
+    <div class="col-12 col-lg-4">
+      <div class="role-card" style="border: 2px dashed #fca5a5;">
+        <div class="role-header" style="background: linear-gradient(135deg,#dc2626,#f87171);">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="role-avatar">⚠️</div>
+            <div>
+              <div class="fw-bold fs-5">แผนหลัง มด ลาออก</div>
+              <span class="badge-role">TBD</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-body">
+          <div class="section-label">งานที่ต้องกระจาย</div>
+          <ul class="task-list">
+            <li>แก้ปัญหา ProShip รายวัน → ก้อย รับเพิ่ม?</li>
+            <li>Monthly feedback report → เอม หรือ hire ใหม่?</li>
+            <li>Onboarding ลูกค้าใหม่ ProShip → ต้องวางแผน</li>
+            <li>Load ก้อย จะเพิ่มขึ้น — ต้อง prioritize</li>
+          </ul>
+          <div class="section-label">ตัวเลือก</div>
+          <div>
+            <span class="track-pill tp-red">จ้างใหม่</span>
+            <span class="track-pill tp-orange">โอนให้ก้อย</span>
+            <span class="track-pill tp-purple">Automate บางส่วน</span>
+          </div>
+          <div class="mt-2" style="font-size:0.8rem;color:#6b7280;">* ให้สิงห์ตัดสินใจ</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /row -->
+
+  <div class="text-center mt-2" style="font-size:0.8rem;color:#9ca3af;">
+    ProShip Team — อัพเดทล่าสุด: เมษายน 2026 · สร้างโดย Bee 🐝
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
