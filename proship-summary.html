@@ -3,63 +3,235 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProShip — สรุปงาน OneChat</title>
+  <title>ProShip × OneChat — Knowledge Base</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
     .hero { background: linear-gradient(135deg, #6c3fc5, #3a7bd5); color: white; padding: 2.5rem 2rem; border-radius: 16px; margin-bottom: 2rem; }
     .card { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 1.5rem; }
-    .card-header { border-radius: 14px 14px 0 0 !important; font-weight: 600; font-size: 1.05rem; }
-    .badge-role { font-size: 0.8rem; padding: 5px 10px; border-radius: 20px; }
-    .section-title { font-weight: 700; color: #6c3fc5; border-left: 4px solid #6c3fc5; padding-left: 10px; margin-bottom: 1rem; }
+    .card-header { border-radius: 14px 14px 0 0 !important; font-weight: 600; font-size: 1rem; padding: 0.8rem 1.2rem; }
+    .section-title { font-weight: 700; color: #6c3fc5; border-left: 4px solid #6c3fc5; padding-left: 10px; margin-bottom: 1rem; font-size: 0.95rem; }
     .info-box { background: #f8f6ff; border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
-    .script-box { background: #e8f4fd; border-radius: 10px; padding: 1rem 1.2rem; border-left: 3px solid #3a7bd5; margin-bottom: 0.8rem; font-size: 0.9rem; }
-    .feature-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 0.5rem; }
-    .feature-item .icon { color: #6c3fc5; font-size: 1.1rem; min-width: 20px; }
+    .script-box { background: #e8f4fd; border-radius: 10px; padding: 0.9rem 1.1rem; border-left: 3px solid #3a7bd5; margin-bottom: 0.8rem; font-size: 0.88rem; }
+    .green-box { background: #e6f9f0; border-radius: 10px; padding: 0.9rem 1.1rem; border-left: 3px solid #10b981; margin-bottom: 0.8rem; font-size: 0.88rem; }
     .price-table th { background: #6c3fc5; color: white; }
-    .tag { display: inline-block; background: #e8e0fa; color: #6c3fc5; border-radius: 20px; padding: 3px 10px; font-size: 0.8rem; margin: 2px; }
-    .updated { font-size: 0.8rem; color: #999; }
-    a.nav-link { color: #6c3fc5; }
+    .tag { display: inline-block; background: #e8e0fa; color: #6c3fc5; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; margin: 2px; }
+    .updated { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
     .toc { background: white; border-radius: 14px; padding: 1.2rem 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 2rem; }
-    .toc a { color: #6c3fc5; text-decoration: none; display: block; padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+    .toc a { color: #6c3fc5; text-decoration: none; display: block; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
     .toc a:last-child { border-bottom: none; }
-    .toc a:hover { color: #3a7bd5; }
+    .toc a:hover { color: #3a7bd5; padding-left: 6px; transition: 0.15s; }
+    .product-card { background: white; border-radius: 12px; padding: 1.2rem; height: 100%; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+    .product-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .badge-price { font-size: 1rem; }
+    .step-num { background: #6c3fc5; color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; margin-right: 8px; flex-shrink: 0; }
+    .step-row { display: flex; align-items: center; margin-bottom: 0.6rem; font-size: 0.9rem; }
+    .issue-row { display: flex; gap: 12px; margin-bottom: 0.7rem; font-size: 0.88rem; }
+    .issue-label { background: #fee2e2; color: #dc2626; border-radius: 8px; padding: 3px 10px; font-size: 0.78rem; white-space: nowrap; align-self: flex-start; margin-top: 2px; }
+    .fix-label { background: #dcfce7; color: #16a34a; border-radius: 8px; padding: 3px 10px; font-size: 0.78rem; white-space: nowrap; align-self: flex-start; margin-top: 2px; }
   </style>
 </head>
 <body>
-<div class="container py-4" style="max-width: 900px;">
+<div class="container py-4" style="max-width: 920px;">
 
   <!-- Hero -->
   <div class="hero">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
       <div>
-        <h2 class="mb-1">🚀 ProShip — สรุปงาน OneChat</h2>
-        <p class="mb-0 opacity-75">CS Knowledge · Sales Scripts · Features · Carrier Pricing</p>
+        <h2 class="mb-1">🚀 ProShip × OneChat</h2>
+        <p class="mb-0" style="opacity:0.8;">Knowledge Base — CS · Sales · Products · Pricing</p>
       </div>
       <div class="text-end">
-        <div class="updated text-white opacity-75">อัปเดต: เมษายน 2569</div>
-        <div class="mt-1">
-          <span class="badge bg-white text-purple" style="color:#6c3fc5;">Singh × Bee</span>
-        </div>
+        <div class="updated">อัปเดต: เมษายน 2569</div>
+        <div class="mt-1"><span class="badge bg-white" style="color:#6c3fc5;">Singh × Bee</span></div>
       </div>
     </div>
   </div>
 
   <!-- TOC -->
   <div class="toc">
-    <div class="fw-bold mb-2" style="color:#6c3fc5;">📋 เนื้อหา</div>
-    <a href="#team">1. ทีม CS</a>
-    <a href="#ops">2. CS Operations (3 ส่วน)</a>
-    <a href="#scripts">3. Sales & Support Scripts</a>
-    <a href="#features">4. Features ProShip</a>
-    <a href="#pricing">5. ราคาขนส่ง</a>
-    <a href="#issues">6. ปัญหาที่พบบ่อย</a>
-    <a href="#contacts">7. ข้อมูลติดต่อ</a>
+    <div class="fw-bold mb-2" style="color:#6c3fc5; font-size:0.9rem;">📋 เนื้อหา</div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#products">🤖 OneChat Products (4 ตัว)</a>
+        <a href="#pricing">💰 Pricing & Packages</a>
+        <a href="#onboarding">🚦 Onboarding Flow</a>
+        <a href="#issues">🐛 Common Issues</a>
+      </div>
+      <div class="col-md-6">
+        <a href="#sales">💬 Sales Scripts</a>
+        <a href="#integration">🔗 Integration</a>
+        <a href="#admin">⚙️ Admin Flow</a>
+        <a href="#team">👥 CS Team (ProShip)</a>
+        <a href="#proship-features">🛠️ ProShip Features</a>
+        <a href="#carriers">📦 Carrier Pricing</a>
+      </div>
+    </div>
   </div>
 
-  <!-- 1. ทีม CS -->
+  <!-- OneChat Products -->
+  <div id="products" class="card">
+    <div class="card-header" style="background:#6c3fc5;color:white;">🤖 OneChat Products — 4 ตัว</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="product-card">
+            <div class="product-icon">💬</div>
+            <div class="fw-bold mb-1">แชทบอท</div>
+            <div class="small text-muted">ตั้ง auto-reply บอทตอบแชทแทนแอดมิน ลดการตอบซ้ำๆ ช่วยปิดการขายไว ไม่ต้องรอแอดมิน</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="product-card">
+            <div class="product-icon">💭</div>
+            <div class="fw-bold mb-1">ตอบคอมเมนต์ใต้โพสต์</div>
+            <div class="small text-muted">บอทตอบคอมเมนต์แทนแอดมิน ไม่ต้องกดตอบทีละคอมเมนต์ ลดงาน admin ได้มาก</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="product-card">
+            <div class="product-icon">📥</div>
+            <div class="fw-bold mb-1">ดูดคอมเมนต์เข้า INBOX</div>
+            <div class="small text-muted">ดึงลูกค้าที่คอมเมนต์ใต้โพสต์เข้า inbox อัตโนมัติ ส่งคำทักทายเบื้องต้น ไม่มีตกหล่น ไม่พลาดลูกค้าสักคน</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="product-card">
+            <div class="product-icon">📢</div>
+            <div class="fw-bold mb-1">บรอดแคสต์</div>
+            <div class="small text-muted">ยิงข้อความหาลูกค้า แจ้งโปรโมชั่น ข่าวสารร้าน ได้ทีละหลายคนพร้อมกัน</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div id="pricing" class="card">
+    <div class="card-header" style="background:#0369a1;color:white;">💰 Pricing & Packages</div>
+    <div class="card-body">
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <div class="info-box text-center">
+            <div class="fw-bold" style="font-size:1.5rem; color:#6c3fc5;">฿900</div>
+            <div class="small fw-bold">ต่อเดือน</div>
+            <div class="small text-muted mt-1">ใช้ได้ 3 เพจ</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-box text-center" style="border: 2px solid #f59e0b;">
+            <div class="badge bg-warning text-dark mb-1">⭐ โปร</div>
+            <div class="fw-bold" style="font-size:1.5rem; color:#d97706;">฿3,900</div>
+            <div class="small fw-bold">ต่อปี (1 เพจ)</div>
+            <div class="small text-muted mt-1">ราคาโปรโมชั่น</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-box text-center">
+            <div class="fw-bold" style="font-size:1.2rem; color:#374151;">มากกว่า 3 เพจ</div>
+            <div class="small text-muted mt-1">ติดต่อแอดมินเพื่อดูราคาพิเศษ</div>
+          </div>
+        </div>
+      </div>
+      <div class="green-box">
+        ✅ <strong>ไม่จำกัดจำนวนแอดมิน</strong> — เพิ่ม admin ได้ไม่อั้น
+      </div>
+    </div>
+  </div>
+
+  <!-- Onboarding -->
+  <div id="onboarding" class="card">
+    <div class="card-header" style="background:#0d9488;color:white;">🚦 Onboarding Flow</div>
+    <div class="card-body">
+      <div class="step-row"><span class="step-num">1</span> สมัครใช้งาน</div>
+      <div class="step-row"><span class="step-num">2</span> แจ้งจำนวนเพจที่ต้องการ</div>
+      <div class="step-row"><span class="step-num">3</span> เข้า Setting → คีย์เวิร์ด + ข้อความ + คำตอบ <span class="ms-2 tag">ลูกค้าแก้เองได้ หรือให้ทีมช่วย</span></div>
+      <div class="step-row"><span class="step-num">4</span> กดบันทึก → พร้อมใช้งานทันที</div>
+      <div class="mt-2 p-2 rounded text-center fw-bold" style="background:#dcfce7; color:#15803d;">
+        ⚡ ใช้เวลา Setup เพียง 10–15 นาที
+      </div>
+    </div>
+  </div>
+
+  <!-- Common Issues -->
+  <div id="issues" class="card">
+    <div class="card-header" style="background:#dc2626;color:white;">🐛 Common Issues & Solutions</div>
+    <div class="card-body">
+      <div class="issue-row">
+        <span class="issue-label">บอทไม่ตอบ</span>
+        <div>เช็คคีย์เวิร์ดที่ลูกค้าพิมพ์มา — ถูกต้องตรงกับที่ตั้งไว้ไหม?</div>
+      </div>
+      <div class="issue-row">
+        <span class="issue-label">คอมเมนต์ไม่ดูด</span>
+        <div>เช็คว่าเพจหลุดการเชื่อมหรือเปล่า → ออกจากระบบแล้ว login ใหม่</div>
+      </div>
+      <div class="issue-row">
+        <span class="issue-label">ทำแล้วยังไม่ได้</span>
+        <div>ลบคีย์เวิร์ด → ตั้งใหม่ หรือถอดแอพ → ติดตั้งใหม่ → เชื่อมเพจใหม่</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Script -->
+  <div id="sales" class="card">
+    <div class="card-header" style="background:#7c3aed;color:white;">💬 Sales Script — OneChat</div>
+    <div class="card-body">
+      <div class="script-box">
+        <div class="fw-bold mb-1">🎯 Pain Point: แชทเยอะ ตอบไม่ทัน</div>
+        <div class="text-muted small mb-1">"ตอนนี้มีลูกค้าทักแชทมาเยอะไหมคะ?"</div>
+        <div>→ วันแชทช่วยลดงานแอดมิน บอทตอบแทนเลยค่ะ ไม่ต้องตอบซ้ำๆ ไม่ต้องสลับแชทเอง</div>
+      </div>
+      <div class="script-box">
+        <div class="fw-bold mb-1">🎯 Pain Point: คอมเมนต์ตกหล่น</div>
+        <div class="text-muted small mb-1">"ตอบคอมเมนต์ไม่ทัน ลูกค้าหลุดบ้างไหมคะ?"</div>
+        <div>→ วันแชทดึงคอมเมนต์เข้า inbox ให้เลย ตอบแทนให้ด้วย ไม่ตกหล่น ไม่พลาดสักคน</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integration -->
+  <div id="integration" class="card">
+    <div class="card-header" style="background:#374151;color:white;">🔗 Integration</div>
+    <div class="card-body">
+      <div class="info-box">
+        <div class="fw-bold mb-2">📘 ทำงานกับ FB Page</div>
+        <div class="small">ล็อคอินเข้าระบบ → ดึงเพจที่ต้องการ → ใช้งานได้ทันที<br>ไม่ต้องติดตั้งโปรแกรมเพิ่มเติม</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Flow -->
+  <div id="admin" class="card">
+    <div class="card-header" style="background:#1e40af;color:white;">⚙️ Admin Flow (หลังบ้าน)</div>
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <div class="green-box">
+            📱 ทำงานผ่าน <strong>Facebook Business Suite</strong> ได้เลย — ดูแชท/ข้อความที่บอทส่งได้ทันที
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="green-box">
+            🌙 <strong>ไม่ต้องเปิดทิ้งไว้กลางคืน</strong> — เราหลับ ระบบทำงานต่อเอง
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="green-box">
+            ✅ ไม่ต้องโหลดโปรแกรมเพิ่ม
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="green-box">
+            🔛 เปิด/ปิดการใช้งานได้ด้วยตัวเอง
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CS Team -->
   <div id="team" class="card">
-    <div class="card-header bg-purple text-white" style="background:#6c3fc5!important;">👥 ทีม CS (3 คน)</div>
+    <div class="card-header" style="background:#6c3fc5;color:white;">👥 ทีม CS — ProShip (3 คน)</div>
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-4">
@@ -87,285 +259,86 @@
           </div>
         </div>
       </div>
-      <div class="mt-3 small text-muted">
-        <strong>ช่องทาง:</strong> FB Page (OneCat.ai + ProShip) · LINE @ (OneChat.ai + ProShip) · LINE Group ลูกค้าทุกราย
-      </div>
     </div>
   </div>
 
-  <!-- 2. CS Ops -->
-  <div id="ops" class="card">
-    <div class="card-header" style="background:#3a7bd5;color:white;">⚙️ CS Operations — 3 ส่วน</div>
+  <!-- ProShip Features -->
+  <div id="proship-features" class="card">
+    <div class="card-header" style="background:#3a7bd5;color:white;">🛠️ ProShip Features (สรุป)</div>
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-4">
-          <h6 class="section-title">1. Support</h6>
-          <ul class="small list-unstyled">
-            <li>🔸 Login ไม่ได้ (case-sensitive email)</li>
-            <li>🔸 ขนส่งผิด → export→reimport</li>
-            <li>🔸 Status counter bug</li>
-            <li>🔸 Stock hang → เพิ่ม SKU 2 ตัว</li>
-            <li>⚠️ <strong>ห้ามลบ admin user</strong> → ข้อมูลหาย</li>
-            <li>📋 Escalate: Trello → Slack IT</li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <h6 class="section-title">2. Sales (Onboarding)</h6>
-          <ul class="small list-unstyled">
-            <li>❓ ส่งกี่ชิ้น/วัน?</li>
-            <li>❓ ขนส่งไหน?</li>
-            <li>❓ มีสมาชิกแล้วหรือยัง?</li>
-            <li>📚 4-step training</li>
-            <li>🤝 CS setup ทั้งหมด</li>
-            <li>📞 Follow-up หลัง 3 วัน</li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <h6 class="section-title">3. Relation</h6>
-          <ul class="small list-unstyled">
-            <li>🔔 Check-in ลูกค้า inactive</li>
-            <li>📅 Milestone: 1 เดือน, 3 เดือน</li>
-            <li>⭐ Key Account 300+/วัน</li>
-            <li>🏢 Visit 300-500/วัน → monthly</li>
-            <li>🏢 1000+/วัน → weekly</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Scripts -->
-  <div id="scripts" class="card">
-    <div class="card-header" style="background:#0d9488;color:white;">💬 Sales & Support Scripts</div>
-    <div class="card-body">
-      <h6 class="section-title">Inbound — ลูกค้าใหม่สนใจ</h6>
-      <div class="script-box">
-        <div class="fw-bold mb-1">Step 1: Qualify</div>
-        "ปกติพี่ส่งของวันละกี่ชิ้นอยู่คะ?" → "แล้วตอนนี้ส่งกับขนส่งไหนอยู่คะ?" → "มีสมาชิกกับ [ขนส่ง] อยู่แล้วไหมคะพี่?"
-      </div>
-      <div class="row g-2 mb-3">
-        <div class="col-md-6">
-          <div class="script-box">
-            <span class="badge bg-success mb-1">มีสมาชิกแล้ว ✅</span><br>
-            นำ member ID ผูกระบบ → ขอ ชื่อ/email/เบอร์/ที่อยู่ → เปิด user → ส่ง login + คลิปสอน
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="script-box">
-            <span class="badge bg-warning text-dark mb-1">ยังไม่มีสมาชิก</span><br>
-            ขอข้อมูล → ประสานขนส่ง → รอได้ราคา → เปิด user
-          </div>
-        </div>
-      </div>
-
-      <h6 class="section-title">Support — ปัญหาที่พบบ่อย</h6>
-      <div class="row g-2">
-        <div class="col-md-6">
-          <div class="script-box small">
-            <strong>🔒 Login ไม่ได้</strong><br>
-            "รบกวนแจ้งอีเมลที่ใช้ login ให้หน่อยนะคะ" → ยืนยันตัวตน → reset password ส่วนตัว
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="script-box small">
-            <strong>📦 ทำออเดอร์ไม่ได้</strong><br>
-            "พี่เลือกร้านค้าก่อนสร้างรายการแล้วหรือยังคะ?" → ถ้ายังไม่ได้ → ขอ email เพื่อเช็คในระบบ
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="script-box small">
-            <strong>🖨️ ปริ้นไม่ได้ / ระบบช้า</strong><br>
-            "ใช้ Google Chrome ไหมคะ?" → ล้างแคช (Ctrl+Shift+Del) → ถ้ายังไม่ได้ → ขอ email
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="script-box small">
-            <strong>📮 สแกน Barcode ไม่ได้</strong><br>
-            ขอรูปลาเบล → ถ้าชัดแล้วยังไม่ได้ → แจ้งให้ขนส่งเปลี่ยนเครื่องสแกน
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-3 p-2 rounded small" style="background:#fff3cd;">
-        ⚠️ <strong>Draft</strong> — ต้องให้ Singh + Aem review ก่อน use จริง
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. Features -->
-  <div id="features" class="card">
-    <div class="card-header" style="background:#7c3aed;color:white;">🛠️ Features ProShip (Official Spec)</div>
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-6">
           <h6 class="section-title">📏 Dashboard</h6>
           <ul class="small list-unstyled">
             <li>✅ ยอดขายทั้งหมด</li>
             <li>✅ รายการจัดส่ง</li>
-            <li>✅ การแจ้งเตือน (มุมขวา)</li>
+            <li>✅ การแจ้งเตือน</li>
             <li>✅ เติมเงิน J&T</li>
-            <li>💡 แนะนำ: filter ช่วงวันที่</li>
-            <li>💡 แนะนำ: ดูกำไร/ต้นทุน</li>
+            <li>💡 Filter ช่วงวันที่ + กำไร/ต้นทุน</li>
           </ul>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h6 class="section-title">📦 Shipping</h6>
           <ul class="small list-unstyled">
             <li>✅ สถานะ 11 ขั้นตอน</li>
-            <li>✅ สร้างรายการ (manual/เลือกสินค้า)</li>
-            <li>✅ Import bulk</li>
+            <li>✅ สร้างรายการ manual/bulk import</li>
             <li>✅ ค้นหา 14+ fields</li>
             <li>✅ ปริ้น/ยกเลิก/เปลี่ยนสถานะ</li>
           </ul>
         </div>
-        <div class="col-md-6">
-          <h6 class="section-title">👤 CRM</h6>
-          <ul class="small list-unstyled">
-            <li>✅ เก็บข้อมูลลูกค้าจากออเดอร์</li>
-            <li>✅ สร้างจัดส่งจาก CRM ได้โดยตรง</li>
-            <li>✅ ค้นหาด้วยเบอร์/ชื่อ</li>
-          </ul>
-        </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h6 class="section-title">⚙️ Settings</h6>
           <ul class="small list-unstyled">
-            <li>✅ เพิ่มร้านค้า</li>
+            <li>✅ เพิ่มร้านค้า/พนักงาน</li>
             <li>✅ ส่ง Tracking ทาง OneChat</li>
-            <li>✅ เพิ่ม user พนักงาน</li>
-            <li>✅ สิทธิ์: Stock, จัดส่ง</li>
+            <li>✅ สิทธิ์ Stock + จัดส่ง</li>
+            <li>✅ CRM ลูกค้า</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 5. Pricing -->
-  <div id="pricing" class="card">
-    <div class="card-header" style="background:#0369a1;color:white;">💰 ราคาขนส่ง (สรุป)</div>
+  <!-- Carrier Pricing -->
+  <div id="carriers" class="card">
+    <div class="card-header" style="background:#0369a1;color:white;">📦 Carrier Pricing</div>
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-sm table-hover price-table">
-          <thead>
-            <tr>
-              <th>ขนส่ง</th>
-              <th>ราคาเริ่มต้น</th>
-              <th>ราคาดีที่สุด</th>
-              <th>เงื่อนไข</th>
-              <th>COD</th>
-            </tr>
+        <table class="table table-sm table-hover">
+          <thead style="background:#6c3fc5;color:white;">
+            <tr><th>ขนส่ง</th><th>เริ่มต้น</th><th>ดีที่สุด</th><th>เงื่อนไข</th><th>COD</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>📮 ไปรษณีย์</td>
-              <td>28 บาท</td>
-              <td>17 บาท</td>
-              <td>10,000+ ชิ้น/เดือน</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>⚡ Flash</td>
-              <td>23 บาท</td>
-              <td>13 บาท</td>
-              <td>10,000+ ชิ้น/เดือน</td>
-              <td>1% (6,000+)</td>
-            </tr>
-            <tr>
-              <td>🔶 Kerry</td>
-              <td>27 บาท</td>
-              <td>12 บาท</td>
-              <td>300+/วัน (BKK)</td>
-              <td>1% (81+/วัน)</td>
-            </tr>
-            <tr>
-              <td>🛒 SPX</td>
-              <td>16 บาท</td>
-              <td>15 บาท</td>
-              <td>50+/วัน</td>
-              <td>2%</td>
-            </tr>
-            <tr>
-              <td>📦 J&T</td>
-              <td>18 บาท</td>
-              <td>18 บาท</td>
-              <td>Simple, no tiers</td>
-              <td>—</td>
-            </tr>
+            <tr><td>📮 ไปรษณีย์</td><td>28฿</td><td>17฿</td><td>10,000+/เดือน</td><td>—</td></tr>
+            <tr><td>⚡ Flash</td><td>23฿</td><td>13฿</td><td>10,000+/เดือน</td><td>1% (6,000+)</td></tr>
+            <tr><td>🔶 Kerry</td><td>27฿</td><td>12฿</td><td>300+/วัน (BKK)</td><td>1% (81+/วัน)</td></tr>
+            <tr><td>🛒 SPX</td><td>16฿</td><td>15฿</td><td>50+/วัน</td><td>2%</td></tr>
+            <tr><td>📦 J&T</td><td>18฿</td><td>18฿</td><td>Simple</td><td>—</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- 6. Issues -->
-  <div id="issues" class="card">
-    <div class="card-header" style="background:#dc2626;color:white;">🐛 ปัญหาที่พบบ่อย</div>
-    <div class="card-body">
-      <div class="row g-2">
-        <div class="col-md-6">
-          <div class="info-box small">
-            <strong>ทำออเดอร์ไม่ได้</strong><br>
-            ลืมเลือกร้านค้า / รหัสไปรษณีย์ผิด / เขต-แขวงผิด
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-box small">
-            <strong>ระบบช้า/หน่วง</strong><br>
-            → ล้างแคช browser (Ctrl+Shift+Del)
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-box small">
-            <strong>Login ไม่ได้</strong><br>
-            Password ผิด → ต้องติดต่อ Support (ไม่มี self-reset)
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-box small">
-            <strong>Tracking ไม่ส่งหาลูกค้า</strong><br>
-            ตรวจสอบที่ <a href="https://sky.onechat.ai/users" target="_blank">sky.onechat.ai/users</a>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-box small">
-            <strong>Status counter ผิด</strong><br>
-            Known bug (pagination/cache) — escalate ถ้า volume มาก
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-box small">
-            <strong>Stock โหลดค้าง</strong><br>
-            Workaround: เพิ่ม SKU ที่ 2
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 7. Contacts -->
-  <div id="contacts" class="card">
+  <!-- Contacts -->
+  <div class="card">
     <div class="card-header" style="background:#374151;color:white;">📞 ข้อมูลติดต่อ</div>
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-6">
-          <div class="info-box">
-            <div class="fw-bold mb-2">🌐 ProShip</div>
-            <div class="small">
-              <div>🔗 <a href="https://www.proship.co.th" target="_blank">www.proship.co.th</a></div>
-              <div>📧 care@proship.co.th</div>
-              <div>📱 065-986-5752</div>
-              <div>💬 <a href="https://lin.ee/m8oR0jO" target="_blank">LINE Support</a></div>
-              <div>🎥 <a href="https://www.youtube.com/@proshipthailand8704/playlists" target="_blank">Tutorials</a></div>
-            </div>
+          <div class="info-box small">
+            <div class="fw-bold mb-1">🌐 ProShip</div>
+            <a href="https://www.proship.co.th" target="_blank">www.proship.co.th</a><br>
+            📧 care@proship.co.th · 📱 065-986-5752<br>
+            <a href="https://lin.ee/m8oR0jO" target="_blank">LINE Support</a> ·
+            <a href="https://www.youtube.com/@proshipthailand8704/playlists" target="_blank">Tutorials</a>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="info-box">
-            <div class="fw-bold mb-2">🔐 Demo Account</div>
-            <div class="small">
-              <div>Email: proshipdemo@hotmail.com</div>
-              <div>Pass: 123456789</div>
-              <div class="mt-2">Tracking: <a href="https://sky.onechat.ai" target="_blank">sky.onechat.ai</a></div>
-            </div>
+          <div class="info-box small">
+            <div class="fw-bold mb-1">🔐 Demo Account</div>
+            proshipdemo@hotmail.com / 123456789<br>
+            Tracking: <a href="https://sky.onechat.ai" target="_blank">sky.onechat.ai</a>
           </div>
         </div>
       </div>
@@ -373,7 +346,7 @@
   </div>
 
   <div class="text-center text-muted small py-3">
-    ProShip × OneChat — Internal Knowledge Base · Singh × Bee · 2026
+    ProShip × OneChat — Internal Knowledge Base · 2026
   </div>
 
 </div>
